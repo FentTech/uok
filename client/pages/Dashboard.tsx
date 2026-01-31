@@ -208,10 +208,29 @@ export default function Dashboard() {
               </div>
 
               {selectedMood && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                  <p className="text-green-700 font-semibold">
+                <div className="bg-gradient-to-r from-green-50 to-cyan-50 border border-green-200 rounded-lg p-6">
+                  <p className="text-green-700 font-semibold mb-4 text-center">
                     ✓ Check-in recorded! Your contacts have been notified.
                   </p>
+
+                  {/* Inspiration Songs */}
+                  <div className="mt-4 pt-4 border-t border-green-200">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Music className="w-5 h-5 text-purple-600" />
+                      <p className="font-semibold text-slate-900">Inspiration Playlist</p>
+                    </div>
+                    <div className="space-y-2">
+                      {moodSongs[
+                        MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood || ""
+                      ]?.map((song, idx) => (
+                        <div key={idx} className="bg-white rounded-lg p-3">
+                          <p className="font-medium text-slate-900 text-sm">{song.title}</p>
+                          <p className="text-xs text-slate-600">{song.artist}</p>
+                          <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
