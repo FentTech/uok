@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   Heart,
@@ -11,6 +11,7 @@ import {
   AlertCircle,
   CheckCircle,
   Music,
+  Trash2,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
 
@@ -20,6 +21,13 @@ interface CheckIn {
   mood: string;
   time: string;
   date: string;
+}
+
+interface MediaItem {
+  id: string;
+  type: "photo" | "video";
+  url: string;
+  timestamp: string;
 }
 
 const MOOD_EMOJIS = [
