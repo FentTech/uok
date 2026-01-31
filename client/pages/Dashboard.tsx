@@ -467,9 +467,12 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              <button className="w-full mt-4 py-2 text-cyan-600 font-semibold hover:bg-cyan-50 rounded-lg transition text-sm">
+              <Link
+                to="/manage-contacts"
+                className="block w-full mt-4 py-2 text-cyan-600 font-semibold hover:bg-cyan-50 rounded-lg transition text-sm text-center"
+              >
                 Manage Contacts
-              </button>
+              </Link>
             </div>
 
             {/* Tips */}
