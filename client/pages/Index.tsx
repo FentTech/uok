@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Heart, Users, Clock, Camera, Shield, TrendingUp } from "lucide-react";
+import { Heart, Users, Clock, Camera, Shield, TrendingUp, Music } from "lucide-react";
+import { moodSongs } from "../data/songs";
 
 export default function Index() {
   return (
