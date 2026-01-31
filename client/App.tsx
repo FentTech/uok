@@ -36,6 +36,10 @@ const App = () => (
 );
 
 const rootElement = document.getElementById("root");
-if (rootElement && !rootElement.__react_root__) {
-  createRoot(rootElement).render(<App />);
+if (rootElement) {
+  // Check if root is already mounted to prevent double-mounting during HMR
+  if (!(window as any).__app_mounted__) {
+    createRoot(rootElement).render(<App />);
+    (window as any).__app_mounted__ = true;
+  }
 }
