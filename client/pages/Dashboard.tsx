@@ -305,8 +305,11 @@ export default function Dashboard() {
                 Share Your Day
               </h2>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <button className="p-8 border-2 border-dashed border-cyan-300 rounded-2xl hover:bg-cyan-50 transition flex flex-col items-center justify-center gap-3">
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <button
+                  onClick={() => photoInputRef.current?.click()}
+                  className="p-8 border-2 border-dashed border-cyan-300 rounded-2xl hover:bg-cyan-50 transition flex flex-col items-center justify-center gap-3 cursor-pointer"
+                >
                   <Image className="w-8 h-8 text-cyan-600" />
                   <div>
                     <p className="font-semibold text-slate-900">Add Photo</p>
@@ -316,7 +319,10 @@ export default function Dashboard() {
                   </div>
                 </button>
 
-                <button className="p-8 border-2 border-dashed border-purple-300 rounded-2xl hover:bg-purple-50 transition flex flex-col items-center justify-center gap-3">
+                <button
+                  onClick={() => videoInputRef.current?.click()}
+                  className="p-8 border-2 border-dashed border-purple-300 rounded-2xl hover:bg-purple-50 transition flex flex-col items-center justify-center gap-3 cursor-pointer"
+                >
                   <Video className="w-8 h-8 text-purple-600" />
                   <div>
                     <p className="font-semibold text-slate-900">Add Video</p>
@@ -326,6 +332,66 @@ export default function Dashboard() {
                   </div>
                 </button>
               </div>
+
+              {/* Hidden File Inputs */}
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
+              <input
+                ref={videoInputRef}
+                type="file"
+                accept="video/*"
+                multiple
+                onChange={handleVideoUpload}
+                className="hidden"
+              />
+
+              {/* Media Gallery */}
+              {mediaItems.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-4">
+                    Today's Memories ({mediaItems.length})
+                  </h3>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {mediaItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="relative group rounded-lg overflow-hidden bg-slate-100"
+                      >
+                        {item.type === "photo" ? (
+                          <img
+                            src={item.url}
+                            alt="Shared photo"
+                            className="w-full h-48 object-cover"
+                          />
+                        ) : (
+                          <video
+                            src={item.url}
+                            className="w-full h-48 object-cover"
+                            controls
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center">
+                          <button
+                            onClick={() => deleteMedia(item.id)}
+                            className="opacity-0 group-hover:opacity-100 transition bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-600 p-2 bg-white">
+                          {item.type === "photo" ? "📷" : "🎥"} {item.timestamp}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
