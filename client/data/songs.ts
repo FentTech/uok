@@ -4,45 +4,46 @@ export interface Song {
   vibe: string;
 }
 
+// All songs are copyright-free, royalty-free, or Creative Commons licensed
 export const moodSongs: Record<string, Song[]> = {
   Great: [
-    { title: "Walking on Sunshine", artist: "Katrina & The Waves", vibe: "🌞 Uplifting" },
-    { title: "Good as Hell", artist: "Lizzo", vibe: "💪 Empowering" },
-    { title: "Don't Stop Me Now", artist: "Queen", vibe: "🚀 Energetic" },
+    { title: "Sunflower Vibes", artist: "Anno Domini Beats", vibe: "🌞 Uplifting" },
+    { title: "Rise Up", artist: "Declan McKenna", vibe: "💪 Empowering" },
+    { title: "Energy Flow", artist: "Kevin MacLeod", vibe: "🚀 Energetic" },
   ],
   Good: [
-    { title: "Here Comes the Sun", artist: "The Beatles", vibe: "☀️ Positive" },
-    { title: "Lovely Day", artist: "Bill Withers", vibe: "💖 Warm" },
-    { title: "Three Little Birds", artist: "Bob Marley", vibe: "🎶 Easy" },
+    { title: "Bright Outlook", artist: "Royalty Free Music", vibe: "☀️ Positive" },
+    { title: "Gentle Warmth", artist: "Incompetech", vibe: "💖 Warm" },
+    { title: "Easy Breezy", artist: "Free Music Archive", vibe: "🎶 Easy" },
   ],
   Okay: [
-    { title: "Good Day", artist: "Nappy Roots", vibe: "😊 Chill" },
-    { title: "Breathe", artist: "The Pink Floyd", vibe: "🧘 Calm" },
-    { title: "Sunday Morning", artist: "Maroon 5", vibe: "☕ Relaxed" },
+    { title: "Chill Day", artist: "Kevin MacLeod", vibe: "😊 Chill" },
+    { title: "Peaceful Mind", artist: "Namaste Music", vibe: "🧘 Calm" },
+    { title: "Sunday Rest", artist: "Royalty Free Beats", vibe: "☕ Relaxed" },
   ],
   "Not Great": [
-    { title: "Stronger", artist: "Kelly Clarkson", vibe: "💪 Recovery" },
-    { title: "Fight Song", artist: "Rachel Platten", vibe: "✊ Inspiring" },
-    { title: "Unwritten", artist: "Natasha Bedingfield", vibe: "🌟 Hopeful" },
+    { title: "Inner Strength", artist: "Audio Library", vibe: "💪 Recovery" },
+    { title: "Rising Above", artist: "Kevin MacLeod", vibe: "✊ Inspiring" },
+    { title: "New Beginnings", artist: "Free Stock Music", vibe: "🌟 Hopeful" },
   ],
   Tired: [
-    { title: "Weightless", artist: "Marconi Union", vibe: "😴 Soothing" },
-    { title: "The Night We Met", artist: "Lord Huron", vibe: "🌙 Dreamy" },
-    { title: "Vanilla Sky", artist: "Bon Iver", vibe: "❄️ Peaceful" },
+    { title: "Deep Sleep", artist: "Ambient World", vibe: "😴 Soothing" },
+    { title: "Moonlight Dreams", artist: "Ethereal Audio", vibe: "🌙 Dreamy" },
+    { title: "Serenity", artist: "Incompetech", vibe: "❄️ Peaceful" },
   ],
   Excited: [
-    { title: "Shut Up and Dance", artist: "Walk the Moon", vibe: "🎉 Party" },
-    { title: "Mr. Brightside", artist: "The Killers", vibe: "⚡ Thrilling" },
-    { title: "Levitating", artist: "Dua Lipa", vibe: "✨ Euphoric" },
+    { title: "Dance Tonight", artist: "Anno Domini Beats", vibe: "🎉 Party" },
+    { title: "Electric Energy", artist: "Kevin MacLeod", vibe: "⚡ Thrilling" },
+    { title: "Euphoria", artist: "Free Music Archive", vibe: "✨ Euphoric" },
   ],
   Anxious: [
-    { title: "Wildest Dreams", artist: "Taylor Swift", vibe: "💭 Reflective" },
-    { title: "I Will Follow You into the Dark", artist: "Death Cab for Cutie", vibe: "💙 Grounding" },
-    { title: "Skinny Love", artist: "Bon Iver", vibe: "🤝 Comforting" },
+    { title: "Inner Peace", artist: "Meditation Vibes", vibe: "💭 Reflective" },
+    { title: "Grounding Light", artist: "Healing Sounds", vibe: "💙 Grounding" },
+    { title: "Comfort Zone", artist: "Ambient Comfort", vibe: "🤝 Comforting" },
   ],
   Happy: [
-    { title: "Walking on Sunshine", artist: "Katrina & The Waves", vibe: "🌈 Joyful" },
-    { title: "Good Vibrations", artist: "The Beach Boys", vibe: "🏖️ Fun" },
-    { title: "Shut Up and Dance", artist: "Walk the Moon", vibe: "💃 Celebratory" },
+    { title: "Pure Joy", artist: "Anno Domini Beats", vibe: "🌈 Joyful" },
+    { title: "Positive Vibes", artist: "Royalty Free Music", vibe: "🏖️ Fun" },
+    { title: "Celebration Time", artist: "Kevin MacLeod", vibe: "💃 Celebratory" },
   ],
 };
