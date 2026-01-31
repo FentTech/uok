@@ -37,9 +37,7 @@ const App = () => (
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
-  // Check if root is already mounted to prevent double-mounting during HMR
-  if (!(window as any).__app_mounted__) {
-    createRoot(rootElement).render(<App />);
-    (window as any).__app_mounted__ = true;
-  }
+  const root = (window as any).__root__ || createRoot(rootElement);
+  root.render(<App />);
+  (window as any).__root__ = root;
 }
