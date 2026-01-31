@@ -366,13 +366,14 @@ export default function Dashboard() {
                             className="w-full h-48 object-cover"
                           />
                         ) : (
-                          <div className="w-full h-48 bg-black flex items-center justify-center">
+                          <div className="w-full h-48 bg-black flex items-center justify-center relative">
                             <video
+                              key={item.url}
                               src={item.url}
                               className="w-full h-full object-contain"
                               controls
-                              controlsList="nodownload"
-                              crossOrigin="anonymous"
+                              playsInline
+                              preload="metadata"
                             />
                           </div>
                         )}
