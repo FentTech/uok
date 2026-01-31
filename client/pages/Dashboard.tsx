@@ -123,20 +123,18 @@ export default function Dashboard() {
     const files = e.target.files;
     if (files) {
       Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const newMedia: MediaItem = {
-            id: Date.now().toString() + Math.random(),
-            type: "photo",
-            url: event.target?.result as string,
-            timestamp: new Date().toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          };
-          setMediaItems([newMedia, ...mediaItems]);
+        // Use createObjectURL for better performance and compatibility
+        const url = URL.createObjectURL(file);
+        const newMedia: MediaItem = {
+          id: Date.now().toString() + Math.random(),
+          type: "photo",
+          url: url,
+          timestamp: new Date().toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
         };
-        reader.readAsDataURL(file);
+        setMediaItems((prev) => [newMedia, ...prev]);
       });
     }
     // Reset input
@@ -147,20 +145,18 @@ export default function Dashboard() {
     const files = e.target.files;
     if (files) {
       Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const newMedia: MediaItem = {
-            id: Date.now().toString() + Math.random(),
-            type: "video",
-            url: event.target?.result as string,
-            timestamp: new Date().toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          };
-          setMediaItems([newMedia, ...mediaItems]);
+        // Use createObjectURL for video playback
+        const url = URL.createObjectURL(file);
+        const newMedia: MediaItem = {
+          id: Date.now().toString() + Math.random(),
+          type: "video",
+          url: url,
+          timestamp: new Date().toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
         };
-        reader.readAsDataURL(file);
+        setMediaItems((prev) => [newMedia, ...prev]);
       });
     }
     // Reset input
