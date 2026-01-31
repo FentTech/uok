@@ -10,6 +10,9 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import SetupContacts from "./pages/SetupContacts";
 import Dashboard from "./pages/Dashboard";
+import ManageContacts from "./pages/ManageContacts";
+import WellnessInsights from "./pages/WellnessInsights";
+import SharedMemories from "./pages/SharedMemories";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
