@@ -244,6 +244,52 @@ export default function Index() {
         </div>
       </div>
 
+      {/* Inspiration Songs Section */}
+      <div className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-16">
+            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+              Music for Every Mood
+            </span>
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[
+              { mood: "Great", color: "from-yellow-400 to-orange-400", gradient: "from-yellow-50 to-orange-50" },
+              { mood: "Good", color: "from-green-400 to-emerald-400", gradient: "from-green-50 to-emerald-50" },
+              { mood: "Okay", color: "from-blue-400 to-cyan-400", gradient: "from-blue-50 to-cyan-50" },
+              { mood: "Happy", color: "from-pink-400 to-rose-400", gradient: "from-pink-50 to-rose-50" },
+            ].map((moodCategory) => (
+              <div
+                key={moodCategory.mood}
+                className={`bg-gradient-to-br ${moodCategory.gradient} rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition`}
+              >
+                <h3 className="text-xl font-bold text-slate-900 mb-4">{moodCategory.mood} Vibes</h3>
+                <div className="space-y-3">
+                  {moodSongs[moodCategory.mood]?.slice(0, 2).map((song, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3">
+                      <p className="font-medium text-slate-900 text-sm">{song.title}</p>
+                      <p className="text-xs text-slate-600">{song.artist}</p>
+                      <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-gradient-to-r from-purple-50 to-cyan-50 rounded-2xl border border-purple-200 p-8 text-center">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Music className="w-6 h-6 text-purple-600" />
+              <h3 className="text-xl font-bold text-slate-900">Personalized Playlists</h3>
+            </div>
+            <p className="text-slate-700 max-w-2xl mx-auto">
+              Every mood is valid, and music can help. When you check in with your mood, we'll suggest inspiring songs tailored to how you're feeling. Use music as a tool for wellness and self-expression.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* CTA Section */}
       <div className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-cyan-500 via-cyan-400 to-purple-500">
         <div className="max-w-4xl mx-auto text-center">
