@@ -119,6 +119,58 @@ export default function Dashboard() {
     }
   };
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const newMedia: MediaItem = {
+            id: Date.now().toString() + Math.random(),
+            type: "photo",
+            url: event.target?.result as string,
+            timestamp: new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+          setMediaItems([newMedia, ...mediaItems]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    // Reset input
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  };
+
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const newMedia: MediaItem = {
+            id: Date.now().toString() + Math.random(),
+            type: "video",
+            url: event.target?.result as string,
+            timestamp: new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+          setMediaItems([newMedia, ...mediaItems]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    // Reset input
+    if (videoInputRef.current) videoInputRef.current.value = "";
+  };
+
+  const deleteMedia = (id: string) => {
+    setMediaItems(mediaItems.filter((item) => item.id !== id));
+  };
+
   const status = checkInStatus();
   const StatusIcon = status.icon;
 
