@@ -35,7 +35,7 @@ const MOOD_EMOJIS = [
   { emoji: "🙂", mood: "Good" },
   { emoji: "😐", mood: "Okay" },
   { emoji: "😔", mood: "Not Great" },
-  { emoji: "😴", mood: "Tired" },
+  { emoji: "😴", mood: "Sleep" },
   { emoji: "🎉", mood: "Excited" },
   { emoji: "😰", mood: "Anxious" },
   { emoji: "😍", mood: "Happy" },
@@ -46,6 +46,10 @@ const MOOD_EMOJIS = [
   { emoji: "😎", mood: "Confident" },
   { emoji: "🤔", mood: "Thoughtful" },
   { emoji: "🌟", mood: "Inspired" },
+  { emoji: "🛏️", mood: "Wake Up" },
+  { emoji: "🎓", mood: "In Class" },
+  { emoji: "🚗", mood: "On My Way" },
+  { emoji: "🏠", mood: "At Home" },
 ];
 
 export default function Dashboard() {
