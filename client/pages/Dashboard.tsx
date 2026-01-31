@@ -366,11 +366,15 @@ export default function Dashboard() {
                             className="w-full h-48 object-cover"
                           />
                         ) : (
-                          <video
-                            src={item.url}
-                            className="w-full h-48 object-cover"
-                            controls
-                          />
+                          <div className="w-full h-48 bg-black flex items-center justify-center">
+                            <video
+                              src={item.url}
+                              className="w-full h-full object-contain"
+                              controls
+                              controlsList="nodownload"
+                              crossOrigin="anonymous"
+                            />
+                          </div>
                         )}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center">
                           <button
