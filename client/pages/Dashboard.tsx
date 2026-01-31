@@ -248,19 +248,19 @@ export default function Dashboard() {
                 How are you feeling?
               </h2>
 
-              <div className="grid grid-cols-4 gap-3 mb-6">
+              <div className="grid grid-cols-5 gap-2 mb-6">
                 {MOOD_EMOJIS.map((item) => (
                   <button
                     key={item.emoji}
                     onClick={() => handleCheckIn(item.emoji, item.mood)}
                     disabled={todayCheckInCount >= 3}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-2xl transition ${
+                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition ${
                       selectedMood === item.emoji
                         ? "bg-gradient-to-br from-cyan-400 to-cyan-500 shadow-lg scale-110"
                         : "bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     }`}
                   >
-                    <span className="text-3xl">{item.emoji}</span>
+                    <span className="text-2xl">{item.emoji}</span>
                     <span
                       className={`text-xs font-medium mt-1 ${
                         selectedMood === item.emoji
