@@ -10,7 +10,9 @@ import {
   Clock,
   AlertCircle,
   CheckCircle,
+  Music,
 } from "lucide-react";
+import { moodSongs } from "../data/songs";
 
 interface CheckIn {
   id: string;
