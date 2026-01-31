@@ -42,6 +42,9 @@ const MOOD_EMOJIS = [
 ];
 
 export default function Dashboard() {
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
   const [checkIns, setCheckIns] = useState<CheckIn[]>([
     {
       id: "1",
@@ -60,6 +63,7 @@ export default function Dashboard() {
   ]);
   const [todayCheckInCount, setTodayCheckInCount] = useState(2);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
   const handleCheckIn = (emoji: string, mood: string) => {
     if (todayCheckInCount >= 3) {
