@@ -39,6 +39,13 @@ const MOOD_EMOJIS = [
   { emoji: "🎉", mood: "Excited" },
   { emoji: "😰", mood: "Anxious" },
   { emoji: "😍", mood: "Happy" },
+  { emoji: "😌", mood: "Calm" },
+  { emoji: "🤗", mood: "Grateful" },
+  { emoji: "😤", mood: "Frustrated" },
+  { emoji: "🥰", mood: "Loved" },
+  { emoji: "😎", mood: "Confident" },
+  { emoji: "🤔", mood: "Thoughtful" },
+  { emoji: "🌟", mood: "Inspired" },
 ];
 
 export default function Dashboard() {
