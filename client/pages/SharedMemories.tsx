@@ -69,6 +69,14 @@ export default function SharedMemories() {
     memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {})
   );
 
+  // Handle incoming media from Dashboard
+  useEffect(() => {
+    const state = location.state as { mediaUrl?: string; mediaType?: "photo" | "video"; mood?: string } | null;
+    if (state?.mediaUrl && caption) {
+      // Media is ready to be shared
+    }
+  }, [location.state, caption]);
+
   const toggleLike = (id: string) => {
     setMemories(
       memories.map((m) =>
