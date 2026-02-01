@@ -94,7 +94,7 @@ export default function Dashboard() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
-  const [missedCheckInTimer, setMissedCheckInTimer] = useState<NodeJS.Timeout | null>(null);
+  const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Send alerts to emergency contacts
   const sendAlerts = (mood: string) => {
