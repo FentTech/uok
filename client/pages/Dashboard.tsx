@@ -300,28 +300,71 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-900 to-slate-950">
-      {/* Top Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-cyan-100 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
+      {/* Top Navigation - Futuristic Glassmorphism */}
+      <nav className="bg-white/10 backdrop-blur-xl border-b border-cyan-400/20 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/50 group-hover:shadow-cyan-500/100 transition">
+              <Heart className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
               UOK
             </span>
           </Link>
 
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-slate-100 rounded-lg transition">
-              <Settings className="w-6 h-6 text-slate-700" />
+          <div className="flex items-center gap-3">
+            {/* Notifications Badge */}
+            <div className="relative">
+              <button className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400 relative">
+                <Bell className="w-6 h-6" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+            </div>
+            <button className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400">
+              <Settings className="w-6 h-6" />
             </button>
-            <button className="p-2 hover:bg-red-50 rounded-lg transition text-red-600">
+            <button className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400">
               <LogOut className="w-6 h-6" />
             </button>
           </div>
         </div>
       </nav>
+
+      {/* Notifications Panel */}
+      {notifications.length > 0 && (
+        <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border-b border-cyan-400/20 px-4 sm:px-6 lg:px-8 py-3">
+          <div className="max-w-7xl mx-auto">
+            {notifications.slice(0, 2).map((notif) => (
+              <div
+                key={notif.id}
+                className="flex items-center justify-between bg-white/5 rounded-lg p-3 mb-2 backdrop-blur-sm border border-cyan-400/20"
+              >
+                <div className="flex items-center gap-3">
+                  <Zap className="w-5 h-5 text-yellow-400" />
+                  <div>
+                    <p className="text-cyan-300 text-sm font-medium">{notif.message}</p>
+                    <p className="text-cyan-500/60 text-xs">{notif.timestamp}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() =>
+                    setNotifications((prev) =>
+                      prev.filter((n) => n.id !== notif.id)
+                    )
+                  }
+                  className="text-cyan-500/60 hover:text-cyan-400"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
