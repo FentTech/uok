@@ -71,6 +71,7 @@ const MOOD_EMOJIS = [
 export default function Dashboard() {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const [checkIns, setCheckIns] = useState<CheckIn[]>([
     {
@@ -91,6 +92,9 @@ export default function Dashboard() {
   const [todayCheckInCount, setTodayCheckInCount] = useState(2);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
+  const [missedCheckInTimer, setMissedCheckInTimer] = useState<NodeJS.Timeout | null>(null);
 
   const handleCheckIn = (emoji: string, mood: string) => {
     if (todayCheckInCount >= 3) {
