@@ -489,6 +489,34 @@ export default function Dashboard() {
               </Link>
             </div>
 
+            {/* Wellness Insights */}
+            <Link
+              to="/wellness-insights"
+              className="bg-gradient-to-br from-cyan-400 to-purple-400 text-white rounded-2xl border border-cyan-300 p-6 hover:shadow-lg transition block"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <BarChart3 className="w-5 h-5" />
+                <h3 className="text-lg font-bold">Wellness Insights</h3>
+              </div>
+              <p className="text-sm text-cyan-50">
+                View your wellness statistics and progress
+              </p>
+            </Link>
+
+            {/* Shared Memories */}
+            <Link
+              to="/shared-memories"
+              className="bg-gradient-to-br from-pink-400 to-rose-400 text-white rounded-2xl border border-pink-300 p-6 hover:shadow-lg transition block"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Share2 className="w-5 h-5" />
+                <h3 className="text-lg font-bold">Share Memories</h3>
+              </div>
+              <p className="text-sm text-pink-50">
+                Share your day with the community
+              </p>
+            </Link>
+
             {/* Tips */}
             <div className="bg-gradient-to-br from-cyan-50 to-purple-50 rounded-2xl border border-cyan-200 p-6">
               <h3 className="text-lg font-bold text-slate-900 mb-3">💡 Tip</h3>
