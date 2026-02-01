@@ -259,6 +259,7 @@ export default function Dashboard() {
             hour: "2-digit",
             minute: "2-digit",
           }),
+          mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
         };
         setMediaItems((prev) => [newMedia, ...prev]);
       });
@@ -281,6 +282,7 @@ export default function Dashboard() {
             hour: "2-digit",
             minute: "2-digit",
           }),
+          mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
         };
         setMediaItems((prev) => [newMedia, ...prev]);
       });
