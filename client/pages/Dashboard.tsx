@@ -372,9 +372,18 @@ export default function Dashboard() {
               {/* Media Gallery */}
               {mediaItems.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">
-                    Today's Memories ({mediaItems.length})
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Today's Memories ({mediaItems.length})
+                    </h3>
+                    <Link
+                      to="/shared-memories"
+                      className="text-cyan-600 hover:text-cyan-700 font-semibold text-sm flex items-center gap-1"
+                    >
+                      Share
+                      <Share2 className="w-4 h-4" />
+                    </Link>
+                  </div>
                   <div className="grid md:grid-cols-3 gap-4">
                     {mediaItems.map((item) => (
                       <div
