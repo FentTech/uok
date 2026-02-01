@@ -79,6 +79,8 @@ export default function Dashboard() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
 
