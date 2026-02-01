@@ -12,6 +12,9 @@ import {
   CheckCircle,
   Music,
   Trash2,
+  Play,
+  BarChart3,
+  Share2,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
 
