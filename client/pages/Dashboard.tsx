@@ -120,15 +120,43 @@ export default function Dashboard() {
     }
   };
 
-  // Setup missed check-in alerts (60 seconds)
+  // Initialize with sample check-ins only once
   useEffect(() => {
-    if (todayCheckInCount >= 2) {
-      // Clear any existing timer
-      if (missedCheckInTimerRef.current) clearTimeout(missedCheckInTimerRef.current);
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      setCheckIns([
+        {
+          id: "1",
+          emoji: "😊",
+          mood: "Great",
+          time: "08:30 AM",
+          date: "Today",
+        },
+        {
+          id: "2",
+          emoji: "🎉",
+          mood: "Excited",
+          time: "02:15 PM",
+          date: "Today",
+        },
+      ]);
+      setTodayCheckInCount(2);
+    }
+  }, []);
 
-      // Set timer for missed check-in alert (60 seconds)
-      const timer = setTimeout(() => {
-        if (todayCheckInCount < 3) {
+  // Setup missed check-in alerts (60 seconds) - only when user manually checks in and reaches 2+
+  useEffect(() => {
+    if (todayCheckInCount >= 2 && hasInitializedRef.current) {
+      // Clear any existing timer
+      if (missedCheckInTimerRef.current) {
+        clearTimeout(missedCheckInTimerRef.current);
+        missedCheckInTimerRef.current = null;
+      }
+
+      // Only set timer if not already at 3
+      if (todayCheckInCount < 3) {
+        // Set timer for missed check-in alert (60 seconds)
+        const timer = setTimeout(() => {
           const emergencyContacts = [
             { name: "Mom" },
             { name: "Brother" },
@@ -152,10 +180,10 @@ export default function Dashboard() {
             timestamp: new Date().toISOString(),
             message: "User missed 3rd check-in window",
           });
-        }
-      }, 60000); // 60 seconds
+        }, 60000); // 60 seconds
 
-      missedCheckInTimerRef.current = timer;
+        missedCheckInTimerRef.current = timer;
+      }
 
       return () => {
         if (missedCheckInTimerRef.current) {
