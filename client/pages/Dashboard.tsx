@@ -608,10 +608,10 @@ export default function Dashboard() {
 
           {/* Sidebar */}
           <div className="space-y-8">
-            {/* Today's Check-ins */}
-            <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-cyan-600" />
+            {/* Today's Check-ins - Futuristic */}
+            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
+              <h3 className="text-lg font-bold text-cyan-100 mb-4 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-cyan-400" />
                 Today's Check-ins
               </h3>
 
@@ -620,47 +620,52 @@ export default function Dashboard() {
                   checkIns.map((checkIn) => (
                     <div
                       key={checkIn.id}
-                      className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-white/10 rounded-lg border border-cyan-400/20 hover:border-cyan-400/40 transition"
                     >
                       <span className="text-2xl">{checkIn.emoji}</span>
                       <div className="flex-1">
-                        <p className="font-semibold text-slate-900 text-sm">
+                        <p className="font-semibold text-cyan-100 text-sm">
                           {checkIn.mood}
                         </p>
-                        <p className="text-xs text-slate-600">{checkIn.time}</p>
+                        <p className="text-xs text-cyan-400/60">{checkIn.time}</p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-slate-600 text-sm">
+                  <p className="text-cyan-300/80 text-sm">
                     No check-ins yet today
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Emergency Contacts */}
-            <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">
+            {/* Emergency Contacts - Futuristic */}
+            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
+              <h3 className="text-lg font-bold text-cyan-100 mb-4">
                 Emergency Contacts
               </h3>
 
               <div className="space-y-3">
                 {[
-                  { name: "Mom", emoji: "👩" },
-                  { name: "Brother", emoji: "👨" },
-                  { name: "Best Friend", emoji: "👨‍🤝‍👨" },
+                  { name: "Mom", emoji: "👩", online: true },
+                  { name: "Brother", emoji: "👨", online: true },
+                  { name: "Best Friend", emoji: "👨‍🤝‍👨", online: false },
                 ].map((contact, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
+                    className="flex items-center gap-3 p-3 bg-white/10 rounded-lg border border-cyan-400/20 hover:border-cyan-400/40 transition cursor-pointer group"
                   >
-                    <span className="text-2xl">{contact.emoji}</span>
+                    <div className="relative">
+                      <span className="text-2xl">{contact.emoji}</span>
+                      <span className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full ${contact.online ? "bg-green-400" : "bg-gray-500"}`}></span>
+                    </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-slate-900 text-sm">
+                      <p className="font-semibold text-cyan-100 text-sm">
                         {contact.name}
                       </p>
-                      <p className="text-xs text-green-600">●  Notified</p>
+                      <p className={`text-xs ${contact.online ? "text-green-400" : "text-gray-400"}`}>
+                        {contact.online ? "● Online" : "● Offline"}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -668,46 +673,45 @@ export default function Dashboard() {
 
               <Link
                 to="/manage-contacts"
-                className="block w-full mt-4 py-2 text-cyan-600 font-semibold hover:bg-cyan-50 rounded-lg transition text-sm text-center"
+                className="block w-full mt-4 py-2 text-cyan-400 font-semibold hover:bg-cyan-400/10 rounded-lg transition text-sm text-center border border-cyan-400/30"
               >
                 Manage Contacts
               </Link>
             </div>
 
-            {/* Wellness Insights */}
+            {/* Wellness Insights - Futuristic */}
             <Link
               to="/wellness-insights"
-              className="bg-gradient-to-br from-cyan-400 to-purple-400 text-white rounded-2xl border border-cyan-300 p-6 hover:shadow-lg transition block"
+              className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 text-cyan-100 rounded-2xl border border-cyan-400/40 p-6 hover:border-cyan-400/60 hover:shadow-lg hover:shadow-cyan-500/20 transition block backdrop-blur-xl"
             >
               <div className="flex items-center gap-3 mb-2">
-                <BarChart3 className="w-5 h-5" />
+                <BarChart3 className="w-5 h-5 text-cyan-400" />
                 <h3 className="text-lg font-bold">Wellness Insights</h3>
               </div>
-              <p className="text-sm text-cyan-50">
-                View your wellness statistics and progress
+              <p className="text-sm text-cyan-300/80">
+                View your statistics and progress
               </p>
             </Link>
 
-            {/* Shared Memories */}
+            {/* Shared Memories - Futuristic */}
             <Link
               to="/shared-memories"
-              className="bg-gradient-to-br from-pink-400 to-rose-400 text-white rounded-2xl border border-pink-300 p-6 hover:shadow-lg transition block"
+              className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-cyan-100 rounded-2xl border border-purple-400/40 p-6 hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition block backdrop-blur-xl"
             >
               <div className="flex items-center gap-3 mb-2">
-                <Share2 className="w-5 h-5" />
+                <Share2 className="w-5 h-5 text-purple-400" />
                 <h3 className="text-lg font-bold">Share Memories</h3>
               </div>
-              <p className="text-sm text-pink-50">
-                Share your day with the community
+              <p className="text-sm text-purple-300/80">
+                Share your day with community
               </p>
             </Link>
 
-            {/* Tips */}
-            <div className="bg-gradient-to-br from-cyan-50 to-purple-50 rounded-2xl border border-cyan-200 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-3">💡 Tip</h3>
-              <p className="text-sm text-slate-700">
-                Check in consistently to help your loved ones stay assured about
-                your wellbeing. Set reminders to never miss a check-in time!
+            {/* Tip Section - Futuristic */}
+            <div className="bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl border border-cyan-400/30 p-6 backdrop-blur-xl">
+              <h3 className="text-lg font-bold text-cyan-100 mb-3">💡 Daily Tip</h3>
+              <p className="text-sm text-cyan-300/80">
+                Consistent check-ins keep your loved ones assured. Set reminders for your daily check-in times!
               </p>
             </div>
           </div>
