@@ -367,13 +367,13 @@ export default function Dashboard() {
       )}
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Card */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">
+        <div className="mb-8 text-center">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
             Welcome Back! 👋
           </h1>
-          <p className="text-slate-600">Check in with how you're feeling today</p>
+          <p className="text-cyan-300/80">How are you feeling today? Let your contacts know you're okay.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
