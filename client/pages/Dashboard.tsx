@@ -406,30 +406,30 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Check-in Section */}
-            <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">
+            {/* Check-in Section - Futuristic */}
+            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-8 hover:border-cyan-400/60 transition">
+              <h2 className="text-2xl font-bold text-cyan-100 mb-6">
                 How are you feeling?
               </h2>
 
-              <div className="grid grid-cols-5 gap-2 mb-6">
+              <div className="grid grid-cols-5 gap-3 mb-6">
                 {MOOD_EMOJIS.map((item) => (
                   <button
                     key={item.emoji}
                     onClick={() => handleCheckIn(item.emoji, item.mood)}
                     disabled={todayCheckInCount >= 3}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition ${
+                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition transform ${
                       selectedMood === item.emoji
-                        ? "bg-gradient-to-br from-cyan-400 to-cyan-500 shadow-lg scale-110"
-                        : "bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        ? "bg-gradient-to-br from-cyan-400 to-blue-500 shadow-lg shadow-cyan-500/50 scale-110"
+                        : "bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-cyan-400/30 hover:border-cyan-400/60"
                     }`}
                   >
-                    <span className="text-2xl">{item.emoji}</span>
+                    <span className="text-3xl">{item.emoji}</span>
                     <span
                       className={`text-xs font-medium mt-1 ${
                         selectedMood === item.emoji
                           ? "text-white"
-                          : "text-slate-700"
+                          : "text-cyan-200"
                       }`}
                     >
                       {item.mood}
@@ -439,9 +439,9 @@ export default function Dashboard() {
               </div>
 
               {selectedMood && (
-                <div className="bg-gradient-to-r from-green-50 to-cyan-50 border border-green-200 rounded-lg p-6">
-                  <p className="text-green-700 font-semibold mb-4 text-center">
-                    ✓ Check-in recorded! Your contacts have been notified.
+                <div className="bg-gradient-to-r from-green-500/20 to-cyan-500/20 border border-green-400/50 rounded-lg p-6 backdrop-blur-sm">
+                  <p className="text-green-300 font-semibold mb-4 text-center">
+                    ✓ Check-in recorded! Alert sent to your emergency contacts.
                   </p>
 
                   {/* Inspiration Songs */}
