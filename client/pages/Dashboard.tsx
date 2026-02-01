@@ -50,6 +50,7 @@ const MOOD_EMOJIS = [
   { emoji: "🎓", mood: "In Class" },
   { emoji: "🚗", mood: "On My Way" },
   { emoji: "🏠", mood: "At Home" },
+  { emoji: "💼", mood: "At Work" },
 ];
 
 export default function Dashboard() {
