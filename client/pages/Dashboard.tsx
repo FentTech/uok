@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Heart,
   LogOut,
@@ -15,6 +15,10 @@ import {
   Play,
   BarChart3,
   Share2,
+  Send,
+  X,
+  Bell,
+  Zap,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
 
@@ -30,6 +34,14 @@ interface MediaItem {
   id: string;
   type: "photo" | "video";
   url: string;
+  timestamp: string;
+  mood?: string;
+}
+
+interface Notification {
+  id: string;
+  type: "checkin" | "missed";
+  message: string;
   timestamp: string;
 }
 
