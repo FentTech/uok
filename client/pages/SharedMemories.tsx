@@ -180,18 +180,48 @@ export default function SharedMemories() {
 
         {/* Share Memory Prompt */}
         <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
-              Y
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+                Y
+              </div>
+              <textarea
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Share how you're feeling today..."
+                className="flex-1 bg-slate-100 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none h-24"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Share how you're feeling today..."
-              className="flex-1 bg-slate-100 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            />
-            <button className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition flex items-center gap-2">
+
+            {/* Media Preview from Dashboard */}
+            {location.state && (location.state as any)?.mediaUrl && (
+              <div className="border-t border-slate-200 pt-4">
+                <p className="text-sm text-slate-600 mb-2">📎 Media ready to share:</p>
+                <div className="relative rounded-lg overflow-hidden bg-slate-900 h-32">
+                  {(location.state as any)?.mediaType === "video" ? (
+                    <video
+                      src={(location.state as any)?.mediaUrl}
+                      className="w-full h-full object-cover"
+                      controls
+                    />
+                  ) : (
+                    <img
+                      src={(location.state as any)?.mediaUrl}
+                      alt="Media to share"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={handleShareMemory}
+              disabled={shareLoading}
+              className="w-full px-6 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <Share2 className="w-5 h-5" />
-              <span className="hidden sm:inline">Share</span>
+              <span>{shareLoading ? "Sharing..." : "Share Memory"}</span>
             </button>
           </div>
         </div>
