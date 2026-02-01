@@ -378,15 +378,18 @@ export default function Dashboard() {
                             className="w-full h-48 object-cover"
                           />
                         ) : (
-                          <div className="w-full h-48 bg-black flex items-center justify-center relative">
+                          <div className="w-full h-48 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative">
                             <video
-                              key={item.url}
-                              src={item.url}
-                              className="w-full h-full object-contain"
+                              key={item.id}
+                              className="w-full h-full"
                               controls
-                              playsInline
-                              preload="metadata"
-                            />
+                              controlsList="nodownload"
+                              style={{ maxWidth: "100%", maxHeight: "100%" }}
+                            >
+                              <source src={item.url} type="video/mp4" />
+                              <source src={item.url} type="video/webm" />
+                              Your browser does not support the video tag.
+                            </video>
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center">
