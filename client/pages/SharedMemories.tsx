@@ -99,6 +99,52 @@ export default function SharedMemories() {
     setMemories(memories.filter((m) => m.id !== id));
   };
 
+  const handleShareMemory = async () => {
+    const state = location.state as { mediaUrl?: string; mediaType?: "photo" | "video"; mood?: string } | null;
+
+    if (!caption && !state?.mediaUrl) {
+      alert("Please add a caption or share a photo/video");
+      return;
+    }
+
+    setShareLoading(true);
+
+    try {
+      // Create new memory object
+      const newMemory: SharedMemory = {
+        id: Date.now().toString(),
+        username: "You",
+        avatar: "Y",
+        mood: state?.mood || "Great",
+        moodEmoji: "😊",
+        timestamp: "just now",
+        caption: caption || "Shared a moment from their day",
+        imageUrl: state?.mediaUrl,
+        mediaType: state?.mediaType,
+        likes: 0,
+        comments: 0,
+        isLiked: false,
+      };
+
+      // Add to memories
+      setMemories((prev) => [newMemory, ...prev]);
+
+      // Reset form
+      setCaption("");
+
+      // Clear the location state by replacing history
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Show success message
+      alert("✓ Memory shared with the community!");
+    } catch (error) {
+      console.error("Error sharing memory:", error);
+      alert("Failed to share memory. Please try again.");
+    } finally {
+      setShareLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-purple-50">
       {/* Header */}
