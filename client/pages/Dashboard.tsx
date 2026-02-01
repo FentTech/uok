@@ -87,9 +87,9 @@ export default function Dashboard() {
   // Send alerts to emergency contacts
   const sendAlerts = (mood: string) => {
     const emergencyContacts = [
-      { name: "Mom", phone: "+1234567890" },
-      { name: "Brother", phone: "+0987654321" },
-      { name: "Best Friend", phone: "+1122334455" },
+      { name: "Mom", phone: "+1234567890", method: "whatsapp" },
+      { name: "Brother", phone: "+0987654321", method: "sms" },
+      { name: "Best Friend", phone: "+1122334455", method: "whatsapp" },
     ];
 
     // Create notification
@@ -105,12 +105,21 @@ export default function Dashboard() {
 
     setNotifications((prev) => [notification, ...prev]);
 
-    // Log for backend integration (Twilio, WhatsApp, etc.)
-    console.log("📱 Alert sent to emergency contacts:", {
-      contacts: emergencyContacts,
-      mood: mood,
-      timestamp: new Date().toISOString(),
-      message: `User checked in feeling ${mood}`,
+    // Backend integration - Send to Twilio/WhatsApp API
+    // This is placeholder for actual SMS/WhatsApp integration
+    emergencyContacts.forEach((contact) => {
+      console.log("📱 Sending alert:", {
+        recipient: contact.name,
+        phone: contact.phone,
+        method: contact.method,
+        mood: mood,
+        timestamp: new Date().toISOString(),
+        message: `Your contact just checked in on UOK feeling ${mood}. They're doing okay! 💚`,
+      });
+
+      // In production, this would call your backend API:
+      // POST /api/alerts/send
+      // Body: { phone, method: 'sms' | 'whatsapp', message, mood }
     });
 
     // Browser notification
