@@ -138,7 +138,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (todayCheckInCount >= 2) {
       // Clear any existing timer
-      if (missedCheckInTimer) clearTimeout(missedCheckInTimer);
+      if (missedCheckInTimerRef.current) clearTimeout(missedCheckInTimerRef.current);
 
       // Set timer for missed check-in alert (60 seconds)
       const timer = setTimeout(() => {
@@ -169,11 +169,15 @@ export default function Dashboard() {
         }
       }, 60000); // 60 seconds
 
-      setMissedCheckInTimer(timer);
+      missedCheckInTimerRef.current = timer;
 
-      return () => clearTimeout(timer);
+      return () => {
+        if (missedCheckInTimerRef.current) {
+          clearTimeout(missedCheckInTimerRef.current);
+        }
+      };
     }
-  }, [todayCheckInCount, missedCheckInTimer]);
+  }, [todayCheckInCount]);
 
   const handleCheckIn = (emoji: string, mood: string) => {
     if (todayCheckInCount >= 3) {
