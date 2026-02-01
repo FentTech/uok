@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Heart, Share2, MessageCircle, ThumbsUp, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Heart, Share2, MessageCircle, ThumbsUp, Trash2, Image, Video } from "lucide-react";
 
 interface SharedMemory {
   id: string;
@@ -11,12 +11,16 @@ interface SharedMemory {
   timestamp: string;
   caption: string;
   imageUrl?: string;
+  mediaType?: "photo" | "video";
   likes: number;
   comments: number;
   isLiked: boolean;
 }
 
 export default function SharedMemories() {
+  const location = useLocation();
+  const [caption, setCaption] = useState("");
+  const [shareLoading, setShareLoading] = useState(false);
   const [memories, setMemories] = useState<SharedMemory[]>([
     {
       id: "1",
