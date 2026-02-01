@@ -342,20 +342,127 @@ export default function Dashboard() {
           </Link>
 
           <div className="flex items-center gap-3">
-            {/* Notifications Badge */}
+            {/* Notifications Dropdown */}
             <div className="relative">
-              <button className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400 relative">
+              <button
+                onClick={() => setNotificationDropdownOpen(!notificationDropdownOpen)}
+                className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400 relative"
+              >
                 <Bell className="w-6 h-6" />
                 {notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                    {notifications.length}
+                    {Math.min(notifications.length, 9)}
                   </span>
                 )}
               </button>
+
+              {/* Notification Dropdown Menu */}
+              {notificationDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-cyan-400/30 rounded-xl shadow-xl z-50 backdrop-blur-xl">
+                  <div className="p-4 border-b border-cyan-400/20">
+                    <h3 className="text-cyan-100 font-bold">Notifications</h3>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 10).map((notif) => (
+                        <div
+                          key={notif.id}
+                          className="px-4 py-3 border-b border-cyan-400/10 hover:bg-white/5 transition"
+                        >
+                          <p className="text-cyan-300 text-sm font-medium">
+                            {notif.message}
+                          </p>
+                          <p className="text-cyan-500/60 text-xs mt-1">
+                            {notif.timestamp}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-6 text-center text-cyan-400/60">
+                        No notifications yet
+                      </div>
+                    )}
+                  </div>
+                  {notifications.length > 10 && (
+                    <div className="p-3 border-t border-cyan-400/20 text-center">
+                      <button className="text-cyan-400 hover:text-cyan-300 text-sm font-medium">
+                        View all notifications
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <button className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400">
+
+            {/* Settings Button */}
+            <button
+              onClick={() => setSettingsOpen(!settingsOpen)}
+              className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400"
+            >
               <Settings className="w-6 h-6" />
             </button>
+
+            {/* Settings Modal */}
+            {settingsOpen && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+                <div className="bg-slate-900 border border-cyan-400/30 rounded-2xl p-6 max-w-md w-full mx-4 backdrop-blur-xl">
+                  <h2 className="text-2xl font-bold text-cyan-100 mb-6">Settings</h2>
+
+                  <div className="space-y-4">
+                    <div className="border-b border-cyan-400/20 pb-4">
+                      <h3 className="text-cyan-200 font-semibold mb-2">
+                        Notification Settings
+                      </h3>
+                      <label className="flex items-center gap-3 text-cyan-300">
+                        <input type="checkbox" defaultChecked className="w-4 h-4" />
+                        <span className="text-sm">
+                          SMS/WhatsApp alerts for check-ins
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="border-b border-cyan-400/20 pb-4">
+                      <h3 className="text-cyan-200 font-semibold mb-2">
+                        Check-in Reminders
+                      </h3>
+                      <label className="flex items-center gap-3 text-cyan-300">
+                        <input type="checkbox" defaultChecked className="w-4 h-4" />
+                        <span className="text-sm">
+                          Daily check-in notifications
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="border-b border-cyan-400/20 pb-4">
+                      <h3 className="text-cyan-200 font-semibold mb-2">
+                        Privacy
+                      </h3>
+                      <select className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-cyan-100 text-sm">
+                        <option>Public profile</option>
+                        <option>Friends only</option>
+                        <option>Private</option>
+                      </select>
+                    </div>
+
+                    <div className="pt-4 space-y-2">
+                      <button
+                        onClick={() => setSettingsOpen(false)}
+                        className="w-full py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium transition"
+                      >
+                        Save Settings
+                      </button>
+                      <button
+                        onClick={() => setSettingsOpen(false)}
+                        className="w-full py-2 bg-white/10 hover:bg-white/20 text-cyan-300 rounded-lg font-medium transition"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <button className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400">
               <LogOut className="w-6 h-6" />
             </button>
