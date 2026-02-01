@@ -529,36 +529,28 @@ export default function Dashboard() {
               {mediaItems.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-slate-900">
+                    <h3 className="text-lg font-bold text-cyan-100">
                       Today's Memories ({mediaItems.length})
                     </h3>
-                    <Link
-                      to="/shared-memories"
-                      className="text-cyan-600 hover:text-cyan-700 font-semibold text-sm flex items-center gap-1"
-                    >
-                      Share
-                      <Share2 className="w-4 h-4" />
-                    </Link>
                   </div>
                   <div className="grid md:grid-cols-3 gap-4">
                     {mediaItems.map((item) => (
                       <div
                         key={item.id}
-                        className="relative group rounded-lg overflow-hidden bg-slate-100"
+                        className="relative group rounded-lg overflow-hidden bg-slate-900 border border-cyan-400/30 hover:border-cyan-400/60 transition"
                       >
                         {item.type === "photo" ? (
                           <img
                             src={item.url}
                             alt="Shared photo"
-                            className="w-full h-48 object-cover"
+                            className="w-full h-48 object-cover group-hover:scale-105 transition"
                           />
                         ) : (
                           <div className="w-full h-48 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative">
                             <video
                               key={item.id}
-                              className="w-full h-full"
+                              className="w-full h-full object-cover"
                               controls
-                              controlsList="nodownload"
                               style={{ maxWidth: "100%", maxHeight: "100%" }}
                             >
                               <source src={item.url} type="video/mp4" />
@@ -567,15 +559,23 @@ export default function Dashboard() {
                             </video>
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => shareToMemories(item)}
+                            className="opacity-0 group-hover:opacity-100 transition bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg"
+                            title="Share to community"
+                          >
+                            <Share2 className="w-5 h-5" />
+                          </button>
                           <button
                             onClick={() => deleteMedia(item.id)}
                             className="opacity-0 group-hover:opacity-100 transition bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg"
+                            title="Delete media"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
-                        <p className="text-xs text-slate-600 p-2 bg-white">
+                        <p className="text-xs text-cyan-300 p-2 bg-white/10 backdrop-blur-sm border-t border-cyan-400/20">
                           {item.type === "photo" ? "📷" : "🎥"} {item.timestamp}
                         </p>
                       </div>
