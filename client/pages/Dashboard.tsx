@@ -379,27 +379,27 @@ export default function Dashboard() {
         <div className="grid md:grid-cols-3 gap-8">
           {/* Main Check-in Section */}
           <div className="md:col-span-2 space-y-8">
-            {/* Status Card */}
-            <div
-              className={`${status.bg} border ${status.border} rounded-2xl p-6`}
-            >
+            {/* Status Card - Futuristic */}
+            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
               <div className="flex items-center gap-3">
-                <StatusIcon className={`w-8 h-8 ${status.color}`} />
+                <div className="p-3 bg-cyan-500/20 rounded-lg">
+                  <StatusIcon className="w-6 h-6 text-cyan-400" />
+                </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">
+                  <h3 className="font-semibold text-cyan-100">
                     Daily Check-in Status
                   </h3>
-                  <p className={`text-sm ${status.color}`}>{status.text}</p>
+                  <p className="text-sm text-cyan-300/80">{status.text}</p>
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className={`flex-1 h-2 rounded-full ${
+                    className={`flex-1 h-3 rounded-full ${
                       i < todayCheckInCount
-                        ? "bg-gradient-to-r from-cyan-500 to-purple-500"
-                        : "bg-slate-300"
+                        ? "bg-gradient-to-r from-cyan-400 to-purple-400 shadow-lg shadow-cyan-500/50"
+                        : "bg-white/10"
                     }`}
                   ></div>
                 ))}
