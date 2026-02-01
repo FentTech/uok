@@ -299,7 +299,7 @@ export default function Dashboard() {
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-900 to-slate-950">
       {/* Top Navigation */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-cyan-100 sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
