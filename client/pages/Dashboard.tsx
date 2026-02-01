@@ -298,10 +298,17 @@ export default function Dashboard() {
                       {moodSongs[
                         MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood || ""
                       ]?.map((song, idx) => (
-                        <div key={idx} className="bg-white rounded-lg p-3">
-                          <p className="font-medium text-slate-900 text-sm">{song.title}</p>
-                          <p className="text-xs text-slate-600">{song.artist}</p>
-                          <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
+                        <div key={idx} className="bg-white rounded-lg p-3 hover:shadow-md transition">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-medium text-slate-900 text-sm">{song.title}</p>
+                              <p className="text-xs text-slate-600">{song.artist}</p>
+                              <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
+                            </div>
+                            <button className="flex-shrink-0 p-2 bg-purple-100 hover:bg-purple-200 text-purple-600 rounded-lg transition" title="Play music">
+                              <Play className="w-4 h-4 fill-current" />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
