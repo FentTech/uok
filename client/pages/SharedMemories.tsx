@@ -259,13 +259,36 @@ export default function SharedMemories() {
                 <p className="text-slate-800 leading-relaxed">{memory.caption}</p>
               </div>
 
-              {/* Memory Image */}
+              {/* Memory Media */}
               {memory.imageUrl && (
-                <img
-                  src={memory.imageUrl}
-                  alt="Shared memory"
-                  className="w-full h-64 object-cover"
-                />
+                <div className="w-full bg-slate-900 relative">
+                  {memory.mediaType === "video" ? (
+                    <video
+                      src={memory.imageUrl}
+                      className="w-full h-64 object-cover"
+                      controls
+                    />
+                  ) : (
+                    <img
+                      src={memory.imageUrl}
+                      alt="Shared memory"
+                      className="w-full h-64 object-cover"
+                    />
+                  )}
+                  <div className="absolute top-2 right-2 bg-black/50 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                    {memory.mediaType === "video" ? (
+                      <>
+                        <Video className="w-4 h-4" />
+                        Video
+                      </>
+                    ) : (
+                      <>
+                        <Image className="w-4 h-4" />
+                        Photo
+                      </>
+                    )}
+                  </div>
+                </div>
               )}
 
               {/* Memory Stats */}
