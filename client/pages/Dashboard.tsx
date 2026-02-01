@@ -364,14 +364,18 @@ export default function Dashboard() {
                 <div className="flex items-center gap-3">
                   <Zap className="w-5 h-5 text-yellow-400" />
                   <div>
-                    <p className="text-cyan-300 text-sm font-medium">{notif.message}</p>
-                    <p className="text-cyan-500/60 text-xs">{notif.timestamp}</p>
+                    <p className="text-cyan-300 text-sm font-medium">
+                      {notif.message}
+                    </p>
+                    <p className="text-cyan-500/60 text-xs">
+                      {notif.timestamp}
+                    </p>
                   </div>
                 </div>
                 <button
                   onClick={() =>
                     setNotifications((prev) =>
-                      prev.filter((n) => n.id !== notif.id)
+                      prev.filter((n) => n.id !== notif.id),
                     )
                   }
                   className="text-cyan-500/60 hover:text-cyan-400"
@@ -391,7 +395,9 @@ export default function Dashboard() {
           <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
             Welcome Back! 👋
           </h1>
-          <p className="text-cyan-300/80">How are you feeling today? Let your contacts know you're okay.</p>
+          <p className="text-cyan-300/80">
+            How are you feeling today? Let your contacts know you're okay.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -466,20 +472,35 @@ export default function Dashboard() {
                   <div className="mt-4 pt-4 border-t border-green-200">
                     <div className="flex items-center gap-2 mb-3">
                       <Music className="w-5 h-5 text-purple-600" />
-                      <p className="font-semibold text-slate-900">Inspiration Playlist</p>
+                      <p className="font-semibold text-slate-900">
+                        Inspiration Playlist
+                      </p>
                     </div>
                     <div className="space-y-2">
                       {moodSongs[
-                        MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood || ""
+                        MOOD_EMOJIS.find((m) => m.emoji === selectedMood)
+                          ?.mood || ""
                       ]?.map((song, idx) => (
-                        <div key={idx} className="bg-white rounded-lg p-3 hover:shadow-md transition">
+                        <div
+                          key={idx}
+                          className="bg-white rounded-lg p-3 hover:shadow-md transition"
+                        >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <p className="font-medium text-slate-900 text-sm">{song.title}</p>
-                              <p className="text-xs text-slate-600">{song.artist}</p>
-                              <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
+                              <p className="font-medium text-slate-900 text-sm">
+                                {song.title}
+                              </p>
+                              <p className="text-xs text-slate-600">
+                                {song.artist}
+                              </p>
+                              <p className="text-xs text-purple-600 mt-1">
+                                {song.vibe}
+                              </p>
                             </div>
-                            <button className="flex-shrink-0 p-2 bg-purple-100 hover:bg-purple-200 text-purple-600 rounded-lg transition" title="Play music">
+                            <button
+                              className="flex-shrink-0 p-2 bg-purple-100 hover:bg-purple-200 text-purple-600 rounded-lg transition"
+                              title="Play music"
+                            >
                               <Play className="w-4 h-4 fill-current" />
                             </button>
                           </div>
@@ -504,10 +525,10 @@ export default function Dashboard() {
                 >
                   <Image className="w-8 h-8 text-cyan-400 group-hover:text-cyan-300" />
                   <div>
-                    <p className="font-semibold text-cyan-100 group-hover:text-cyan-50">Add Photo</p>
-                    <p className="text-sm text-cyan-300/80">
-                      Capture a moment
+                    <p className="font-semibold text-cyan-100 group-hover:text-cyan-50">
+                      Add Photo
                     </p>
+                    <p className="text-sm text-cyan-300/80">Capture a moment</p>
                   </div>
                 </button>
 
@@ -517,7 +538,9 @@ export default function Dashboard() {
                 >
                   <Video className="w-8 h-8 text-purple-400 group-hover:text-purple-300" />
                   <div>
-                    <p className="font-semibold text-cyan-100 group-hover:text-cyan-50">Add Video</p>
+                    <p className="font-semibold text-cyan-100 group-hover:text-cyan-50">
+                      Add Video
+                    </p>
                     <p className="text-sm text-cyan-300/80">
                       Share a video update
                     </p>
@@ -614,7 +637,8 @@ export default function Dashboard() {
                     Featured Partner - Wellness Products
                   </h3>
                   <p className="text-amber-200/80 text-sm mb-3">
-                    Enhance your wellness journey with our curated selection of stress-relief products and mindfulness tools.
+                    Enhance your wellness journey with our curated selection of
+                    stress-relief products and mindfulness tools.
                   </p>
                   <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium text-sm transition">
                     Explore →
@@ -645,7 +669,9 @@ export default function Dashboard() {
                         <p className="font-semibold text-cyan-100 text-sm">
                           {checkIn.mood}
                         </p>
-                        <p className="text-xs text-cyan-400/60">{checkIn.time}</p>
+                        <p className="text-xs text-cyan-400/60">
+                          {checkIn.time}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -675,13 +701,17 @@ export default function Dashboard() {
                   >
                     <div className="relative">
                       <span className="text-2xl">{contact.emoji}</span>
-                      <span className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full ${contact.online ? "bg-green-400" : "bg-gray-500"}`}></span>
+                      <span
+                        className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full ${contact.online ? "bg-green-400" : "bg-gray-500"}`}
+                      ></span>
                     </div>
                     <div className="flex-1">
                       <p className="font-semibold text-cyan-100 text-sm">
                         {contact.name}
                       </p>
-                      <p className={`text-xs ${contact.online ? "text-green-400" : "text-gray-400"}`}>
+                      <p
+                        className={`text-xs ${contact.online ? "text-green-400" : "text-gray-400"}`}
+                      >
                         {contact.online ? "● Online" : "● Offline"}
                       </p>
                     </div>
@@ -727,9 +757,12 @@ export default function Dashboard() {
 
             {/* Tip Section - Futuristic */}
             <div className="bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl border border-cyan-400/30 p-6 backdrop-blur-xl">
-              <h3 className="text-lg font-bold text-cyan-100 mb-3">💡 Daily Tip</h3>
+              <h3 className="text-lg font-bold text-cyan-100 mb-3">
+                💡 Daily Tip
+              </h3>
               <p className="text-sm text-cyan-300/80">
-                Consistent check-ins keep your loved ones assured. Set reminders for your daily check-in times!
+                Consistent check-ins keep your loved ones assured. Set reminders
+                for your daily check-in times!
               </p>
             </div>
           </div>
