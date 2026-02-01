@@ -96,6 +96,85 @@ export default function Dashboard() {
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
   const [missedCheckInTimer, setMissedCheckInTimer] = useState<NodeJS.Timeout | null>(null);
 
+  // Send alerts to emergency contacts
+  const sendAlerts = (mood: string) => {
+    const emergencyContacts = [
+      { name: "Mom", phone: "+1234567890" },
+      { name: "Brother", phone: "+0987654321" },
+      { name: "Best Friend", phone: "+1122334455" },
+    ];
+
+    // Create notification
+    const notification: Notification = {
+      id: Date.now().toString(),
+      type: "checkin",
+      message: `✓ Check-in sent to ${emergencyContacts.length} contacts - You're feeling ${mood}`,
+      timestamp: new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+
+    setNotifications((prev) => [notification, ...prev]);
+
+    // Log for backend integration (Twilio, WhatsApp, etc.)
+    console.log("📱 Alert sent to emergency contacts:", {
+      contacts: emergencyContacts,
+      mood: mood,
+      timestamp: new Date().toISOString(),
+      message: `User checked in feeling ${mood}`,
+    });
+
+    // Browser notification
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("UOK Check-in Sent", {
+        body: `Your contacts have been notified - You're feeling ${mood}`,
+        icon: "/favicon.ico",
+      });
+    }
+  };
+
+  // Setup missed check-in alerts (60 seconds)
+  useEffect(() => {
+    if (todayCheckInCount >= 2) {
+      // Clear any existing timer
+      if (missedCheckInTimer) clearTimeout(missedCheckInTimer);
+
+      // Set timer for missed check-in alert (60 seconds)
+      const timer = setTimeout(() => {
+        if (todayCheckInCount < 3) {
+          const emergencyContacts = [
+            { name: "Mom" },
+            { name: "Brother" },
+            { name: "Best Friend" },
+          ];
+
+          const notification: Notification = {
+            id: Date.now().toString(),
+            type: "missed",
+            message: `⚠ Alert sent - User missed 3rd check-in. ${emergencyContacts.length} contacts notified.`,
+            timestamp: new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+
+          setNotifications((prev) => [notification, ...prev]);
+
+          console.log("📱 Missed check-in alert sent:", {
+            contacts: emergencyContacts,
+            timestamp: new Date().toISOString(),
+            message: "User missed 3rd check-in window",
+          });
+        }
+      }, 60000); // 60 seconds
+
+      setMissedCheckInTimer(timer);
+
+      return () => clearTimeout(timer);
+    }
+  }, [todayCheckInCount, missedCheckInTimer]);
+
   const handleCheckIn = (emoji: string, mood: string) => {
     if (todayCheckInCount >= 3) {
       alert("You've reached your maximum check-ins for today (3)");
@@ -118,8 +197,24 @@ export default function Dashboard() {
     setTodayCheckInCount((prev) => Math.min(prev + 1, 3));
     setSelectedMood(emoji);
 
+    // Send alerts to emergency contacts
+    sendAlerts(mood);
+
     // Show confirmation
     setTimeout(() => setSelectedMood(null), 2000);
+  };
+
+  // Share media to community
+  const shareToMemories = (item: MediaItem) => {
+    // Navigate to shared memories with pre-filled data
+    navigate("/shared-memories", {
+      state: {
+        mediaUrl: item.url,
+        mediaType: item.type,
+        mood: item.mood,
+      },
+    });
+    setShareModalOpen(null);
   };
 
   const checkInStatus = () => {
