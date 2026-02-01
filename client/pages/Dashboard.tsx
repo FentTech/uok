@@ -73,28 +73,14 @@ export default function Dashboard() {
   const videoInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const [checkIns, setCheckIns] = useState<CheckIn[]>([
-    {
-      id: "1",
-      emoji: "😊",
-      mood: "Great",
-      time: "08:30 AM",
-      date: "Today",
-    },
-    {
-      id: "2",
-      emoji: "🎉",
-      mood: "Excited",
-      time: "02:15 PM",
-      date: "Today",
-    },
-  ]);
-  const [todayCheckInCount, setTodayCheckInCount] = useState(2);
+  const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
+  const [todayCheckInCount, setTodayCheckInCount] = useState(0);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasInitializedRef = useRef(false);
 
   // Send alerts to emergency contacts
   const sendAlerts = (mood: string) => {
