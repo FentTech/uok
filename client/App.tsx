@@ -25,17 +25,17 @@ export default function App() {
         <Sonner />
         <BrowserRouter>
           <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/setup-contacts" element={<SetupContacts />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/bond-contacts" element={<BondContacts />} />
-          <Route path="/wellness-insights" element={<WellnessInsights />} />
-          <Route path="/shared-memories" element={<SharedMemories />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/setup-contacts" element={<SetupContacts />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/bond-contacts" element={<BondContacts />} />
+            <Route path="/wellness-insights" element={<WellnessInsights />} />
+            <Route path="/shared-memories" element={<SharedMemories />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

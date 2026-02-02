@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, Copy, Check, Smartphone, Link2, Users, ArrowLeft } from "lucide-react";
+import {
+  Heart,
+  Copy,
+  Check,
+  Smartphone,
+  Link2,
+  Users,
+  ArrowLeft,
+} from "lucide-react";
 
 interface BondedContact {
   id: string;
@@ -103,7 +111,9 @@ export default function BondContacts() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-2 group">
             <ArrowLeft className="w-5 h-5 text-cyan-400" />
-            <span className="text-cyan-300 hover:text-cyan-200">Back to Dashboard</span>
+            <span className="text-cyan-300 hover:text-cyan-200">
+              Back to Dashboard
+            </span>
           </Link>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/50">
@@ -133,7 +143,9 @@ export default function BondContacts() {
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Smartphone className="w-5 h-5 text-cyan-400" />
-                <h2 className="text-xl font-bold text-cyan-100">Your Bond Code</h2>
+                <h2 className="text-xl font-bold text-cyan-100">
+                  Your Bond Code
+                </h2>
               </div>
 
               <p className="text-sm text-cyan-300/80 mb-6">
@@ -141,7 +153,9 @@ export default function BondContacts() {
               </p>
 
               <div className="bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg p-4 border border-cyan-400/30 mb-6">
-                <p className="text-xs text-cyan-400 mb-2">YOUR PERSONAL BOND CODE</p>
+                <p className="text-xs text-cyan-400 mb-2">
+                  YOUR PERSONAL BOND CODE
+                </p>
                 <p className="text-3xl font-bold font-mono text-cyan-100 break-all">
                   {userBondCode}
                 </p>
@@ -219,7 +233,9 @@ export default function BondContacts() {
                     type="text"
                     placeholder="Enter code (e.g., UOKABCD123)"
                     value={manualBondCode}
-                    onChange={(e) => setManualBondCode(e.target.value.toUpperCase())}
+                    onChange={(e) =>
+                      setManualBondCode(e.target.value.toUpperCase())
+                    }
                     className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-4 py-2 text-cyan-100 placeholder-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
                 </div>
@@ -301,7 +317,9 @@ export default function BondContacts() {
                         {contact.emoji}
                       </div>
                       <div>
-                        <p className="font-semibold text-cyan-100">{contact.name}</p>
+                        <p className="font-semibold text-cyan-100">
+                          {contact.name}
+                        </p>
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-green-400">
                             ✓ Bonded
@@ -335,7 +353,9 @@ export default function BondContacts() {
 
         {/* How It Works Section */}
         <div className="mt-8 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 backdrop-blur-xl border border-cyan-400/20 rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-cyan-100 mb-4">📲 How Bonding Works</h3>
+          <h3 className="text-lg font-bold text-cyan-100 mb-4">
+            📲 How Bonding Works
+          </h3>
           <div className="space-y-4">
             <div className="flex gap-3">
               <span className="font-bold text-cyan-400 min-w-fit">Step 1:</span>
@@ -358,14 +378,17 @@ export default function BondContacts() {
             <div className="flex gap-3">
               <span className="font-bold text-cyan-400 min-w-fit">Step 4:</span>
               <p className="text-sm text-cyan-300/80">
-                If you miss a check-in for 10+ minutes, they get emergency alerts
+                If you miss a check-in for 10+ minutes, they get emergency
+                alerts
               </p>
             </div>
           </div>
 
           <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-400/20 rounded-lg">
             <p className="text-sm text-cyan-300">
-              💚 <strong>Max 3 bonded contacts.</strong> Your emergency contacts will be notified of your daily wellness check-ins to ensure your safety.
+              💚 <strong>Max 3 bonded contacts.</strong> Your emergency contacts
+              will be notified of your daily wellness check-ins to ensure your
+              safety.
             </p>
           </div>
         </div>

@@ -79,7 +79,8 @@ export default function Dashboard() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
-  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] =
+    useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [bondedContacts, setBondedContacts] = useState<any[]>([]);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -89,7 +90,9 @@ export default function Dashboard() {
   const sendCheckInNotification = (mood: string) => {
     // Get bonded contacts from localStorage or state
     const bondedContactsStr = localStorage.getItem("bondedContacts");
-    const bondedContacts = bondedContactsStr ? JSON.parse(bondedContactsStr) : [];
+    const bondedContacts = bondedContactsStr
+      ? JSON.parse(bondedContactsStr)
+      : [];
 
     const contactCount = bondedContacts.length;
 
@@ -180,7 +183,9 @@ export default function Dashboard() {
         const timer = setTimeout(() => {
           // Get bonded contacts
           const bondedContactsStr = localStorage.getItem("bondedContacts");
-          const bondedContacts = bondedContactsStr ? JSON.parse(bondedContactsStr) : [];
+          const bondedContacts = bondedContactsStr
+            ? JSON.parse(bondedContactsStr)
+            : [];
 
           const notification: Notification = {
             id: Date.now().toString(),
@@ -200,7 +205,8 @@ export default function Dashboard() {
               recipient: contact.name,
               bondCode: contact.bondCode,
               timestamp: new Date().toISOString(),
-              message: "Your bonded family member missed their 10-minute check-in window!",
+              message:
+                "Your bonded family member missed their 10-minute check-in window!",
             });
           });
 
@@ -368,7 +374,9 @@ export default function Dashboard() {
             {/* Notifications Dropdown */}
             <div className="relative">
               <button
-                onClick={() => setNotificationDropdownOpen(!notificationDropdownOpen)}
+                onClick={() =>
+                  setNotificationDropdownOpen(!notificationDropdownOpen)
+                }
                 className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400 relative"
               >
                 <Bell className="w-6 h-6" />
@@ -429,7 +437,9 @@ export default function Dashboard() {
             {settingsOpen && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
                 <div className="bg-slate-900 border border-cyan-400/30 rounded-2xl p-6 max-w-md w-full mx-4 backdrop-blur-xl">
-                  <h2 className="text-2xl font-bold text-cyan-100 mb-6">Settings</h2>
+                  <h2 className="text-2xl font-bold text-cyan-100 mb-6">
+                    Settings
+                  </h2>
 
                   <div className="space-y-4">
                     <div className="border-b border-cyan-400/20 pb-4">
@@ -437,7 +447,11 @@ export default function Dashboard() {
                         Notification Settings
                       </h3>
                       <label className="flex items-center gap-3 text-cyan-300">
-                        <input type="checkbox" defaultChecked className="w-4 h-4" />
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="w-4 h-4"
+                        />
                         <span className="text-sm">
                           SMS/WhatsApp alerts for check-ins
                         </span>
@@ -449,7 +463,11 @@ export default function Dashboard() {
                         Check-in Reminders
                       </h3>
                       <label className="flex items-center gap-3 text-cyan-300">
-                        <input type="checkbox" defaultChecked className="w-4 h-4" />
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="w-4 h-4"
+                        />
                         <span className="text-sm">
                           Daily check-in notifications
                         </span>
@@ -838,7 +856,9 @@ export default function Dashboard() {
                       className="flex items-center gap-3 p-3 bg-white/10 rounded-lg border border-cyan-400/20 hover:border-cyan-400/40 transition cursor-pointer group"
                     >
                       <div className="relative">
-                        <span className="text-2xl">{contact.emoji || "👤"}</span>
+                        <span className="text-2xl">
+                          {contact.emoji || "👤"}
+                        </span>
                         <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-400"></span>
                       </div>
                       <div className="flex-1">
@@ -853,7 +873,8 @@ export default function Dashboard() {
                   ))
                 ) : (
                   <p className="text-cyan-300/80 text-sm p-3 bg-white/5 rounded-lg border border-cyan-400/20 text-center">
-                    No bonded contacts yet. Tap the button below to add family members.
+                    No bonded contacts yet. Tap the button below to add family
+                    members.
                   </p>
                 )}
               </div>
