@@ -153,7 +153,7 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Setup missed check-in alerts (60 seconds) - only when user manually checks in and reaches 2+
+  // Setup missed check-in alerts (10 minutes) - Alert bonded contacts if 3rd check-in is missed
   useEffect(() => {
     if (todayCheckInCount >= 2 && hasInitializedRef.current) {
       // Clear any existing timer
@@ -164,18 +164,16 @@ export default function Dashboard() {
 
       // Only set timer if not already at 3
       if (todayCheckInCount < 3) {
-        // Set timer for missed check-in alert (60 seconds)
+        // Set timer for missed check-in alert (10 minutes = 600000 ms)
         const timer = setTimeout(() => {
-          const emergencyContacts = [
-            { name: "Mom" },
-            { name: "Brother" },
-            { name: "Best Friend" },
-          ];
+          // Get bonded contacts
+          const bondedContactsStr = localStorage.getItem("bondedContacts");
+          const bondedContacts = bondedContactsStr ? JSON.parse(bondedContactsStr) : [];
 
           const notification: Notification = {
             id: Date.now().toString(),
             type: "missed",
-            message: `⚠ Alert sent - User missed 3rd check-in. ${emergencyContacts.length} contacts notified.`,
+            message: `⚠ ALERT: You missed your 3rd check-in! Alert sent to ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""} + email notifications.`,
             timestamp: new Date().toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
@@ -184,12 +182,27 @@ export default function Dashboard() {
 
           setNotifications((prev) => [notification, ...prev]);
 
-          console.log("📱 Missed check-in alert sent:", {
-            contacts: emergencyContacts,
-            timestamp: new Date().toISOString(),
-            message: "User missed 3rd check-in window",
+          // Send alerts to bonded contacts
+          bondedContacts.forEach((contact: any) => {
+            console.log("🚨 MISSED CHECK-IN ALERT sent to bonded contact:", {
+              recipient: contact.name,
+              bondCode: contact.bondCode,
+              timestamp: new Date().toISOString(),
+              message: "Your bonded family member missed their 10-minute check-in window!",
+            });
           });
-        }, 60000); // 60 seconds
+
+          // Send email alerts (Backend integration)
+          console.log("📧 Email alerts would be sent to bonded contacts at:", {
+            timestamp: new Date().toISOString(),
+            emailSubject: "UOK Alert: Family Member Missed Check-In",
+            bondedContacts: bondedContacts.map((c: any) => c.name),
+          });
+
+          // In production, this would call your backend API:
+          // POST /api/alerts/missed-checkin
+          // Body: { bondedContacts, message, timestamp }
+        }, 600000); // 10 minutes
 
         missedCheckInTimerRef.current = timer;
       }
