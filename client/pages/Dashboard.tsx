@@ -237,8 +237,8 @@ export default function Dashboard() {
     setTodayCheckInCount((prev) => Math.min(prev + 1, 3));
     setSelectedMood(emoji);
 
-    // Send alerts to emergency contacts
-    sendAlerts(mood);
+    // Send check-in notification to bonded contacts
+    sendCheckInNotification(mood);
 
     // Show confirmation
     setTimeout(() => setSelectedMood(null), 2000);
