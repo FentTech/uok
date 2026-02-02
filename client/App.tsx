@@ -30,7 +30,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/setup-contacts" element={<SetupContacts />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/bond-contacts" element={<BondContacts />} />
+          {/* <Route path="/bond-contacts" element={<BondContacts />} /> */}
           <Route path="/wellness-insights" element={<WellnessInsights />} />
           <Route path="/shared-memories" element={<SharedMemories />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
