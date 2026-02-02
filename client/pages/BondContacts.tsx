@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Copy, Check, Smartphone, Link2, Users, ArrowLeft } from "lucide-react";
 
@@ -14,12 +13,10 @@ interface BondedContact {
 
 export default function BondContacts() {
   const [userBondCode] = useState(() => {
-    // Generate unique bond code for this user
     return `UOK${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
   });
 
   const [bondedContacts, setBondedContacts] = useState<BondedContact[]>(() => {
-    // Load bonded contacts from localStorage on mount
     const stored = localStorage.getItem("bondedContacts");
     return stored ? JSON.parse(stored) : [];
   });
@@ -63,7 +60,6 @@ export default function BondContacts() {
       return;
     }
 
-    // Add new bonded contact
     const newContact: BondedContact = {
       id: Date.now().toString(),
       name: bondName,
@@ -127,7 +123,7 @@ export default function BondContacts() {
             Bond Emergency Contacts
           </h1>
           <p className="text-cyan-300/80">
-            Connect with family members securely through app-to-app bonding. Receive daily check-ins and alerts.
+            Connect with family members securely through app-to-app bonding.
           </p>
         </div>
 
@@ -141,10 +137,9 @@ export default function BondContacts() {
               </div>
 
               <p className="text-sm text-cyan-300/80 mb-6">
-                Share this code with family members so they can bond with you and receive your daily check-ins.
+                Share this code with family members to bond with you.
               </p>
 
-              {/* Bond Code Display */}
               <div className="bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg p-4 border border-cyan-400/30 mb-6">
                 <p className="text-xs text-cyan-400 mb-2">YOUR PERSONAL BOND CODE</p>
                 <p className="text-3xl font-bold font-mono text-cyan-100 break-all">
@@ -152,7 +147,6 @@ export default function BondContacts() {
                 </p>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex gap-2 mb-4">
                 <button
                   onClick={copyBondCode}
@@ -180,7 +174,7 @@ export default function BondContacts() {
               </div>
 
               <p className="text-xs text-cyan-400/60 mt-4">
-                Family members will enter your code in their app to bond with you.
+                Family members will enter your code to bond with you.
               </p>
             </div>
           </div>
@@ -197,7 +191,7 @@ export default function BondContacts() {
             {!scanMode ? (
               <div className="space-y-4">
                 <p className="text-sm text-cyan-300/80">
-                  Ask your family member to share their bond code, then enter it below to create a connection.
+                  Ask your family member to share their bond code.
                 </p>
 
                 <button
@@ -206,12 +200,12 @@ export default function BondContacts() {
                   className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Smartphone className="w-5 h-5 inline mr-2" />
-                  Enter Family Member's Bond Code
+                  Enter Bond Code
                 </button>
 
                 {!canAddMore && (
                   <p className="text-sm text-amber-400 text-center bg-amber-500/10 rounded p-2 border border-amber-400/20">
-                    ✓ You have bonded with 3 emergency contacts (maximum reached)
+                    ✓ Maximum 3 bonded contacts reached
                   </p>
                 )}
               </div>
@@ -232,11 +226,11 @@ export default function BondContacts() {
 
                 <div>
                   <label className="text-sm text-cyan-300 block mb-2">
-                    Their Name/Relationship
+                    Their Name
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g., Mom, Brother, Best Friend"
+                    placeholder="e.g., Mom, Brother"
                     value={bondName}
                     onChange={(e) => setBondName(e.target.value)}
                     className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-4 py-2 text-cyan-100 placeholder-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -278,7 +272,7 @@ export default function BondContacts() {
                 </div>
 
                 <p className="text-xs text-cyan-400/60 text-center">
-                  Ask them to share their bond code from their Bond Contacts page
+                  Ask them to share their bond code from Bond Contacts page
                 </p>
               </div>
             )}
@@ -290,7 +284,7 @@ export default function BondContacts() {
           <div className="flex items-center gap-2 mb-6">
             <Users className="w-5 h-5 text-cyan-400" />
             <h2 className="text-xl font-bold text-cyan-100">
-              Bonded Emergency Contacts ({bondedContacts.length}/3)
+              Bonded Contacts ({bondedContacts.length}/3)
             </h2>
           </div>
 
@@ -335,9 +329,6 @@ export default function BondContacts() {
               <p className="text-cyan-300/80 mb-4">
                 No bonded contacts yet. Start by sharing your bond code!
               </p>
-              <p className="text-sm text-cyan-400/60">
-                Once family members bond with you, they'll receive all your daily check-ins.
-              </p>
             </div>
           )}
         </div>
@@ -349,25 +340,25 @@ export default function BondContacts() {
             <div className="flex gap-3">
               <span className="font-bold text-cyan-400 min-w-fit">Step 1:</span>
               <p className="text-sm text-cyan-300/80">
-                Copy or share your Bond Code above with family members
+                Share your Bond Code above with family members
               </p>
             </div>
             <div className="flex gap-3">
               <span className="font-bold text-cyan-400 min-w-fit">Step 2:</span>
               <p className="text-sm text-cyan-300/80">
-                Family members go to Bond Contacts and enter your code
+                Family members enter your code in their Bond Contacts
               </p>
             </div>
             <div className="flex gap-3">
               <span className="font-bold text-cyan-400 min-w-fit">Step 3:</span>
               <p className="text-sm text-cyan-300/80">
-                Once bonded, they receive all your daily check-in notifications
+                Once bonded, they receive all your daily check-ins
               </p>
             </div>
             <div className="flex gap-3">
               <span className="font-bold text-cyan-400 min-w-fit">Step 4:</span>
               <p className="text-sm text-cyan-300/80">
-                If you miss a check-in for 10+ minutes, they get an emergency alert + email
+                If you miss a check-in for 10+ minutes, they get emergency alerts
               </p>
             </div>
           </div>
