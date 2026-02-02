@@ -72,7 +72,11 @@ export default function BondContacts() {
       emoji: ["👩", "👨", "👨‍🤝‍👨", "👤"][bondedContacts.length % 4],
     };
 
-    setBondedContacts((prev) => [newContact, ...prev]);
+    setBondedContacts((prev) => {
+      const updated = [newContact, ...prev];
+      localStorage.setItem("bondedContacts", JSON.stringify(updated));
+      return updated;
+    });
     setBondSuccess(true);
     setManualBondCode("");
     setBondName("");
