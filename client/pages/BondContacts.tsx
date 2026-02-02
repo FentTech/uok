@@ -88,7 +88,11 @@ export default function BondContacts() {
   };
 
   const removeBond = (id: string) => {
-    setBondedContacts((prev) => prev.filter((c) => c.id !== id));
+    setBondedContacts((prev) => {
+      const updated = prev.filter((c) => c.id !== id);
+      localStorage.setItem("bondedContacts", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const generateShareableLink = () => {
