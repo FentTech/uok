@@ -81,6 +81,7 @@ export default function Dashboard() {
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [bondedContacts, setBondedContacts] = useState<any[]>([]);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
 
