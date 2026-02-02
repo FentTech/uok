@@ -130,10 +130,21 @@ export default function Dashboard() {
     }
   };
 
-  // Initialize with sample check-ins only once
+  // Initialize with sample check-ins and load bonded contacts
   useEffect(() => {
     if (!hasInitializedRef.current) {
       hasInitializedRef.current = true;
+
+      // Load bonded contacts from localStorage
+      const bondedContactsStr = localStorage.getItem("bondedContacts");
+      if (bondedContactsStr) {
+        try {
+          setBondedContacts(JSON.parse(bondedContactsStr));
+        } catch (e) {
+          console.error("Error loading bonded contacts:", e);
+        }
+      }
+
       setCheckIns([
         {
           id: "1",
