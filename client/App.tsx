@@ -10,7 +10,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import SetupContacts from "./pages/SetupContacts";
 import Dashboard from "./pages/Dashboard";
-// import BondContacts from "./pages/BondContacts";
+import BondContacts from "./pages/BondContacts";
 import WellnessInsights from "./pages/WellnessInsights";
 import SharedMemories from "./pages/SharedMemories";
 import NotFound from "./pages/NotFound";
