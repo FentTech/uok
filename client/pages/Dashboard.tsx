@@ -84,19 +84,19 @@ export default function Dashboard() {
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
 
-  // Send alerts to emergency contacts
-  const sendAlerts = (mood: string) => {
-    const emergencyContacts = [
-      { name: "Mom", phone: "+1234567890", method: "whatsapp" },
-      { name: "Brother", phone: "+0987654321", method: "sms" },
-      { name: "Best Friend", phone: "+1122334455", method: "whatsapp" },
-    ];
+  // Send check-in notifications to bonded contacts
+  const sendCheckInNotification = (mood: string) => {
+    // Get bonded contacts from localStorage or state
+    const bondedContactsStr = localStorage.getItem("bondedContacts");
+    const bondedContacts = bondedContactsStr ? JSON.parse(bondedContactsStr) : [];
+
+    const contactCount = bondedContacts.length;
 
     // Create notification
     const notification: Notification = {
       id: Date.now().toString(),
       type: "checkin",
-      message: `✓ Check-in sent to ${emergencyContacts.length} contacts - You're feeling ${mood}`,
+      message: `✓ Check-in sent to ${contactCount} bonded contact${contactCount !== 1 ? "s" : ""} - You're feeling ${mood}`,
       timestamp: new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
@@ -105,27 +105,25 @@ export default function Dashboard() {
 
     setNotifications((prev) => [notification, ...prev]);
 
-    // Backend integration - Send to Twilio/WhatsApp API
-    // This is placeholder for actual SMS/WhatsApp integration
-    emergencyContacts.forEach((contact) => {
-      console.log("📱 Sending alert:", {
+    // Backend integration - Send to bonded contacts
+    bondedContacts.forEach((contact: any) => {
+      console.log("📱 Check-in notification sent to bonded contact:", {
         recipient: contact.name,
-        phone: contact.phone,
-        method: contact.method,
+        bondCode: contact.bondCode,
         mood: mood,
         timestamp: new Date().toISOString(),
-        message: `Your contact just checked in on UOK feeling ${mood}. They're doing okay! 💚`,
+        message: `Your bonded family member just checked in on UOK feeling ${mood}. They're doing okay! 💚`,
       });
 
       // In production, this would call your backend API:
-      // POST /api/alerts/send
-      // Body: { phone, method: 'sms' | 'whatsapp', message, mood }
+      // POST /api/notifications/send
+      // Body: { bondCode, type: 'checkin', mood, message }
     });
 
     // Browser notification
     if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("UOK Check-in Sent", {
-        body: `Your contacts have been notified - You're feeling ${mood}`,
+      new Notification("UOK Check-in Recorded", {
+        body: `Your check-in has been shared with ${contactCount} bonded contact${contactCount !== 1 ? "s" : ""}.`,
         icon: "/favicon.ico",
       });
     }
