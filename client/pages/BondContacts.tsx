@@ -17,7 +17,11 @@ export default function BondContacts() {
     return `UOK${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
   });
 
-  const [bondedContacts, setBondedContacts] = useState<BondedContact[]>([]);
+  const [bondedContacts, setBondedContacts] = useState<BondedContact[]>(() => {
+    // Load bonded contacts from localStorage on mount
+    const stored = localStorage.getItem("bondedContacts");
+    return stored ? JSON.parse(stored) : [];
+  });
 
   const [scanMode, setScanMode] = useState(false);
   const [manualBondCode, setManualBondCode] = useState("");
