@@ -1,7 +1,6 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Copy, Check, Smartphone, Link2, Users, ArrowLeft } from "lucide-react";
-import QRCode from "qrcode.react";
 
 interface BondedContact {
   id: string;
@@ -13,42 +12,24 @@ interface BondedContact {
 }
 
 export default function BondContacts() {
-  const [userQRCode] = useState(() => {
+  const [userBondCode] = useState(() => {
     // Generate unique bond code for this user
-    return `UOK_USER_${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    return `UOK${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
   });
 
-  const [bondedContacts, setBondedContacts] = useState<BondedContact[]>([
-    {
-      id: "1",
-      name: "Mom",
-      bondCode: "UOK_USER_ABC123",
-      status: "bonded",
-      bondedAt: "Today at 08:30 AM",
-      emoji: "👩",
-    },
-    {
-      id: "2",
-      name: "Brother",
-      bondCode: "UOK_USER_DEF456",
-      status: "bonded",
-      bondedAt: "Yesterday",
-      emoji: "👨",
-    },
-  ]);
+  const [bondedContacts, setBondedContacts] = useState<BondedContact[]>([]);
 
   const [scanMode, setScanMode] = useState(false);
   const [manualBondCode, setManualBondCode] = useState("");
   const [bondName, setBondName] = useState("");
   const [bondError, setBondError] = useState("");
   const [bondSuccess, setBondSuccess] = useState(false);
-  const qrRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
   const canAddMore = bondedContacts.length < 3;
 
   const copyBondCode = () => {
-    navigator.clipboard.writeText(userQRCode);
+    navigator.clipboard.writeText(userBondCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -67,7 +48,7 @@ export default function BondContacts() {
       return;
     }
 
-    if (manualBondCode === userQRCode) {
+    if (manualBondCode === userBondCode) {
       setBondError("You cannot bond with yourself!");
       return;
     }
@@ -84,7 +65,7 @@ export default function BondContacts() {
       bondCode: manualBondCode,
       status: "bonded",
       bondedAt: new Date().toLocaleString(),
-      emoji: "👤",
+      emoji: ["👩", "👨", "👨‍🤝‍👨", "👤"][bondedContacts.length % 4],
     };
 
     setBondedContacts((prev) => [newContact, ...prev]);
@@ -102,14 +83,8 @@ export default function BondContacts() {
     setBondedContacts((prev) => prev.filter((c) => c.id !== id));
   };
 
-  const downloadQRCode = () => {
-    const canvas = qrRef.current?.querySelector("canvas");
-    if (canvas) {
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
-      link.download = `uok-bond-code-${userQRCode}.png`;
-      link.click();
-    }
+  const generateShareableLink = () => {
+    return `${window.location.origin}/?bond=${userBondCode}`;
   };
 
   return (
@@ -139,12 +114,12 @@ export default function BondContacts() {
             Bond Emergency Contacts
           </h1>
           <p className="text-cyan-300/80">
-            Connect with family members through app-to-app bonding. Max 3 emergency contacts.
+            Connect with family members securely through app-to-app bonding. Receive daily check-ins and alerts.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Your QR Code Section */}
+          {/* Your Bond Code Section */}
           <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6">
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-4">
@@ -152,66 +127,52 @@ export default function BondContacts() {
                 <h2 className="text-xl font-bold text-cyan-100">Your Bond Code</h2>
               </div>
 
-              <p className="text-sm text-cyan-300/80 mb-4">
-                Share this QR code with family members to bond with you
+              <p className="text-sm text-cyan-300/80 mb-6">
+                Share this code with family members so they can bond with you and receive your daily check-ins.
               </p>
 
-              {/* QR Code */}
-              <div
-                ref={qrRef}
-                className="bg-white p-4 rounded-lg mb-4 flex justify-center"
-              >
-                <QRCode
-                  value={userQRCode}
-                  size={200}
-                  level="H"
-                  includeMargin={true}
-                />
-              </div>
-
-              <div className="space-y-3">
-                {/* Bond Code Display */}
-                <div className="bg-white/5 rounded-lg p-3 border border-cyan-400/20">
-                  <p className="text-xs text-cyan-400 mb-1">Manual Bond Code</p>
-                  <p className="text-lg font-mono text-cyan-100 break-all">
-                    {userQRCode}
-                  </p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={copyBondCode}
-                    className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium text-sm transition flex items-center justify-center gap-2"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copy Code
-                      </>
-                    )}
-                  </button>
-                  <button
-                    onClick={downloadQRCode}
-                    className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium text-sm transition"
-                  >
-                    Download QR
-                  </button>
-                </div>
-
-                <p className="text-xs text-cyan-400/60 mt-4">
-                  Share your QR code with family members so they can scan and bond with you.
+              {/* Bond Code Display */}
+              <div className="bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg p-4 border border-cyan-400/30 mb-6">
+                <p className="text-xs text-cyan-400 mb-2">YOUR PERSONAL BOND CODE</p>
+                <p className="text-3xl font-bold font-mono text-cyan-100 break-all">
+                  {userBondCode}
                 </p>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 mb-4">
+                <button
+                  onClick={copyBondCode}
+                  className="flex-1 px-4 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium transition flex items-center justify-center gap-2"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy Code
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <div className="bg-white/5 rounded-lg p-3 border border-cyan-400/20">
+                <p className="text-xs text-cyan-300 mb-2">Share this link:</p>
+                <p className="text-xs text-cyan-400 break-all font-mono">
+                  {generateShareableLink()}
+                </p>
+              </div>
+
+              <p className="text-xs text-cyan-400/60 mt-4">
+                Family members will enter your code in their app to bond with you.
+              </p>
             </div>
           </div>
 
-          {/* Scan QR Code Section */}
+          {/* Add Emergency Contact Section */}
           <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Link2 className="w-5 h-5 text-purple-400" />
@@ -223,45 +184,55 @@ export default function BondContacts() {
             {!scanMode ? (
               <div className="space-y-4">
                 <p className="text-sm text-cyan-300/80">
-                  Ask your family member to share their QR code or bond code, then enter it below.
+                  Ask your family member to share their bond code, then enter it below to create a connection.
                 </p>
 
                 <button
                   onClick={() => setScanMode(true)}
                   disabled={!canAddMore}
-                  className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Smartphone className="w-5 h-5" />
-                  Scan QR Code or Enter Code
+                  <Smartphone className="w-5 h-5 inline mr-2" />
+                  Enter Family Member's Bond Code
                 </button>
 
                 {!canAddMore && (
-                  <p className="text-sm text-amber-400 text-center">
-                    You have bonded with 3 emergency contacts (maximum reached)
+                  <p className="text-sm text-amber-400 text-center bg-amber-500/10 rounded p-2 border border-amber-400/20">
+                    ✓ You have bonded with 3 emergency contacts (maximum reached)
                   </p>
                 )}
               </div>
             ) : (
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Enter their bond code (UOK_USER_...)"
-                  value={manualBondCode}
-                  onChange={(e) => setManualBondCode(e.target.value.toUpperCase())}
-                  className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-4 py-2 text-cyan-100 placeholder-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
+                <div>
+                  <label className="text-sm text-cyan-300 block mb-2">
+                    Their Bond Code
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter code (e.g., UOKABCD123)"
+                    value={manualBondCode}
+                    onChange={(e) => setManualBondCode(e.target.value.toUpperCase())}
+                    className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-4 py-2 text-cyan-100 placeholder-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
 
-                <input
-                  type="text"
-                  placeholder="What's their relationship? (e.g., Mom, Brother)"
-                  value={bondName}
-                  onChange={(e) => setBondName(e.target.value)}
-                  className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-4 py-2 text-cyan-100 placeholder-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
+                <div>
+                  <label className="text-sm text-cyan-300 block mb-2">
+                    Their Name/Relationship
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Mom, Brother, Best Friend"
+                    value={bondName}
+                    onChange={(e) => setBondName(e.target.value)}
+                    className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-4 py-2 text-cyan-100 placeholder-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
 
                 {bondError && (
                   <div className="bg-red-500/20 border border-red-400/50 rounded-lg p-3">
-                    <p className="text-red-300 text-sm">{bondError}</p>
+                    <p className="text-red-300 text-sm">⚠ {bondError}</p>
                   </div>
                 )}
 
@@ -278,7 +249,7 @@ export default function BondContacts() {
                     onClick={handleBondUser}
                     className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium transition"
                   >
-                    Bond Contact
+                    Bond Now
                   </button>
                   <button
                     onClick={() => {
@@ -294,7 +265,7 @@ export default function BondContacts() {
                 </div>
 
                 <p className="text-xs text-cyan-400/60 text-center">
-                  Ask family members to share their personal QR code or bond code
+                  Ask them to share their bond code from their Bond Contacts page
                 </p>
               </div>
             )}
@@ -319,14 +290,14 @@ export default function BondContacts() {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
                         {contact.emoji}
                       </div>
                       <div>
                         <p className="font-semibold text-cyan-100">{contact.name}</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-cyan-400">
-                            ✓ {contact.status === "bonded" ? "Bonded" : "Pending"}
+                          <span className="text-xs text-green-400">
+                            ✓ Bonded
                           </span>
                           <span className="text-xs text-cyan-400/60">
                             {contact.bondedAt}
@@ -346,9 +317,13 @@ export default function BondContacts() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
+            <div className="text-center py-12">
+              <Users className="w-12 h-12 text-cyan-400/40 mx-auto mb-3" />
               <p className="text-cyan-300/80 mb-4">
-                No bonded contacts yet. Add family members using QR codes to get started!
+                No bonded contacts yet. Start by sharing your bond code!
+              </p>
+              <p className="text-sm text-cyan-400/60">
+                Once family members bond with you, they'll receive all your daily check-ins.
               </p>
             </div>
           )}
@@ -356,24 +331,38 @@ export default function BondContacts() {
 
         {/* How It Works Section */}
         <div className="mt-8 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 backdrop-blur-xl border border-cyan-400/20 rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-cyan-100 mb-4">How Bonding Works</h3>
-          <div className="space-y-3 text-sm text-cyan-300/80">
+          <h3 className="text-lg font-bold text-cyan-100 mb-4">📲 How Bonding Works</h3>
+          <div className="space-y-4">
             <div className="flex gap-3">
-              <span className="font-bold text-cyan-400">1.</span>
-              <p>Share your QR code with family members (print, text, or show on screen)</p>
+              <span className="font-bold text-cyan-400 min-w-fit">Step 1:</span>
+              <p className="text-sm text-cyan-300/80">
+                Copy or share your Bond Code above with family members
+              </p>
             </div>
             <div className="flex gap-3">
-              <span className="font-bold text-cyan-400">2.</span>
-              <p>They scan your code in their UOK app to initiate bonding</p>
+              <span className="font-bold text-cyan-400 min-w-fit">Step 2:</span>
+              <p className="text-sm text-cyan-300/80">
+                Family members go to Bond Contacts and enter your code
+              </p>
             </div>
             <div className="flex gap-3">
-              <span className="font-bold text-cyan-400">3.</span>
-              <p>Once bonded, they receive all your daily check-in notifications</p>
+              <span className="font-bold text-cyan-400 min-w-fit">Step 3:</span>
+              <p className="text-sm text-cyan-300/80">
+                Once bonded, they receive all your daily check-in notifications
+              </p>
             </div>
             <div className="flex gap-3">
-              <span className="font-bold text-cyan-400">4.</span>
-              <p>If you miss a check-in, they get alerts after 10 minutes</p>
+              <span className="font-bold text-cyan-400 min-w-fit">Step 4:</span>
+              <p className="text-sm text-cyan-300/80">
+                If you miss a check-in for 10+ minutes, they get an emergency alert + email
+              </p>
             </div>
+          </div>
+
+          <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-400/20 rounded-lg">
+            <p className="text-sm text-cyan-300">
+              💚 <strong>Max 3 bonded contacts.</strong> Your emergency contacts will be notified of your daily wellness check-ins to ensure your safety.
+            </p>
           </div>
         </div>
       </div>
