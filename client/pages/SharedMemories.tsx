@@ -22,6 +22,9 @@ export default function SharedMemories() {
   const location = useLocation();
   const [caption, setCaption] = useState("");
   const [shareLoading, setShareLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [fullscreenVideo, setFullscreenVideo] = useState<string | null>(null);
+  const [featuredAds, setFeaturedAds] = useState<any[]>([]);
   const [memories, setMemories] = useState<SharedMemory[]>([
     {
       id: "1",
