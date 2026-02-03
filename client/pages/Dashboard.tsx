@@ -179,7 +179,7 @@ export default function Dashboard() {
 
       // Only set timer if not already at 3
       if (todayCheckInCount < 3) {
-        // Set timer for missed check-in alert (10 minutes = 600000 ms)
+        // Set timer for missed check-in alert (30 seconds = 30000 ms)
         const timer = setTimeout(() => {
           // Get bonded contacts
           const bondedContactsStr = localStorage.getItem("bondedContacts");
@@ -206,7 +206,7 @@ export default function Dashboard() {
               bondCode: contact.bondCode,
               timestamp: new Date().toISOString(),
               message:
-                "Your bonded family member missed their 10-minute check-in window!",
+                "Your bonded family member missed their 30-second check-in window!",
             });
           });
 
@@ -220,7 +220,7 @@ export default function Dashboard() {
           // In production, this would call your backend API:
           // POST /api/alerts/missed-checkin
           // Body: { bondedContacts, message, timestamp }
-        }, 600000); // 10 minutes
+        }, 30000); // 30 seconds
 
         missedCheckInTimerRef.current = timer;
       }
