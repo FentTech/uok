@@ -73,6 +73,29 @@ export default function SharedMemories() {
     memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {})
   );
 
+  // Load featured ads from localStorage
+  useEffect(() => {
+    const featured = localStorage.getItem("featuredPartners");
+    if (featured) {
+      try {
+        const partners = JSON.parse(featured);
+        const activeAds: any[] = [];
+        partners.forEach((partner: any) => {
+          if (partner.paymentStatus === "paid" && partner.ads) {
+            partner.ads.forEach((ad: any) => {
+              if (ad.active) {
+                activeAds.push(ad);
+              }
+            });
+          }
+        });
+        setFeaturedAds(activeAds);
+      } catch (e) {
+        console.error("Error loading ads:", e);
+      }
+    }
+  }, []);
+
   // Handle incoming media from Dashboard
   useEffect(() => {
     const state = location.state as { mediaUrl?: string; mediaType?: "photo" | "video"; mood?: string } | null;
