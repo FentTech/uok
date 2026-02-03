@@ -209,6 +209,23 @@ export default function SharedMemories() {
           </p>
         </div>
 
+        {/* Featured Ads */}
+        <div className="mb-8">
+          <RotatingAds />
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-8 relative">
+          <Search className="absolute left-3 top-3 text-slate-400 w-5 h-5" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search users by username..."
+            className="w-full pl-10 pr-4 py-3 bg-white border border-cyan-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          />
+        </div>
+
         {/* Share Memory Prompt */}
         <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6 mb-8">
           <div className="space-y-4">
