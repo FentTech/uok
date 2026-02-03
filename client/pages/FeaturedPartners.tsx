@@ -147,14 +147,35 @@ export default function FeaturedPartners() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setFormData({
-          ...formData,
-          adContent: event.target?.result as string,
-        });
-      };
-      reader.readAsDataURL(file);
+      try {
+        // Check file size (limit to 5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+          alert("File size exceeds 5MB limit. Please choose a smaller file.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            setFormData({
+              ...formData,
+              adContent: event.target?.result as string,
+            });
+          } catch (error) {
+            console.error("Error setting form data:", error);
+            alert("Error processing file. Please try again.");
+          }
+        };
+        reader.onerror = () => {
+          console.error("Error reading file");
+          alert("Error reading file. Please try again.");
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        alert("Error uploading file. Please try again.");
+      }
     }
   };
 
