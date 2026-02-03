@@ -165,35 +165,45 @@ export default function FeaturedPartners() {
 
       // Simulate payment confirmation
       setTimeout(() => {
-        const updatedPartners = partners.map((p) => {
-          if (p.id === partnerId) {
-            return {
-              ...p,
-              paymentStatus: "paid" as const,
-              ads: p.ads.map((ad) => ({ ...ad, active: true })),
-            };
-          }
-          return p;
-        });
-        setPartners(updatedPartners);
-        localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
-        alert("✓ Payment confirmed! Your ads are now active for 6 months.");
+        try {
+          const updatedPartners = partners.map((p) => {
+            if (p.id === partnerId) {
+              return {
+                ...p,
+                paymentStatus: "paid" as const,
+                ads: p.ads.map((ad) => ({ ...ad, active: true })),
+              };
+            }
+            return p;
+          });
+          setPartners(updatedPartners);
+          localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+          alert("✓ Payment confirmed! Your ads are now active for 6 months.");
+        } catch (error) {
+          console.error("Error processing payment:", error);
+          alert("Error processing payment. Please try again.");
+        }
       }, 2000);
     }
   };
 
   const handleDeleteAd = (partnerId: string, adId: string) => {
-    const updatedPartners = partners.map((p) => {
-      if (p.id === partnerId) {
-        return {
-          ...p,
-          ads: p.ads.filter((ad) => ad.id !== adId),
-        };
-      }
-      return p;
-    });
-    setPartners(updatedPartners);
-    localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+    try {
+      const updatedPartners = partners.map((p) => {
+        if (p.id === partnerId) {
+          return {
+            ...p,
+            ads: p.ads.filter((ad) => ad.id !== adId),
+          };
+        }
+        return p;
+      });
+      setPartners(updatedPartners);
+      localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+    } catch (error) {
+      console.error("Error deleting ad:", error);
+      alert("Error deleting ad. Please try again.");
+    }
   };
 
   const handleRenewPartner = (partnerId: string) => {
