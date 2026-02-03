@@ -504,7 +504,17 @@ export default function Dashboard() {
               </div>
             )}
 
-            <button className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400">
+            <button
+              onClick={() => {
+                // Clear user session and data
+                localStorage.clear();
+                sessionStorage.clear();
+                // Redirect to login
+                navigate("/login");
+              }}
+              className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400"
+              title="Logout"
+            >
               <LogOut className="w-6 h-6" />
             </button>
           </div>
