@@ -21,6 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
+import RotatingAds from "../components/RotatingAds";
 
 interface CheckIn {
   id: string;
