@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import BondContacts from "./pages/BondContacts";
 import WellnessInsights from "./pages/WellnessInsights";
 import SharedMemories from "./pages/SharedMemories";
+import FeaturedPartners from "./pages/FeaturedPartners";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
