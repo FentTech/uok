@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Heart, Share2, MessageCircle, ThumbsUp, Trash2, Image, Video } from "lucide-react";
+import { Heart, Share2, MessageCircle, ThumbsUp, Trash2, Image, Video, Search, X } from "lucide-react";
+import RotatingAds from "../components/RotatingAds";
 
 interface SharedMemory {
   id: string;
