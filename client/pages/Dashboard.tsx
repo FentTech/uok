@@ -908,6 +908,20 @@ export default function Dashboard() {
               </p>
             </Link>
 
+            {/* Featured Partners Link */}
+            <Link
+              to="/featured-partners"
+              className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-50 rounded-2xl border border-amber-400/40 p-6 hover:border-amber-400/60 hover:shadow-lg hover:shadow-amber-500/20 transition block backdrop-blur-xl"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Zap className="w-5 h-5 text-amber-400" />
+                <h3 className="text-lg font-bold">Featured Partners</h3>
+              </div>
+              <p className="text-sm text-amber-300/80">
+                Advertise your business to our users
+              </p>
+            </Link>
+
             {/* Tip Section - Futuristic */}
             <div className="bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl border border-cyan-400/30 p-6 backdrop-blur-xl">
               <h3 className="text-lg font-bold text-cyan-100 mb-3">
