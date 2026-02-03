@@ -34,6 +34,7 @@ export default function App() {
             <Route path="/bond-contacts" element={<BondContacts />} />
             <Route path="/wellness-insights" element={<WellnessInsights />} />
             <Route path="/shared-memories" element={<SharedMemories />} />
+            <Route path="/featured-partners" element={<FeaturedPartners />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
