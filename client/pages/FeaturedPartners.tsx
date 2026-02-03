@@ -88,50 +88,60 @@ export default function FeaturedPartners() {
       return;
     }
 
-    const newPartner: Partner = {
-      id: Date.now().toString(),
-      name: formData.partnerName,
-      email: formData.email,
-      paymentStatus: "pending",
-      registeredAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(), // 6 months
-      totalViews: 0,
-      ads: [
-        {
-          id: Date.now().toString(),
-          partnerId: Date.now().toString(),
-          partnerName: formData.partnerName,
-          adType: formData.adType,
-          content: formData.adContent,
-          title: formData.adTitle,
-          expiresAt: new Date(
-            Date.now() + 180 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          createdAt: new Date().toISOString(),
-          views: 0,
-          active: false,
-        },
-      ],
-      paymentLink: `https://paypal.me/AFenteng/1000`,
-    };
+    try {
+      const partnerId = Date.now().toString();
+      const now = new Date().toISOString();
+      const expiryDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString();
 
-    const updatedPartners = [...partners, newPartner];
-    setPartners(updatedPartners);
-    localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+      const newPartner: Partner = {
+        id: partnerId,
+        name: formData.partnerName,
+        email: formData.email,
+        paymentStatus: "pending",
+        registeredAt: now,
+        expiresAt: expiryDate,
+        totalViews: 0,
+        ads: [
+          {
+            id: (Date.now() + 1).toString(),
+            partnerId: partnerId,
+            partnerName: formData.partnerName,
+            adType: formData.adType,
+            content: formData.adContent,
+            title: formData.adTitle,
+            expiresAt: expiryDate,
+            createdAt: now,
+            views: 0,
+            active: false,
+          },
+        ],
+        paymentLink: `https://paypal.me/AFenteng/1000`,
+      };
 
-    // Reset form
-    setFormData({
-      partnerName: "",
-      email: "",
-      adTitle: "",
-      adType: "image",
-      adContent: "",
-    });
+      const updatedPartners = [...partners, newPartner];
+      setPartners(updatedPartners);
 
-    alert(
-      `Partner registered! Awaiting payment. Payment link: https://paypal.me/AFenteng/1000`
-    );
-    setShowRegistrationForm(false);
+      // Store in localStorage with error handling
+      const jsonString = JSON.stringify(updatedPartners);
+      localStorage.setItem("featuredPartners", jsonString);
+
+      // Reset form
+      setFormData({
+        partnerName: "",
+        email: "",
+        adTitle: "",
+        adType: "image",
+        adContent: "",
+      });
+
+      alert(
+        `Partner registered! Awaiting payment. Payment link: https://paypal.me/AFenteng/1000`
+      );
+      setShowRegistrationForm(false);
+    } catch (error) {
+      console.error("Error registering partner:", error);
+      alert("Error registering partner. Please check the console for details.");
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
