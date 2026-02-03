@@ -126,6 +126,10 @@ export default function SharedMemories() {
     setMemories(memories.filter((m) => m.id !== id));
   };
 
+  const filteredMemories = memories.filter((m) =>
+    m.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const handleShareMemory = async () => {
     const state = location.state as { mediaUrl?: string; mediaType?: "photo" | "video"; mood?: string } | null;
 
