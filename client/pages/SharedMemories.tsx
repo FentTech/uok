@@ -274,9 +274,33 @@ export default function SharedMemories() {
           </div>
         </div>
 
+        {/* Fullscreen Video Modal */}
+        {fullscreenVideo && (
+          <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+            <button
+              onClick={() => setFullscreenVideo(null)}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
+            >
+              <X className="w-8 h-8" />
+            </button>
+            <video
+              src={fullscreenVideo}
+              className="w-full h-full object-contain"
+              controls
+              autoPlay
+            />
+          </div>
+        )}
+
         {/* Memories Feed */}
         <div className="space-y-6">
-          {memories.map((memory) => (
+          {filteredMemories.length === 0 && searchQuery ? (
+            <div className="text-center py-12 bg-white rounded-2xl">
+              <p className="text-slate-600">No users found matching "{searchQuery}"</p>
+            </div>
+          ) : null}
+
+          {filteredMemories.map((memory) => (
             <div
               key={memory.id}
               className="bg-white rounded-2xl shadow-lg border border-cyan-100 overflow-hidden hover:shadow-xl transition"
