@@ -211,21 +211,28 @@ export default function FeaturedPartners() {
     if (partner) {
       window.open(partner.paymentLink || `https://paypal.me/AFenteng/1000`, "_blank");
       setTimeout(() => {
-        const updatedPartners = partners.map((p) => {
-          if (p.id === partnerId) {
-            return {
-              ...p,
-              paymentStatus: "paid" as const,
-              expiresAt: new Date(
-                Date.now() + 180 * 24 * 60 * 60 * 1000
-              ).toISOString(),
-            };
-          }
-          return p;
-        });
-        setPartners(updatedPartners);
-        localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
-        alert("✓ Subscription renewed for 6 months!");
+        try {
+          const expiryDate = new Date(
+            Date.now() + 180 * 24 * 60 * 60 * 1000
+          ).toISOString();
+
+          const updatedPartners = partners.map((p) => {
+            if (p.id === partnerId) {
+              return {
+                ...p,
+                paymentStatus: "paid" as const,
+                expiresAt: expiryDate,
+              };
+            }
+            return p;
+          });
+          setPartners(updatedPartners);
+          localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+          alert("✓ Subscription renewed for 6 months!");
+        } catch (error) {
+          console.error("Error renewing subscription:", error);
+          alert("Error renewing subscription. Please try again.");
+        }
       }, 2000);
     }
   };
