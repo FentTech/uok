@@ -796,26 +796,8 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Ads Section - Tasteful & Non-intrusive */}
-            <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 backdrop-blur-xl border border-amber-400/30 rounded-2xl p-6">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 p-3 bg-amber-400/20 rounded-lg">
-                  <Zap className="w-6 h-6 text-amber-400" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-amber-50 mb-1">
-                    Featured Partner - Wellness Products
-                  </h3>
-                  <p className="text-amber-200/80 text-sm mb-3">
-                    Enhance your wellness journey with our curated selection of
-                    stress-relief products and mindfulness tools.
-                  </p>
-                  <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium text-sm transition">
-                    Explore →
-                  </button>
-                </div>
-              </div>
-            </div>
+            {/* Rotating Featured Ads */}
+            <RotatingAds />
           </div>
 
           {/* Sidebar */}
