@@ -401,17 +401,27 @@ export default function Dashboard() {
       Array.from(files).forEach((file) => {
         // Use createObjectURL for better performance and compatibility
         const url = URL.createObjectURL(file);
-        const newMedia: MediaItem = {
-          id: Date.now().toString() + Math.random(),
+        const timestamp = new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const date = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        // Save to persistent storage
+        const savedMedia = mediaStorage.add({
           type: "photo",
           url: url,
-          timestamp: new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          timestamp,
+          date,
           mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
-        };
-        setMediaItems((prev) => [newMedia, ...prev]);
+          visibility: "personal",
+        });
+
+        // Update local state
+        setMediaItems((prev) => [savedMedia as any, ...prev]);
       });
     }
     // Reset input
@@ -424,17 +434,27 @@ export default function Dashboard() {
       Array.from(files).forEach((file) => {
         // Use createObjectURL for video playback
         const url = URL.createObjectURL(file);
-        const newMedia: MediaItem = {
-          id: Date.now().toString() + Math.random(),
+        const timestamp = new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const date = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        // Save to persistent storage
+        const savedMedia = mediaStorage.add({
           type: "video",
           url: url,
-          timestamp: new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          timestamp,
+          date,
           mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
-        };
-        setMediaItems((prev) => [newMedia, ...prev]);
+          visibility: "personal",
+        });
+
+        // Update local state
+        setMediaItems((prev) => [savedMedia as any, ...prev]);
       });
     }
     // Reset input
