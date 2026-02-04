@@ -307,6 +307,7 @@ export default function Dashboard() {
     setCheckIns([newCheckIn, ...checkIns]);
     setTodayCheckInCount((prev) => Math.min(prev + 1, 3));
     setSelectedMood(emoji);
+    playNotificationSound(); // Play sound when mood is selected
 
     // Send check-in notification to bonded contacts
     sendCheckInNotification(mood);
