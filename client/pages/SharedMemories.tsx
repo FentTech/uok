@@ -63,12 +63,11 @@ export default function SharedMemories() {
   );
   const [memories, setMemories] = useState<SharedMemory[]>([]);
 
-  const [likedMemories, setLikedMemories] = useState<Record<string, boolean>>(
-    memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {}),
-  );
+  const [likedMemories, setLikedMemories] = useState<Record<string, boolean>>({});
 
-  // Load bonded contacts on mount
+  // Load bonded contacts and shared moments on mount
   useEffect(() => {
+    // Load bonded contacts
     const bondedContactsStr = localStorage.getItem("bondedContacts");
     if (bondedContactsStr) {
       try {
@@ -77,6 +76,34 @@ export default function SharedMemories() {
         console.error("Error loading bonded contacts:", e);
       }
     }
+
+    // Load shared moments from persistent storage
+    const storedMoments = sharedMomentsStorage.getActive();
+    // Convert stored moments to SharedMemory format
+    const convertedMemories: SharedMemory[] = storedMoments.map((m) => ({
+      id: m.id,
+      username: m.username,
+      avatar: m.avatar,
+      mood: m.mood,
+      moodEmoji: m.moodEmoji,
+      timestamp: m.timestamp,
+      caption: m.caption,
+      imageUrl: m.mediaUrl,
+      mediaType: m.mediaType,
+      likes: m.likes,
+      commentsList: m.comments as unknown as Comment[],
+      isLiked: false,
+      visibility: m.visibility,
+      sharedWith: m.sharedWith,
+    }));
+    setMemories(convertedMemories);
+
+    // Initialize liked memories state
+    const initialLikes = convertedMemories.reduce(
+      (acc, m) => ({ ...acc, [m.id]: m.isLiked }),
+      {},
+    );
+    setLikedMemories(initialLikes);
   }, []);
 
   // Load featured ads from localStorage (only images, only verified payments)
