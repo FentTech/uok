@@ -63,7 +63,9 @@ export default function SharedMemories() {
   );
   const [memories, setMemories] = useState<SharedMemory[]>([]);
 
-  const [likedMemories, setLikedMemories] = useState<Record<string, boolean>>({});
+  const [likedMemories, setLikedMemories] = useState<Record<string, boolean>>(
+    {},
+  );
 
   // Load bonded contacts and shared moments on mount
   useEffect(() => {
@@ -215,7 +217,8 @@ export default function SharedMemories() {
 
     try {
       const currentUserEmail = localStorage.getItem("userEmail") || "You";
-      const currentUserName = currentUserEmail === "You" ? "You" : currentUserEmail.split("@")[0];
+      const currentUserName =
+        currentUserEmail === "You" ? "You" : currentUserEmail.split("@")[0];
 
       const newComment: StoredComment = {
         id: Date.now().toString(),
@@ -282,7 +285,8 @@ export default function SharedMemories() {
     try {
       // Get current user info
       const currentUserEmail = localStorage.getItem("userEmail") || "You";
-      const currentUserName = currentUserEmail === "You" ? "You" : currentUserEmail.split("@")[0];
+      const currentUserName =
+        currentUserEmail === "You" ? "You" : currentUserEmail.split("@")[0];
 
       // Save to persistent storage
       const savedMoment = sharedMomentsStorage.add({

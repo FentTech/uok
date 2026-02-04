@@ -101,7 +101,7 @@ export default function Dashboard() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [bondedContacts, setBondedContacts] = useState<any[]>([]);
   const [mediaShareModalOpen, setMediaShareModalOpen] = useState<string | null>(
-    null
+    null,
   );
   const [shareVisibility, setShareVisibility] = useState<
     "personal" | "bonded-contacts" | "community"
@@ -389,9 +389,7 @@ export default function Dashboard() {
 
       // Update media in storage with sharing info
       const contactEmails = selectedContactsToShare
-        .map(
-          (id) => bondedContacts.find((c) => c.id === id)?.email
-        )
+        .map((id) => bondedContacts.find((c) => c.id === id)?.email)
         .filter(Boolean);
 
       mediaStorage.update(item.id, {
@@ -420,7 +418,7 @@ export default function Dashboard() {
       });
 
       alert(
-        `✓ Media shared with ${selectedContactsToShare.length} bonded contact${selectedContactsToShare.length !== 1 ? "s" : ""}!`
+        `✓ Media shared with ${selectedContactsToShare.length} bonded contact${selectedContactsToShare.length !== 1 ? "s" : ""}!`,
       );
     }
 
@@ -1210,7 +1208,7 @@ export default function Dashboard() {
                             <input
                               type="checkbox"
                               checked={selectedContactsToShare.includes(
-                                contact.id
+                                contact.id,
                               )}
                               onChange={(e) => {
                                 if (e.target.checked) {
@@ -1221,8 +1219,8 @@ export default function Dashboard() {
                                 } else {
                                   setSelectedContactsToShare(
                                     selectedContactsToShare.filter(
-                                      (id) => id !== contact.id
-                                    )
+                                      (id) => id !== contact.id,
+                                    ),
                                   );
                                 }
                               }}
@@ -1256,7 +1254,7 @@ export default function Dashboard() {
                   <button
                     onClick={() => {
                       const mediaItem = mediaItems.find(
-                        (m) => m.id === mediaShareModalOpen
+                        (m) => m.id === mediaShareModalOpen,
                       );
                       if (mediaItem) {
                         handleShareMedia(mediaItem);

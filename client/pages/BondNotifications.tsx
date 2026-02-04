@@ -9,7 +9,10 @@ import {
   Trash2,
   Mail,
 } from "lucide-react";
-import { notificationStorage, type StoredNotification } from "../lib/dataStorage";
+import {
+  notificationStorage,
+  type StoredNotification,
+} from "../lib/dataStorage";
 
 export default function BondNotifications() {
   const navigate = useNavigate();
@@ -36,7 +39,7 @@ export default function BondNotifications() {
   const handleMarkAsRead = (id: string) => {
     notificationStorage.markAsRead(id);
     setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
+      notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
 
@@ -49,7 +52,7 @@ export default function BondNotifications() {
   const handleClearAll = () => {
     if (
       window.confirm(
-        "Are you sure you want to delete all notifications? This cannot be undone."
+        "Are you sure you want to delete all notifications? This cannot be undone.",
       )
     ) {
       notificationStorage.clear();
@@ -169,9 +172,9 @@ export default function BondNotifications() {
             {filteredNotifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`border rounded-xl p-4 backdrop-blur-xl transition ${
-                  getNotificationColor(notification.type)
-                } ${!notification.read ? "border-opacity-60" : "border-opacity-30"}`}
+                className={`border rounded-xl p-4 backdrop-blur-xl transition ${getNotificationColor(
+                  notification.type,
+                )} ${!notification.read ? "border-opacity-60" : "border-opacity-30"}`}
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 mt-1">
