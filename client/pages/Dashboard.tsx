@@ -357,7 +357,7 @@ export default function Dashboard() {
     }
   }, [todayCheckInCount]);
 
-  const handleCheckIn = (emoji: string, mood: string) => {
+  const handleCheckIn = async (emoji: string, mood: string) => {
     if (todayCheckInCount >= 3) {
       alert("You've reached your maximum check-ins for today (3)");
       return;
@@ -387,10 +387,10 @@ export default function Dashboard() {
       timeSlot: selectedTimeSlot,
     };
 
-    // Save check-in to persistent storage
+    // Save check-in to persistent storage and Firebase
     const userEmail = localStorage.getItem("userEmail") || "user";
     const userName = userEmail === "user" ? "You" : userEmail.split("@")[0];
-    checkInStorage.add({
+    await checkInStorage.add({
       userEmail,
       userName,
       emoji,
