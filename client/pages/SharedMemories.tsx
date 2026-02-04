@@ -25,6 +25,7 @@ interface SharedMemory {
   commentsList: Comment[];
   isLiked: boolean;
   sharedWith?: string[]; // usernames who can see this
+  visibility?: "everyone" | "bonded-contacts" | "specific-users"; // sharing privacy level
 }
 
 export default function SharedMemories() {
