@@ -31,6 +31,11 @@ import {
   type StoredCheckIn,
 } from "../lib/dataStorage";
 
+// Run cleanup on app load
+if (typeof window !== "undefined") {
+  checkInStorage.cleanupOldCheckIns();
+}
+
 interface CheckIn {
   id: string;
   emoji: string;
