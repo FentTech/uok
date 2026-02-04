@@ -1,0 +1,45 @@
+{
+  "appName": "UOK - Understand Our Knowing",
+  "appId": "com.uok.app",
+  "version": "1.0.0",
+  "description": "UOK is a wellness app that helps you track your daily check-ins, connect with emergency contacts through bonding codes, and share memories with your community.",
+  "shortDescription": "Daily wellness check-ins and emergency contact management",
+  "keywords": ["wellness", "health", "check-in", "emergency contacts", "mental health", "daily tracking"],
+  "category": "Health & Fitness",
+  "developer": {
+    "name": "UOK Team",
+    "email": "support@uok.app",
+    "url": "https://uok.app"
+  },
+  "appStore": {
+    "bundleId": "com.uok.app",
+    "appName": "UOK - Understand Our Knowing",
+    "subtitle": "Daily wellness and emergency contact management",
+    "description": "UOK helps you maintain your wellness by:\n\n✓ Daily mood check-ins with customizable time slots (morning, afternoon, evening)\n✓ Emergency contact bonding through secure bond codes\n✓ Share memories with the community or specific contacts\n✓ Privacy controls - share with everyone, bonded contacts, or specific users\n✓ Connect with partners and discover wellness resources\n\nTake care of yourself and let your loved ones know you're okay.",
+    "privacyUrl": "https://uok.app/privacy",
+    "supportUrl": "https://uok.app/support",
+    "ratingDescription": "This app helps track wellness and emergency contacts"
+  },
+  "googlePlay": {
+    "packageName": "com.uok.app",
+    "appName": "UOK - Understand Our Knowing",
+    "shortDescription": "Daily wellness check-ins and emergency contact management",
+    "fullDescription": "UOK helps you maintain your wellness by:\n\n✓ Daily mood check-ins with customizable time slots (morning, afternoon, evening)\n✓ Emergency contact bonding through secure bond codes\n✓ Share memories with the community or specific contacts\n✓ Privacy controls - share with everyone, bonded contacts, or specific users\n✓ Connect with partners and discover wellness resources\n✓ Secure local storage - your data stays on your device\n\nTake care of yourself and let your loved ones know you're okay.\n\nPrivacy Policy: All user data is stored locally on your device. We don't collect personal information.",
+    "category": "HEALTH_AND_FITNESS",
+    "privacyPolicy": "https://uok.app/privacy",
+    "website": "https://uok.app",
+    "email": "support@uok.app"
+  },
+  "permissions": {
+    "ios": [
+      "NSPhotoLibraryUsageDescription",
+      "NSCameraUsageDescription",
+      "NSMicrophoneUsageDescription"
+    ],
+    "android": [
+      "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.CAMERA"
+    ]
+  }
+}
