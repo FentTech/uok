@@ -253,6 +253,12 @@ export default function SharedMemories() {
         likes: 0,
         commentsList: [],
         isLiked: false,
+        visibility: shareVisibility,
+        sharedWith: shareVisibility === "bonded-contacts"
+          ? bondedContactsForShare.map((c: any) => c.name)
+          : shareVisibility === "specific-users"
+          ? [] // Users would select specific users, defaulting to empty for now
+          : undefined, // "everyone" - no restrictions
       };
 
       // Add to memories
@@ -260,12 +266,18 @@ export default function SharedMemories() {
 
       // Reset form
       setCaption("");
+      setShareVisibility("everyone");
 
       // Clear the location state by replacing history
       window.history.replaceState({}, document.title, window.location.pathname);
 
       // Show success message
-      alert("✓ Memory shared with the community!");
+      const visibilityText = shareVisibility === "everyone"
+        ? "the entire community"
+        : shareVisibility === "bonded-contacts"
+        ? `${bondedContactsForShare.length} bonded contact${bondedContactsForShare.length !== 1 ? 's' : ''}`
+        : "selected users";
+      alert(`✓ Memory shared with ${visibilityText}!`);
     } catch (error) {
       console.error("Error sharing memory:", error);
       alert("Failed to share memory. Please try again.");
