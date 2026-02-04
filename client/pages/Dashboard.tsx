@@ -978,9 +978,9 @@ export default function Dashboard() {
                         )}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition flex items-center justify-center gap-2">
                           <button
-                            onClick={() => shareToMemories(item)}
+                            onClick={() => openMediaShareModal(item)}
                             className="opacity-0 group-hover:opacity-100 transition bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg"
-                            title="Share to community"
+                            title="Share media"
                           >
                             <Share2 className="w-5 h-5" />
                           </button>
