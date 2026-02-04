@@ -1075,6 +1075,42 @@ export default function Dashboard() {
               </div>
             </div>
 
+            {/* Bonded Family Check-ins - Futuristic */}
+            <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-2xl p-6 hover:border-purple-400/60 transition">
+              <h3 className="text-lg font-bold text-purple-100 mb-4 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-purple-400" />
+                Bonded Family Check-ins
+              </h3>
+
+              <div className="space-y-3">
+                {bondedCheckIns && bondedCheckIns.length > 0 ? (
+                  bondedCheckIns.map((checkIn) => (
+                    <div
+                      key={checkIn.id}
+                      className="flex items-center gap-3 p-3 bg-purple-500/10 rounded-lg border border-purple-400/20 hover:border-purple-400/40 transition"
+                    >
+                      <span className="text-2xl">{checkIn.emoji}</span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-purple-100 text-sm">
+                          {checkIn.userName}
+                        </p>
+                        <p className="text-xs text-purple-300">
+                          {checkIn.mood}
+                        </p>
+                        <p className="text-xs text-purple-400/60">
+                          {checkIn.timestamp}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-purple-300/80 text-sm">
+                    No check-ins from bonded members yet today
+                  </p>
+                )}
+              </div>
+            </div>
+
             {/* Bonded Emergency Contacts - Futuristic */}
             <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
               <h3 className="text-lg font-bold text-cyan-100 mb-4">
