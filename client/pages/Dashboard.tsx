@@ -274,6 +274,21 @@ export default function Dashboard() {
     }
   }, []);
 
+  // Auto-refresh bonded check-ins every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const bondedEmails = bondedContacts.map((c) => c.email);
+      if (bondedEmails.length > 0) {
+        const updatedCheckIns = checkInStorage.getTodayFromBondedContacts(
+          bondedEmails
+        );
+        setBondedCheckIns(updatedCheckIns);
+      }
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [bondedContacts]);
+
   // Setup missed check-in alerts (10 minutes) - Alert bonded contacts if 3rd check-in is missed
   useEffect(() => {
     if (todayCheckInCount >= 2 && hasInitializedRef.current) {
