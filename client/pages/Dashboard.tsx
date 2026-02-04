@@ -752,6 +752,7 @@ export default function Dashboard() {
                               </p>
                             </div>
                             <button
+                              onClick={playNotificationSound}
                               className="flex-shrink-0 p-2 bg-purple-100 hover:bg-purple-200 text-purple-600 rounded-lg transition"
                               title="Play music"
                             >
