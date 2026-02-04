@@ -292,7 +292,7 @@ export const notificationHelpers = {
   sendEmail: (
     recipientEmail: string,
     subject: string,
-    message: string
+    message: string,
   ): void => {
     // In production, this would call your backend API:
     // POST /api/emails/send
@@ -345,7 +345,7 @@ export const notificationHelpers = {
       notificationHelpers.sendEmail(
         contact.email,
         "UOK: Check-in Confirmation",
-        `${userEmail} just checked in on UOK feeling ${mood}. They're doing okay! 💚`
+        `${userEmail} just checked in on UOK feeling ${mood}. They're doing okay! 💚`,
       );
     });
   },
@@ -463,7 +463,7 @@ export const checkInStorage = {
     if (deletedCount > 0) {
       localStorage.setItem("uok_checkins", JSON.stringify(filtered));
       console.log(
-        `🧹 Cleaned up ${deletedCount} check-in(s) older than 72 hours`
+        `🧹 Cleaned up ${deletedCount} check-in(s) older than 72 hours`,
       );
     }
 

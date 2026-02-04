@@ -121,8 +121,7 @@ export default function UserProfile() {
                   • Check-in confirmations will be sent to your email
                   <br />
                   • Emergency alerts about missed check-ins
-                  <br />
-                  • Your bonded contacts can reach you via the app
+                  <br />• Your bonded contacts can reach you via the app
                 </p>
               </div>
             </div>
@@ -196,7 +195,9 @@ export default function UserProfile() {
                 💾 What Gets Deleted
               </p>
               <ul className="text-cyan-300 text-sm space-y-1">
-                <li>• Individual check-in records (mood, timestamp, details)</li>
+                <li>
+                  • Individual check-in records (mood, timestamp, details)
+                </li>
                 <li>• Check-in notifications older than 72 hours</li>
                 <li>• Temporary session data</li>
               </ul>
