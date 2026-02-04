@@ -29,6 +29,7 @@ interface CheckIn {
   mood: string;
   time: string;
   date: string;
+  timeSlot?: "morning" | "afternoon" | "evening"; // 8am, 2pm, 8pm
 }
 
 interface MediaItem {
