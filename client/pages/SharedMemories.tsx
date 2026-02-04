@@ -61,49 +61,7 @@ export default function SharedMemories() {
   const [bondedContactsForShare, setBondedContactsForShare] = useState<any[]>(
     [],
   );
-  const [memories, setMemories] = useState<SharedMemory[]>([
-    {
-      id: "1",
-      username: "Sarah Mitchell",
-      avatar: "S",
-      mood: "Great",
-      moodEmoji: "😊",
-      timestamp: "2 hours ago",
-      caption:
-        "Had an amazing day at the park! The weather was perfect and I got to spend time with my loved ones. Feeling so grateful! 🌳",
-      imageUrl:
-        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2306b6d4' width='400' height='300'/%3E%3Ctext x='200' y='150' font-size='48' fill='white' text-anchor='middle' dominant-baseline='middle'%3E🌳 Park Day%3C/text%3E%3C/svg%3E",
-      likes: 124,
-      commentsList: [],
-      isLiked: false,
-    },
-    {
-      id: "2",
-      username: "James Chen",
-      avatar: "J",
-      mood: "Excited",
-      moodEmoji: "🎉",
-      timestamp: "5 hours ago",
-      caption:
-        "Just finished my first 5K run! So proud of myself for pushing through. Never thought I could do it! 🏃",
-      likes: 89,
-      commentsList: [],
-      isLiked: true,
-    },
-    {
-      id: "3",
-      username: "Emma Rodriguez",
-      avatar: "E",
-      mood: "Happy",
-      moodEmoji: "😍",
-      timestamp: "8 hours ago",
-      caption:
-        "Morning meditation session was incredible. Starting the day feeling centered and at peace. 🧘‍♀️",
-      likes: 156,
-      commentsList: [],
-      isLiked: false,
-    },
-  ]);
+  const [memories, setMemories] = useState<SharedMemory[]>([]);
 
   const [likedMemories, setLikedMemories] = useState<Record<string, boolean>>(
     memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {}),
