@@ -185,6 +185,9 @@ export default function SharedMemories() {
   };
 
   const deleteMemory = (id: string) => {
+    // Mark as deleted in persistent storage
+    sharedMomentsStorage.delete(id);
+    // Update local state
     setMemories(memories.filter((m) => m.id !== id));
   };
 
