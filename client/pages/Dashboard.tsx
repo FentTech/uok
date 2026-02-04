@@ -375,9 +375,9 @@ export default function Dashboard() {
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-rose-50">
-      {/* Top Navigation - Warm & Inviting */}
-      <nav className="bg-white/70 backdrop-blur-xl border-b border-orange-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-900 to-slate-950">
+      {/* Top Navigation - Futuristic Glassmorphism */}
+      <nav className="bg-white/10 backdrop-blur-xl border-b border-cyan-400/20 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 bg-gradient-to-br from-red-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-400/50 group-hover:shadow-orange-400/100 transition">
