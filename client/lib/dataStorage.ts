@@ -118,7 +118,7 @@ export const mediaStorage = {
   shareWith: (
     mediaId: string,
     bondCodes: string[],
-    visibility: "bonded-contacts" | "community"
+    visibility: "bonded-contacts" | "community",
   ): boolean => {
     const media = mediaStorage.getActive().find((m) => m.id === mediaId);
     if (media) {
@@ -187,7 +187,9 @@ export const sharedMomentsStorage = {
     }
   },
 
-  add: (moment: Omit<StoredSharedMoment, "id" | "createdAt">): StoredSharedMoment => {
+  add: (
+    moment: Omit<StoredSharedMoment, "id" | "createdAt">,
+  ): StoredSharedMoment => {
     const allMoments = sharedMomentsStorage.getAll();
     const newMoment: StoredSharedMoment = {
       ...moment,
@@ -199,7 +201,10 @@ export const sharedMomentsStorage = {
     return newMoment;
   },
 
-  update: (id: string, updates: Partial<StoredSharedMoment>): StoredSharedMoment | null => {
+  update: (
+    id: string,
+    updates: Partial<StoredSharedMoment>,
+  ): StoredSharedMoment | null => {
     const allMoments = sharedMomentsStorage.getAll();
     const index = allMoments.findIndex((m) => m.id === id);
     if (index !== -1) {
@@ -236,13 +241,14 @@ export const sharedMomentsStorage = {
 
   // Get only active (not deleted) moments
   getActive: (): StoredSharedMoment[] => {
-    return sharedMomentsStorage
-      .getAll()
-      .filter((m) => !m.deletedAt);
+    return sharedMomentsStorage.getAll().filter((m) => !m.deletedAt);
   },
 
   // Get moments visible to user (by visibility setting)
-  getVisibleTo: (userEmail: string, bondedEmails?: string[]): StoredSharedMoment[] => {
+  getVisibleTo: (
+    userEmail: string,
+    bondedEmails?: string[],
+  ): StoredSharedMoment[] => {
     return sharedMomentsStorage.getActive().filter((m) => {
       if (m.visibility === "everyone") return true;
       if (m.visibility === "community") return true;
@@ -250,13 +256,15 @@ export const sharedMomentsStorage = {
         m.visibility === "bonded-contacts" &&
         bondedEmails?.some(
           (email) =>
-            m.sharedWith?.includes(email) ||
-            m.sharedWith?.includes(userEmail)
+            m.sharedWith?.includes(email) || m.sharedWith?.includes(userEmail),
         )
       ) {
         return true;
       }
-      if (m.visibility === "specific-users" && m.sharedWith?.includes(userEmail)) {
+      if (
+        m.visibility === "specific-users" &&
+        m.sharedWith?.includes(userEmail)
+      ) {
         return true;
       }
       return false;
@@ -385,9 +393,7 @@ export const checkInStorage = {
   },
 
   // Get today's check-ins from bonded contacts
-  getTodayFromBondedContacts: (
-    bondedEmails: string[]
-  ): StoredCheckIn[] => {
+  getTodayFromBondedContacts: (bondedEmails: string[]): StoredCheckIn[] => {
     const today = new Date().toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",

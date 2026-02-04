@@ -103,7 +103,7 @@ export default function Dashboard() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [bondedContacts, setBondedContacts] = useState<any[]>([]);
   const [mediaShareModalOpen, setMediaShareModalOpen] = useState<string | null>(
-    null
+    null,
   );
   const [shareVisibility, setShareVisibility] = useState<
     "personal" | "bonded-contacts" | "community"
@@ -234,9 +234,8 @@ export default function Dashboard() {
       // Load bonded contacts' check-ins
       if (bondedContactsList.length > 0) {
         const bondedEmails = bondedContactsList.map((c) => c.email);
-        const bondedCheckins = checkInStorage.getTodayFromBondedContacts(
-          bondedEmails
-        );
+        const bondedCheckins =
+          checkInStorage.getTodayFromBondedContacts(bondedEmails);
         setBondedCheckIns(bondedCheckins);
       }
 
@@ -279,9 +278,8 @@ export default function Dashboard() {
     const interval = setInterval(() => {
       const bondedEmails = bondedContacts.map((c) => c.email);
       if (bondedEmails.length > 0) {
-        const updatedCheckIns = checkInStorage.getTodayFromBondedContacts(
-          bondedEmails
-        );
+        const updatedCheckIns =
+          checkInStorage.getTodayFromBondedContacts(bondedEmails);
         setBondedCheckIns(updatedCheckIns);
       }
     }, 10000); // 10 seconds
@@ -438,9 +436,7 @@ export default function Dashboard() {
 
       // Update media in storage with sharing info
       const contactEmails = selectedContactsToShare
-        .map(
-          (id) => bondedContacts.find((c) => c.id === id)?.email
-        )
+        .map((id) => bondedContacts.find((c) => c.id === id)?.email)
         .filter(Boolean);
 
       mediaStorage.update(item.id, {
@@ -469,7 +465,7 @@ export default function Dashboard() {
       });
 
       alert(
-        `✓ Media shared with ${selectedContactsToShare.length} bonded contact${selectedContactsToShare.length !== 1 ? "s" : ""}!`
+        `✓ Media shared with ${selectedContactsToShare.length} bonded contact${selectedContactsToShare.length !== 1 ? "s" : ""}!`,
       );
     }
 
@@ -580,9 +576,8 @@ export default function Dashboard() {
 
   const refreshBondedCheckIns = () => {
     const bondedEmails = bondedContacts.map((c) => c.email);
-    const updatedCheckIns = checkInStorage.getTodayFromBondedContacts(
-      bondedEmails
-    );
+    const updatedCheckIns =
+      checkInStorage.getTodayFromBondedContacts(bondedEmails);
     setBondedCheckIns(updatedCheckIns);
   };
 
@@ -1312,7 +1307,7 @@ export default function Dashboard() {
                             <input
                               type="checkbox"
                               checked={selectedContactsToShare.includes(
-                                contact.id
+                                contact.id,
                               )}
                               onChange={(e) => {
                                 if (e.target.checked) {
@@ -1323,8 +1318,8 @@ export default function Dashboard() {
                                 } else {
                                   setSelectedContactsToShare(
                                     selectedContactsToShare.filter(
-                                      (id) => id !== contact.id
-                                    )
+                                      (id) => id !== contact.id,
+                                    ),
                                   );
                                 }
                               }}
@@ -1358,7 +1353,7 @@ export default function Dashboard() {
                   <button
                     onClick={() => {
                       const mediaItem = mediaItems.find(
-                        (m) => m.id === mediaShareModalOpen
+                        (m) => m.id === mediaShareModalOpen,
                       );
                       if (mediaItem) {
                         handleShareMedia(mediaItem);
