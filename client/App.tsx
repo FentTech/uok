@@ -15,6 +15,7 @@ import WellnessInsights from "./pages/WellnessInsights";
 import SharedMemories from "./pages/SharedMemories";
 import FeaturedPartners from "./pages/FeaturedPartners";
 import BondNotifications from "./pages/BondNotifications";
+import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/bond-contacts" element={<BondContacts />} />
             <Route path="/bond-notifications" element={<BondNotifications />} />
+            <Route path="/user-profile" element={<UserProfile />} />
             <Route path="/wellness-insights" element={<WellnessInsights />} />
             <Route path="/shared-memories" element={<SharedMemories />} />
             <Route path="/featured-partners" element={<FeaturedPartners />} />
