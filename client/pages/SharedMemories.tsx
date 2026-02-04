@@ -603,7 +603,7 @@ export default function SharedMemories() {
 
               {/* Add Comment Form */}
               {openCommentId === memory.id && (
-                <div className="px-6 py-4 border-t border-slate-100 bg-cyan-50">
+                <div className="px-6 py-4 border-t border-slate-100 bg-orange-50">
                   <div className="flex gap-3">
                     <input
                       type="text"
@@ -615,11 +615,11 @@ export default function SharedMemories() {
                         }
                       }}
                       placeholder="Add a comment..."
-                      className="flex-1 px-3 py-2 bg-white border border-cyan-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      className="flex-1 px-3 py-2 bg-white border border-orange-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                     <button
                       onClick={() => handleAddComment(memory.id)}
-                      className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition"
+                      className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition"
                     >
                       Post
                     </button>
