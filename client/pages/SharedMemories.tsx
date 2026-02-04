@@ -184,7 +184,7 @@ export default function SharedMemories() {
         imageUrl: state?.mediaUrl,
         mediaType: state?.mediaType,
         likes: 0,
-        comments: 0,
+        commentsList: [],
         isLiked: false,
       };
 
