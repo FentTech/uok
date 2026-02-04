@@ -111,6 +111,7 @@ export default function Dashboard() {
   const [selectedContactsToShare, setSelectedContactsToShare] = useState<
     string[]
   >([]);
+  const [bondedCheckIns, setBondedCheckIns] = useState<StoredCheckIn[]>([]);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
