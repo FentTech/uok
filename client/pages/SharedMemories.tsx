@@ -39,6 +39,8 @@ export default function SharedMemories() {
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
+  const [shareVisibility, setShareVisibility] = useState<"everyone" | "bonded-contacts" | "specific-users">("everyone");
+  const [bondedContactsForShare, setBondedContactsForShare] = useState<any[]>([]);
   const [memories, setMemories] = useState<SharedMemory[]>([
     {
       id: "1",
