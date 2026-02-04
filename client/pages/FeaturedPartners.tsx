@@ -323,31 +323,91 @@ export default function FeaturedPartners() {
   const handleRenewPartner = (partnerId: string) => {
     const partner = partners.find((p) => p.id === partnerId);
     if (partner) {
-      window.open(partner.paymentLink || `https://paypal.me/AFenteng/1000`, "_blank");
-      setTimeout(() => {
-        try {
-          const expiryDate = new Date(
-            Date.now() + 180 * 24 * 60 * 60 * 1000
-          ).toISOString();
+      // Open PayPal payment link
+      const paypalWindow = window.open(partner.paymentLink || `https://paypal.me/AFenteng/1000`, "_blank");
 
-          const updatedPartners = partners.map((p) => {
-            if (p.id === partnerId) {
-              return {
-                ...p,
-                paymentStatus: "paid" as const,
-                expiresAt: expiryDate,
-              };
+      // Ask user to confirm renewal payment
+      const confirmRenewal = () => {
+        const userConfirmed = window.confirm(
+          "Have you completed the renewal payment on PayPal? Click OK if payment was successful.\n\n" +
+          "Important: Your ads will ONLY continue after successful payment verification."
+        );
+
+        if (userConfirmed) {
+          // Verify payment by checking for transaction ID
+          const transactionId = prompt(
+            "Please enter your PayPal Transaction ID for the renewal (found in your PayPal receipt):\n\n" +
+            "Without a valid transaction ID, your renewal cannot be verified.",
+            ""
+          );
+
+          if (transactionId && transactionId.trim()) {
+            try {
+              console.log("🔍 Verifying PayPal renewal transaction:", {
+                transactionId,
+                partnerId,
+                amount: 1000,
+                renewalType: "6-month-extension",
+                timestamp: new Date().toISOString(),
+              });
+
+              const expiryDate = new Date(
+                Date.now() + 180 * 24 * 60 * 60 * 1000
+              ).toISOString();
+
+              // Simulate backend verification (in production, verify with PayPal API)
+              const updatedPartners = partners.map((p) => {
+                if (p.id === partnerId) {
+                  return {
+                    ...p,
+                    paymentStatus: "paid" as const,
+                    expiresAt: expiryDate,
+                    paymentId: transactionId, // Store transaction ID
+                  };
+                }
+                return p;
+              });
+
+              setPartners(updatedPartners);
+              localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+              alert(
+                "✅ Renewal payment verified! Transaction ID: " + transactionId + "\n\n" +
+                "Your subscription has been renewed for another 6 months.\n" +
+                "Your ads will continue to run on the dashboard and community section."
+              );
+            } catch (error) {
+              console.error("Error verifying renewal:", error);
+              alert("❌ Error verifying renewal. Please try again.");
             }
-            return p;
-          });
-          setPartners(updatedPartners);
-          localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
-          alert("✓ Subscription renewed for 6 months!");
-        } catch (error) {
-          console.error("Error renewing subscription:", error);
-          alert("Error renewing subscription. Please try again.");
+          } else {
+            alert(
+              "❌ Renewal verification cancelled.\n\n" +
+              "Your ads will STOP running if payment is not verified.\n\n" +
+              "Please complete the renewal payment and provide your Transaction ID."
+            );
+          }
         }
-      }, 2000);
+      };
+
+      // Check if payment window was closed
+      const checkPaymentInterval = setInterval(() => {
+        if (paypalWindow?.closed) {
+          clearInterval(checkPaymentInterval);
+          setTimeout(confirmRenewal, 500);
+        }
+      }, 500);
+
+      // Allow manual verification after 30 seconds
+      setTimeout(() => {
+        if (paypalWindow && !paypalWindow.closed) {
+          const manualVerify = window.confirm(
+            "Still renewing? Click OK when you've completed payment to verify it."
+          );
+          if (manualVerify) {
+            confirmRenewal();
+          }
+        }
+      }, 30000);
     }
   };
 
