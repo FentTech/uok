@@ -351,17 +351,36 @@ export default function Dashboard() {
     }
 
     const now = new Date();
+    const timestamp = now.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const date = now.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+
     const newCheckIn: CheckIn = {
       id: Date.now().toString(),
       emoji,
       mood,
-      time: now.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      time: timestamp,
       date: "Today",
       timeSlot: selectedTimeSlot,
     };
+
+    // Save check-in to persistent storage
+    const userEmail = localStorage.getItem("userEmail") || "user";
+    const userName = userEmail === "user" ? "You" : userEmail.split("@")[0];
+    checkInStorage.add({
+      userEmail,
+      userName,
+      emoji,
+      mood,
+      timestamp,
+      date,
+      timeSlot: selectedTimeSlot,
+    });
 
     setCheckIns([newCheckIn, ...checkIns]);
     setTodayCheckInCount((prev) => Math.min(prev + 1, 3));
