@@ -541,20 +541,20 @@ export default function Dashboard() {
 
       {/* Notifications Panel */}
       {notifications.length > 0 && (
-        <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border-b border-cyan-400/20 px-4 sm:px-6 lg:px-8 py-3">
+        <div className="bg-gradient-to-r from-orange-100/50 to-rose-100/50 border-b border-orange-200 px-4 sm:px-6 lg:px-8 py-3">
           <div className="max-w-7xl mx-auto">
             {notifications.slice(0, 2).map((notif) => (
               <div
                 key={notif.id}
-                className="flex items-center justify-between bg-white/5 rounded-lg p-3 mb-2 backdrop-blur-sm border border-cyan-400/20"
+                className="flex items-center justify-between bg-white/70 rounded-lg p-3 mb-2 backdrop-blur-sm border border-orange-200"
               >
                 <div className="flex items-center gap-3">
-                  <Zap className="w-5 h-5 text-yellow-400" />
+                  <Zap className="w-5 h-5 text-orange-500" />
                   <div>
-                    <p className="text-cyan-300 text-sm font-medium">
+                    <p className="text-orange-800 text-sm font-medium">
                       {notif.message}
                     </p>
-                    <p className="text-cyan-500/60 text-xs">
+                    <p className="text-orange-500/60 text-xs">
                       {notif.timestamp}
                     </p>
                   </div>
@@ -565,7 +565,7 @@ export default function Dashboard() {
                       prev.filter((n) => n.id !== notif.id),
                     )
                   }
-                  className="text-cyan-500/60 hover:text-cyan-400"
+                  className="text-orange-500/60 hover:text-orange-600"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -579,10 +579,10 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Card */}
         <div className="mb-8 text-center">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent mb-2">
             Welcome Back! 👋
           </h1>
-          <p className="text-cyan-300/80">
+          <p className="text-orange-700/80">
             How are you feeling today? Let your contacts know you're okay.
           </p>
         </div>
