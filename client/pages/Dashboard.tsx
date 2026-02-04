@@ -710,25 +710,21 @@ export default function Dashboard() {
 
                     <div className="border-b border-cyan-400/20 pb-4">
                       <h3 className="text-cyan-200 font-semibold mb-2">
-                        Privacy
+                        Account
                       </h3>
-                      <select className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-3 py-2 text-cyan-100 text-sm">
-                        <option>Public profile</option>
-                        <option>Friends only</option>
-                        <option>Private</option>
-                      </select>
+                      <Link
+                        to="/user-profile"
+                        onClick={() => setSettingsOpen(false)}
+                        className="block w-full px-4 py-2 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 hover:text-cyan-200 rounded-lg font-medium text-sm transition border border-cyan-400/30 text-center"
+                      >
+                        👤 Manage Profile
+                      </Link>
                     </div>
 
                     <div className="pt-4 space-y-2">
                       <button
                         onClick={() => setSettingsOpen(false)}
                         className="w-full py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium transition"
-                      >
-                        Save Settings
-                      </button>
-                      <button
-                        onClick={() => setSettingsOpen(false)}
-                        className="w-full py-2 bg-white/10 hover:bg-white/20 text-cyan-300 rounded-lg font-medium transition"
                       >
                         Close
                       </button>
