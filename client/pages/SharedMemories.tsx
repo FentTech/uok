@@ -256,31 +256,74 @@ export default function SharedMemories() {
     setShareLoading(true);
 
     try {
-      // Create new memory object
-      const newMemory: SharedMemory = {
-        id: Date.now().toString(),
-        username: "You",
-        avatar: "Y",
+      // Get current user info
+      const currentUserEmail = localStorage.getItem("userEmail") || "You";
+      const currentUserName = currentUserEmail === "You" ? "You" : currentUserEmail.split("@")[0];
+
+      // Save to persistent storage
+      const savedMoment = sharedMomentsStorage.add({
+        username: currentUserName,
+        email: currentUserEmail,
+        avatar: currentUserName.charAt(0).toUpperCase(),
         mood: state?.mood || "Great",
         moodEmoji: "😊",
         timestamp: "just now",
+        date: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
         caption: caption || "Shared a moment from their day",
-        imageUrl: state?.mediaUrl,
+        mediaUrl: state?.mediaUrl,
         mediaType: state?.mediaType,
         likes: 0,
-        commentsList: [],
-        isLiked: false,
+        comments: [],
         visibility: shareVisibility,
         sharedWith:
           shareVisibility === "bonded-contacts"
-            ? bondedContactsForShare.map((c: any) => c.name)
+            ? bondedContactsForShare.map((c: any) => c.email)
             : shareVisibility === "specific-users"
               ? [] // Users would select specific users, defaulting to empty for now
               : undefined, // "everyone" - no restrictions
+      });
+
+      // Convert and add to local state
+      const newMemory: SharedMemory = {
+        id: savedMoment.id,
+        username: savedMoment.username,
+        avatar: savedMoment.avatar,
+        mood: savedMoment.mood,
+        moodEmoji: savedMoment.moodEmoji,
+        timestamp: savedMoment.timestamp,
+        caption: savedMoment.caption,
+        imageUrl: savedMoment.mediaUrl,
+        mediaType: savedMoment.mediaType,
+        likes: savedMoment.likes,
+        commentsList: [],
+        isLiked: false,
+        visibility: shareVisibility,
+        sharedWith: savedMoment.sharedWith,
       };
 
-      // Add to memories
       setMemories((prev) => [newMemory, ...prev]);
+
+      // Send notifications to bonded contacts if shared with them
+      if (shareVisibility === "bonded-contacts") {
+        bondedContactsForShare.forEach((contact: any) => {
+          notificationStorage.add({
+            type: "media-shared",
+            message: `${currentUserName} shared a ${state?.mediaType || "moment"} with you 📸`,
+            timestamp: new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            date: new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            }),
+            fromContact: contact.email,
+          });
+        });
+      }
 
       // Reset form
       setCaption("");
