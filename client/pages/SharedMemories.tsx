@@ -161,6 +161,55 @@ export default function SharedMemories() {
     m.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleAddComment = (memoryId: string) => {
+    if (!commentText.trim()) {
+      alert("Please enter a comment");
+      return;
+    }
+
+    try {
+      const newComment: Comment = {
+        id: Date.now().toString(),
+        username: "You",
+        avatar: "Y",
+        text: commentText,
+        timestamp: "just now",
+      };
+
+      setMemories((prev) =>
+        prev.map((m) =>
+          m.id === memoryId
+            ? { ...m, commentsList: [newComment, ...m.commentsList] }
+            : m
+        )
+      );
+
+      setCommentText("");
+      setOpenCommentId(null);
+    } catch (error) {
+      console.error("Error adding comment:", error);
+      alert("Failed to add comment. Please try again.");
+    }
+  };
+
+  const handleDeleteComment = (memoryId: string, commentId: string) => {
+    try {
+      setMemories((prev) =>
+        prev.map((m) =>
+          m.id === memoryId
+            ? {
+                ...m,
+                commentsList: m.commentsList.filter((c) => c.id !== commentId),
+              }
+            : m
+        )
+      );
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      alert("Failed to delete comment. Please try again.");
+    }
+  };
+
   const handleShareMemory = async () => {
     const state = location.state as { mediaUrl?: string; mediaType?: "photo" | "video"; mood?: string } | null;
 
