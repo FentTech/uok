@@ -3,6 +3,14 @@ import { Link, useLocation } from "react-router-dom";
 import { Heart, Share2, MessageCircle, ThumbsUp, Trash2, Image, Video, Search, X } from "lucide-react";
 import RotatingAds from "../components/RotatingAds";
 
+interface Comment {
+  id: string;
+  username: string;
+  avatar: string;
+  text: string;
+  timestamp: string;
+}
+
 interface SharedMemory {
   id: string;
   username: string;
@@ -14,8 +22,9 @@ interface SharedMemory {
   imageUrl?: string;
   mediaType?: "photo" | "video";
   likes: number;
-  comments: number;
+  commentsList: Comment[];
   isLiked: boolean;
+  sharedWith?: string[]; // usernames who can see this
 }
 
 export default function SharedMemories() {
@@ -24,7 +33,11 @@ export default function SharedMemories() {
   const [shareLoading, setShareLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [fullscreenVideo, setFullscreenVideo] = useState<string | null>(null);
+  const [adTimer, setAdTimer] = useState(30); // 30 second timer for video ads
   const [featuredAds, setFeaturedAds] = useState<any[]>([]);
+  const [openCommentId, setOpenCommentId] = useState<string | null>(null);
+  const [commentText, setCommentText] = useState("");
+  const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
   const [memories, setMemories] = useState<SharedMemory[]>([
     {
       id: "1",
@@ -38,7 +51,7 @@ export default function SharedMemories() {
       imageUrl:
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2306b6d4' width='400' height='300'/%3E%3Ctext x='200' y='150' font-size='48' fill='white' text-anchor='middle' dominant-baseline='middle'%3E🌳 Park Day%3C/text%3E%3C/svg%3E",
       likes: 124,
-      comments: 18,
+      commentsList: [],
       isLiked: false,
     },
     {
@@ -51,7 +64,7 @@ export default function SharedMemories() {
       caption:
         "Just finished my first 5K run! So proud of myself for pushing through. Never thought I could do it! 🏃",
       likes: 89,
-      comments: 12,
+      commentsList: [],
       isLiked: true,
     },
     {
@@ -64,7 +77,7 @@ export default function SharedMemories() {
       caption:
         "Morning meditation session was incredible. Starting the day feeling centered and at peace. 🧘‍♀️",
       likes: 156,
-      comments: 24,
+      commentsList: [],
       isLiked: false,
     },
   ]);
