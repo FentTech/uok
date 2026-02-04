@@ -586,6 +586,46 @@ export default function Dashboard() {
     setBondedCheckIns(updatedCheckIns);
   };
 
+  const addDemoBondedCheckIns = () => {
+    if (bondedContacts.length === 0) {
+      alert("Please add bonded contacts first!");
+      return;
+    }
+
+    const moodOptions = ["Great", "Good", "Okay", "Happy", "Excited"];
+    const emojiOptions = ["😊", "🙂", "😑", "😍", "🎉"];
+
+    // Add demo check-ins for each bonded contact
+    bondedContacts.forEach((contact: any, index: number) => {
+      const mood = moodOptions[index % moodOptions.length];
+      const emoji = emojiOptions[index % emojiOptions.length];
+      const now = new Date();
+      const time = new Date(now.getTime() - (index + 1) * 30 * 60000); // Stagger by 30 mins
+
+      checkInStorage.add({
+        userEmail: contact.email,
+        userName: contact.name,
+        emoji: emoji,
+        mood: mood,
+        timestamp: time.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        date: now.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+        timeSlot: index % 2 === 0 ? "morning" : "afternoon",
+      });
+    });
+
+    // Refresh the display
+    refreshBondedCheckIns();
+    alert(
+      `✓ Demo check-ins added for ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}!`
+    );
+  };
+
   const status = checkInStatus();
   const StatusIcon = status.icon;
 
