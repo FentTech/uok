@@ -332,7 +332,7 @@ export default function SharedMemories() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search users by username..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-cyan-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-10 pr-4 py-3 bg-white border border-orange-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
 
