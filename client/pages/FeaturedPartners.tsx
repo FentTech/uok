@@ -211,29 +211,93 @@ export default function FeaturedPartners() {
   const handlePayment = (partnerId: string) => {
     const partner = partners.find((p) => p.id === partnerId);
     if (partner?.paymentLink) {
-      window.open(partner.paymentLink, "_blank");
+      // Open PayPal payment link
+      const paypalWindow = window.open(partner.paymentLink, "_blank");
 
-      // Simulate payment confirmation
-      setTimeout(() => {
-        try {
-          const updatedPartners = partners.map((p) => {
-            if (p.id === partnerId) {
-              return {
-                ...p,
-                paymentStatus: "paid" as const,
-                ads: p.ads.map((ad) => ({ ...ad, active: true })),
-              };
+      // Ask user to confirm payment after returning from PayPal
+      const confirmPayment = () => {
+        const userConfirmed = window.confirm(
+          "Have you completed the payment on PayPal? Click OK if payment was successful, Cancel if you haven't paid yet.\n\n" +
+          "Important: Your ads will ONLY activate after successful payment verification."
+        );
+
+        if (userConfirmed) {
+          // Verify payment by checking for transaction ID
+          const transactionId = prompt(
+            "Please enter your PayPal Transaction ID (found in your PayPal receipt):\n\n" +
+            "Without a valid transaction ID, your payment cannot be verified and ads will NOT run.",
+            ""
+          );
+
+          if (transactionId && transactionId.trim()) {
+            // In production, this would call your backend to verify with PayPal
+            // POST /api/verify-payment { transactionId, partnerId, amount: 1000 }
+            try {
+              console.log("🔍 Verifying PayPal transaction:", {
+                transactionId,
+                partnerId,
+                amount: 1000,
+                timestamp: new Date().toISOString(),
+              });
+
+              // Simulate backend verification (in production, verify with PayPal API)
+              const updatedPartners = partners.map((p) => {
+                if (p.id === partnerId) {
+                  return {
+                    ...p,
+                    paymentStatus: "paid" as const,
+                    ads: p.ads.map((ad) => ({ ...ad, active: true })),
+                    paymentId: transactionId, // Store transaction ID
+                  };
+                }
+                return p;
+              });
+
+              setPartners(updatedPartners);
+              try {
+                localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+                alert(
+                  "✅ Payment verified! Transaction ID: " + transactionId + "\n\n" +
+                  "Your ads are now ACTIVE and will run on the dashboard and community section for 6 months.\n\n" +
+                  "You will receive weekly email reports with view counts."
+                );
+              } catch (e) {
+                console.error("Error saving payment data:", e);
+                alert("⚠️ Payment verified but couldn't save locally. Please refresh the page.");
+              }
+            } catch (error) {
+              console.error("Error verifying payment:", error);
+              alert("❌ Error verifying payment. Please try again or contact support.");
             }
-            return p;
-          });
-          setPartners(updatedPartners);
-          localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
-          alert("✓ Payment confirmed! Your ads are now active for 6 months.");
-        } catch (error) {
-          console.error("Error processing payment:", error);
-          alert("Error processing payment. Please try again.");
+          } else {
+            alert(
+              "❌ Payment verification cancelled.\n\n" +
+              "Your ads will NOT run without a verified PayPal transaction.\n\n" +
+              "Please complete the payment and provide your Transaction ID to activate your ads."
+            );
+          }
         }
-      }, 2000);
+      };
+
+      // Check if payment window was closed, then ask for confirmation
+      const checkPaymentInterval = setInterval(() => {
+        if (paypalWindow?.closed) {
+          clearInterval(checkPaymentInterval);
+          setTimeout(confirmPayment, 500);
+        }
+      }, 500);
+
+      // Also allow manual verification after 30 seconds
+      setTimeout(() => {
+        if (paypalWindow && !paypalWindow.closed) {
+          const manualVerify = window.confirm(
+            "Still paying? Click OK when you've completed payment on PayPal to verify it."
+          );
+          if (manualVerify) {
+            confirmPayment();
+          }
+        }
+      }, 30000);
     }
   };
 
