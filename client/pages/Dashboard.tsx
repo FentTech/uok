@@ -280,12 +280,22 @@ export default function Dashboard() {
 
   // Auto-refresh bonded check-ins every 10 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       const bondedEmails = bondedContacts.map((c) => c.email);
       if (bondedEmails.length > 0) {
-        const updatedCheckIns =
-          checkInStorage.getTodayFromBondedContacts(bondedEmails);
-        setBondedCheckIns(updatedCheckIns);
+        // Try Firebase first
+        const firebaseCheckIns = await checkInStorage.fetchBondedCheckInsFromFirebase(
+          bondedEmails
+        );
+
+        if (firebaseCheckIns.length > 0) {
+          setBondedCheckIns(firebaseCheckIns);
+        } else {
+          // Fall back to local storage
+          const localCheckIns =
+            checkInStorage.getTodayFromBondedContacts(bondedEmails);
+          setBondedCheckIns(localCheckIns);
+        }
       }
     }, 10000); // 10 seconds
 
