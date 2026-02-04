@@ -288,6 +288,37 @@ export const sharedMomentsStorage = {
 
 // ===== NOTIFICATION DELIVERY HELPERS =====
 export const notificationHelpers = {
+  // Send email notification (in production, this would call a backend API)
+  sendEmail: (
+    recipientEmail: string,
+    subject: string,
+    message: string
+  ): void => {
+    // In production, this would call your backend API:
+    // POST /api/emails/send
+    // Body: { to: recipientEmail, subject, message, timestamp: new Date() }
+    console.log("📧 Email would be sent:", {
+      to: recipientEmail,
+      subject,
+      message,
+      timestamp: new Date().toISOString(),
+    });
+
+    // For now, we'll just log it as a notification
+    notificationStorage.add({
+      type: "checkin",
+      message: `Email sent to ${recipientEmail}: "${subject}"`,
+      timestamp: new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+    });
+  },
+
   // Create and send a check-in notification to bonded contacts
   sendCheckInNotification: (
     userEmail: string,
@@ -295,6 +326,7 @@ export const notificationHelpers = {
     bondedContacts: Array<{ email: string; name: string }>,
   ): void => {
     bondedContacts.forEach((contact) => {
+      // Add in-app notification
       notificationStorage.add({
         type: "checkin",
         message: `${userEmail} just checked in feeling ${mood} 💚`,
@@ -308,6 +340,13 @@ export const notificationHelpers = {
         }),
         fromContact: contact.email,
       });
+
+      // Send email notification
+      notificationHelpers.sendEmail(
+        contact.email,
+        "UOK: Check-in Confirmation",
+        `${userEmail} just checked in on UOK feeling ${mood}. They're doing okay! 💚`
+      );
     });
   },
 
