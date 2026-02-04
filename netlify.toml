@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm run build:client && npm run build:server"
   publish = "dist/spa"
   environment = { NODE_VERSION = "18" }
 
