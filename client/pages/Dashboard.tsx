@@ -462,6 +462,9 @@ export default function Dashboard() {
   };
 
   const deleteMedia = (id: string) => {
+    // Mark as deleted in persistent storage instead of removing
+    mediaStorage.delete(id);
+    // Update local state
     setMediaItems(mediaItems.filter((item) => item.id !== id));
   };
 
