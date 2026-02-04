@@ -220,12 +220,24 @@ export default function Dashboard() {
 
       // Load bonded contacts from localStorage
       const bondedContactsStr = localStorage.getItem("bondedContacts");
+      const bondedContactsList: any[] = [];
       if (bondedContactsStr) {
         try {
-          setBondedContacts(JSON.parse(bondedContactsStr));
+          const parsed = JSON.parse(bondedContactsStr);
+          setBondedContacts(parsed);
+          bondedContactsList.push(...parsed);
         } catch (e) {
           console.error("Error loading bonded contacts:", e);
         }
+      }
+
+      // Load bonded contacts' check-ins
+      if (bondedContactsList.length > 0) {
+        const bondedEmails = bondedContactsList.map((c) => c.email);
+        const bondedCheckins = checkInStorage.getTodayFromBondedContacts(
+          bondedEmails
+        );
+        setBondedCheckIns(bondedCheckins);
       }
 
       // Load media from persistent storage
