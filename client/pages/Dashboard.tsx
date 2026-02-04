@@ -363,17 +363,69 @@ export default function Dashboard() {
     }, 2000);
   };
 
-  // Share media to community
-  const shareToMemories = (item: MediaItem) => {
-    // Navigate to shared memories with pre-filled data
-    navigate("/shared-memories", {
-      state: {
-        mediaUrl: item.url,
-        mediaType: item.type,
-        mood: item.mood,
-      },
-    });
-    setShareModalOpen(null);
+  // Open share modal for media
+  const openMediaShareModal = (item: MediaItem) => {
+    setMediaShareModalOpen(item.id);
+    setShareVisibility("community");
+    setSelectedContactsToShare([]);
+  };
+
+  // Share media to community or bonded members
+  const handleShareMedia = (item: MediaItem) => {
+    if (shareVisibility === "community") {
+      // Share to community memories
+      navigate("/shared-memories", {
+        state: {
+          mediaUrl: item.url,
+          mediaType: item.type,
+          mood: item.mood,
+        },
+      });
+    } else if (shareVisibility === "bonded-contacts") {
+      if (selectedContactsToShare.length === 0) {
+        alert("Please select at least one bonded contact to share with");
+        return;
+      }
+
+      // Update media in storage with sharing info
+      const contactEmails = selectedContactsToShare
+        .map(
+          (id) => bondedContacts.find((c) => c.id === id)?.email
+        )
+        .filter(Boolean);
+
+      mediaStorage.update(item.id, {
+        sharedWith: contactEmails,
+        visibility: "bonded-contacts",
+      });
+
+      // Send notifications to selected contacts
+      selectedContactsToShare.forEach((contactId) => {
+        const contact = bondedContacts.find((c) => c.id === contactId);
+        if (contact) {
+          notificationStorage.add({
+            type: "media-shared",
+            message: `Shared a ${item.type} with you 📸`,
+            timestamp: new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            date: new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            }),
+            fromContact: contact.email,
+          });
+        }
+      });
+
+      alert(
+        `✓ Media shared with ${selectedContactsToShare.length} bonded contact${selectedContactsToShare.length !== 1 ? "s" : ""}!`
+      );
+    }
+
+    setMediaShareModalOpen(null);
+    setSelectedContactsToShare([]);
   };
 
   const checkInStatus = () => {
