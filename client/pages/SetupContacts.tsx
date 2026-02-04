@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, Phone, MessageCircle, Plus, X } from "lucide-react";
+import { Heart, Plus, X, Copy, Check } from "lucide-react";
 
-interface Contact {
+interface BondedContact {
   id: string;
   name: string;
-  phone: string;
-  type: "phone" | "whatsapp";
+  bondCode: string;
+  status: "pending" | "bonded";
+  bondedAt?: string;
 }
 
 export default function SetupContacts() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState<BondedContact[]>([]);
   const [formData, setFormData] = useState({
     name: "",
-    phone: "",
-    type: "whatsapp" as "phone" | "whatsapp",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -25,17 +25,12 @@ export default function SetupContacts() {
     if (!formData.name.trim()) {
       newErrors.name = "Contact name is required";
     }
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -49,15 +44,21 @@ export default function SetupContacts() {
     }
   };
 
+  const generateBondCode = () => {
+    return `BOND-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  };
+
   const handleAddContact = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm() && contacts.length < 3) {
-      const newContact: Contact = {
+      const newContact: BondedContact = {
         id: Date.now().toString(),
-        ...formData,
+        name: formData.name,
+        bondCode: generateBondCode(),
+        status: "pending",
       };
       setContacts([...contacts, newContact]);
-      setFormData({ name: "", phone: "", type: "whatsapp" });
+      setFormData({ name: "" });
       setErrors({});
     }
   };
@@ -66,9 +67,20 @@ export default function SetupContacts() {
     setContacts(contacts.filter((c) => c.id !== id));
   };
 
+  const handleCopyBondCode = (bondCode: string, id: string) => {
+    navigator.clipboard.writeText(bondCode);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   const handleContinue = () => {
     // Save contacts and navigate to dashboard
-    console.log("Contacts saved:", contacts);
+    const bondedContacts = contacts.map((c) => ({
+      ...c,
+      status: "pending" as const,
+    }));
+    localStorage.setItem("bondedContacts", JSON.stringify(bondedContacts));
+    console.log("Bond codes generated:", bondedContacts);
     navigate("/dashboard");
   };
 
