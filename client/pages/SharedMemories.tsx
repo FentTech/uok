@@ -458,7 +458,7 @@ export default function SharedMemories() {
               <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-sm text-slate-600">
                 <div className="flex gap-4">
                   <span>❤️ {memory.likes} likes</span>
-                  <span>💬 {memory.comments} comments</span>
+                  <span>💬 {memory.commentsList.length} comments</span>
                 </div>
               </div>
 
@@ -480,7 +480,12 @@ export default function SharedMemories() {
                   <span className="hidden sm:inline">Like</span>
                 </button>
 
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+                <button
+                  onClick={() => {
+                    setSelectedMemoryId(memory.id);
+                    setOpenCommentId(memory.id);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
                   <MessageCircle className="w-5 h-5" />
                   <span className="hidden sm:inline">Comment</span>
                 </button>
@@ -493,6 +498,65 @@ export default function SharedMemories() {
                   <span className="hidden sm:inline">Delete</span>
                 </button>
               </div>
+
+              {/* Comments Section */}
+              {memory.commentsList.length > 0 && (
+                <div className="px-6 py-4 border-t border-slate-100 bg-slate-50">
+                  <h4 className="font-semibold text-slate-900 mb-3">Comments</h4>
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {memory.commentsList.map((comment) => (
+                      <div key={comment.id} className="bg-white rounded-lg p-3 border border-slate-200">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                            {comment.avatar}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <p className="font-semibold text-slate-900 text-sm">{comment.username}</p>
+                              {comment.username === "You" && (
+                                <button
+                                  onClick={() => handleDeleteComment(memory.id, comment.id)}
+                                  className="text-red-600 hover:text-red-700 text-xs"
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </div>
+                            <p className="text-slate-700 text-sm">{comment.text}</p>
+                            <p className="text-xs text-slate-500 mt-1">{comment.timestamp}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Add Comment Form */}
+              {openCommentId === memory.id && (
+                <div className="px-6 py-4 border-t border-slate-100 bg-cyan-50">
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          handleAddComment(memory.id);
+                        }
+                      }}
+                      placeholder="Add a comment..."
+                      className="flex-1 px-3 py-2 bg-white border border-cyan-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    />
+                    <button
+                      onClick={() => handleAddComment(memory.id)}
+                      className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition"
+                    >
+                      Post
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
