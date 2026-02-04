@@ -590,17 +590,17 @@ export default function Dashboard() {
         <div className="grid md:grid-cols-3 gap-8">
           {/* Main Check-in Section */}
           <div className="md:col-span-2 space-y-8">
-            {/* Status Card */}
-            <div className="bg-white/80 backdrop-blur-xl border border-orange-200 rounded-2xl p-6 hover:border-orange-400 transition">
+            {/* Status Card - Futuristic */}
+            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-orange-100 rounded-lg">
-                  <StatusIcon className="w-6 h-6 text-orange-600" />
+                <div className="p-3 bg-cyan-500/20 rounded-lg">
+                  <StatusIcon className="w-6 h-6 text-cyan-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-orange-900">
+                  <h3 className="font-semibold text-cyan-100">
                     Daily Check-in Status
                   </h3>
-                  <p className="text-sm text-orange-700/80">{status.text}</p>
+                  <p className="text-sm text-cyan-300/80">{status.text}</p>
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
