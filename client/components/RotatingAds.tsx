@@ -94,6 +94,19 @@ export default function RotatingAds() {
     return null;
   }
 
+  // Try to get ad content from sessionStorage
+  const getAdContent = () => {
+    if (currentAd.content) return currentAd.content;
+    // Try sessionStorage as fallback
+    try {
+      return sessionStorage.getItem(`ad_content_${currentAd.id}`) || "";
+    } catch (e) {
+      return "";
+    }
+  };
+
+  const adContent = getAdContent();
+
   return (
     <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 backdrop-blur-xl border border-amber-400/30 rounded-2xl p-6">
       <div className="flex items-start justify-between gap-4">
@@ -104,16 +117,16 @@ export default function RotatingAds() {
                 {currentAd.title}
               </h3>
               <p className="text-amber-200/80 text-sm mb-3">
-                {currentAd.content}
+                {adContent || "Ad content"}
               </p>
               <p className="text-amber-400/60 text-xs">
                 by {currentAd.partnerName}
               </p>
             </div>
-          ) : currentAd.adType === "image" ? (
+          ) : currentAd.adType === "image" && adContent ? (
             <div>
               <img
-                src={currentAd.content}
+                src={adContent}
                 alt={currentAd.title}
                 className="w-full h-40 object-cover rounded-lg mb-3"
               />
@@ -124,10 +137,19 @@ export default function RotatingAds() {
                 by {currentAd.partnerName}
               </p>
             </div>
+          ) : !adContent ? (
+            <div className="bg-gradient-to-br from-amber-600 to-orange-600 rounded-lg p-8 text-center">
+              <h3 className="text-lg font-bold text-white mb-2">
+                {currentAd.title}
+              </h3>
+              <p className="text-amber-100 text-sm">
+                Ad by {currentAd.partnerName}
+              </p>
+            </div>
           ) : (
             <div>
               <video
-                src={currentAd.content}
+                src={adContent}
                 controls
                 className="w-full h-40 object-cover rounded-lg mb-3"
               />
