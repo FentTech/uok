@@ -121,10 +121,7 @@ export default function Dashboard() {
       oscillator.type = "sine";
 
       gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.01,
-        ctx.currentTime + 0.3
-      );
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
 
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.3);
