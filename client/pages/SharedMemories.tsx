@@ -373,10 +373,49 @@ export default function SharedMemories() {
               </div>
             )}
 
+            {/* Sharing Privacy Options */}
+            <div className="border-t border-slate-200 pt-4">
+              <label className="text-sm font-semibold text-slate-900 block mb-2">Share with:</label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => setShareVisibility("everyone")}
+                  className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
+                    shareVisibility === "everyone"
+                      ? "bg-indigo-600 text-white border border-indigo-600"
+                      : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  🌍 Everyone
+                </button>
+                <button
+                  onClick={() => setShareVisibility("bonded-contacts")}
+                  className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
+                    shareVisibility === "bonded-contacts"
+                      ? "bg-indigo-600 text-white border border-indigo-600"
+                      : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-50"
+                  }`}
+                  disabled={bondedContactsForShare.length === 0}
+                  title={bondedContactsForShare.length === 0 ? "No bonded contacts" : ""}
+                >
+                  💚 Bonded ({bondedContactsForShare.length})
+                </button>
+                <button
+                  onClick={() => setShareVisibility("specific-users")}
+                  className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
+                    shareVisibility === "specific-users"
+                      ? "bg-indigo-600 text-white border border-indigo-600"
+                      : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  👥 Specific
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={handleShareMemory}
               disabled={shareLoading}
-              className="w-full px-6 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Share2 className="w-5 h-5" />
               <span>{shareLoading ? "Sharing..." : "Share Memory"}</span>
