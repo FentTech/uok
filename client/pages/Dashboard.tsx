@@ -375,15 +375,15 @@ export default function Dashboard() {
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-900 to-slate-950">
-      {/* Top Navigation - Futuristic Glassmorphism */}
-      <nav className="bg-white/10 backdrop-blur-xl border-b border-cyan-400/20 sticky top-0 z-40">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-rose-50">
+      {/* Top Navigation - Warm & Inviting */}
+      <nav className="bg-white/70 backdrop-blur-xl border-b border-orange-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/50 group-hover:shadow-cyan-500/100 transition">
+            <div className="w-10 h-10 bg-gradient-to-br from-red-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-400/50 group-hover:shadow-orange-400/100 transition">
               <Heart className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
               UOK
             </span>
           </Link>
@@ -395,7 +395,7 @@ export default function Dashboard() {
                 onClick={() =>
                   setNotificationDropdownOpen(!notificationDropdownOpen)
                 }
-                className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400 relative"
+                className="p-2 hover:bg-orange-100/50 rounded-lg transition text-orange-600 relative"
               >
                 <Bell className="w-6 h-6" />
                 {notifications.length > 0 && (
@@ -407,34 +407,34 @@ export default function Dashboard() {
 
               {/* Notification Dropdown Menu */}
               {notificationDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-cyan-400/30 rounded-xl shadow-xl z-50 backdrop-blur-xl">
-                  <div className="p-4 border-b border-cyan-400/20">
-                    <h3 className="text-cyan-100 font-bold">Notifications</h3>
+                <div className="absolute right-0 mt-2 w-80 bg-white border border-orange-200 rounded-xl shadow-xl z-50 backdrop-blur-xl">
+                  <div className="p-4 border-b border-orange-200">
+                    <h3 className="text-orange-900 font-bold">Notifications</h3>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
                     {notifications.length > 0 ? (
                       notifications.slice(0, 10).map((notif) => (
                         <div
                           key={notif.id}
-                          className="px-4 py-3 border-b border-cyan-400/10 hover:bg-white/5 transition"
+                          className="px-4 py-3 border-b border-orange-100 hover:bg-orange-50 transition"
                         >
-                          <p className="text-cyan-300 text-sm font-medium">
+                          <p className="text-orange-800 text-sm font-medium">
                             {notif.message}
                           </p>
-                          <p className="text-cyan-500/60 text-xs mt-1">
+                          <p className="text-orange-500/60 text-xs mt-1">
                             {notif.timestamp}
                           </p>
                         </div>
                       ))
                     ) : (
-                      <div className="px-4 py-6 text-center text-cyan-400/60">
+                      <div className="px-4 py-6 text-center text-orange-400/60">
                         No notifications yet
                       </div>
                     )}
                   </div>
                   {notifications.length > 10 && (
-                    <div className="p-3 border-t border-cyan-400/20 text-center">
-                      <button className="text-cyan-400 hover:text-cyan-300 text-sm font-medium">
+                    <div className="p-3 border-t border-orange-200 text-center">
+                      <button className="text-orange-600 hover:text-orange-700 text-sm font-medium">
                         View all notifications
                       </button>
                     </div>
@@ -446,7 +446,7 @@ export default function Dashboard() {
             {/* Settings Button */}
             <button
               onClick={() => setSettingsOpen(!settingsOpen)}
-              className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400"
+              className="p-2 hover:bg-orange-100/50 rounded-lg transition text-orange-600"
             >
               <Settings className="w-6 h-6" />
             </button>
@@ -454,8 +454,8 @@ export default function Dashboard() {
             {/* Settings Modal */}
             {settingsOpen && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-                <div className="bg-slate-900 border border-cyan-400/30 rounded-2xl p-6 max-w-md w-full mx-4 backdrop-blur-xl">
-                  <h2 className="text-2xl font-bold text-cyan-100 mb-6">
+                <div className="bg-white border border-orange-200 rounded-2xl p-6 max-w-md w-full mx-4 backdrop-blur-xl">
+                  <h2 className="text-2xl font-bold text-orange-900 mb-6">
                     Settings
                   </h2>
 
