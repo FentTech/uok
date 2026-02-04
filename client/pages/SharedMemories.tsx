@@ -167,21 +167,33 @@ export default function SharedMemories() {
   }, [location.state, caption]);
 
   const toggleLike = (id: string) => {
-    setMemories(
-      memories.map((m) =>
-        m.id === id
-          ? {
-              ...m,
-              likes: likedMemories[id] ? m.likes - 1 : m.likes + 1,
-              isLiked: !likedMemories[id],
-            }
-          : m,
-      ),
-    );
-    setLikedMemories((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    const memory = memories.find((m) => m.id === id);
+    if (memory) {
+      const isLiked = likedMemories[id];
+      const newLikeCount = isLiked ? memory.likes - 1 : memory.likes + 1;
+
+      // Update in persistent storage
+      sharedMomentsStorage.update(id, {
+        likes: newLikeCount,
+      });
+
+      // Update local state
+      setMemories(
+        memories.map((m) =>
+          m.id === id
+            ? {
+                ...m,
+                likes: newLikeCount,
+                isLiked: !isLiked,
+              }
+            : m,
+        ),
+      );
+      setLikedMemories((prev) => ({
+        ...prev,
+        [id]: !prev[id],
+      }));
+    }
   };
 
   const deleteMemory = (id: string) => {
