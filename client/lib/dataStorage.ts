@@ -408,7 +408,9 @@ export const checkInStorage = {
     }
   },
 
-  add: (checkIn: Omit<StoredCheckIn, "id" | "createdAt">): StoredCheckIn => {
+  add: async (
+    checkIn: Omit<StoredCheckIn, "id" | "createdAt">,
+  ): Promise<StoredCheckIn> => {
     const allCheckIns = checkInStorage.getAll();
     const newCheckIn: StoredCheckIn = {
       ...checkIn,
@@ -417,6 +419,15 @@ export const checkInStorage = {
     };
     allCheckIns.push(newCheckIn);
     localStorage.setItem("uok_checkins", JSON.stringify(allCheckIns));
+
+    // Also save to Firebase for syncing with bonded contacts
+    try {
+      const { firebaseCheckInService } = await import("./firebase");
+      await firebaseCheckInService.saveCheckIn(checkIn);
+    } catch (error) {
+      console.log("Firebase not available, check-in saved locally only");
+    }
+
     return newCheckIn;
   },
 
