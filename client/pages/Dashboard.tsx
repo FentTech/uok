@@ -84,6 +84,7 @@ export default function Dashboard() {
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [todayCheckInCount, setTodayCheckInCount] = useState(0);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<"morning" | "afternoon" | "evening" | null>(null);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
