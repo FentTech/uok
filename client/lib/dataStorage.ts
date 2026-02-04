@@ -52,6 +52,18 @@ export interface StoredComment {
   createdAt: string;
 }
 
+export interface StoredCheckIn {
+  id: string;
+  userEmail: string;
+  userName: string;
+  emoji: string;
+  mood: string;
+  timestamp: string;
+  date: string;
+  timeSlot?: "morning" | "afternoon" | "evening";
+  createdAt: string;
+}
+
 // ===== MEDIA STORAGE =====
 export const mediaStorage = {
   getAll: (): StoredMedia[] => {
