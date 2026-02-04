@@ -198,6 +198,20 @@ export default function Dashboard() {
         }
       }
 
+      // Load media from persistent storage
+      const savedMedia = mediaStorage.getActive();
+      // Filter to show only today's media
+      const today = new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      const todayMedia = savedMedia.filter((m) => m.date === today);
+      setMediaItems(todayMedia as any[]);
+
+      // Load notifications from persistent storage
+      const savedNotifications = notificationStorage.getAll();
+      setNotifications(savedNotifications as any[]);
+
       setCheckIns([
         {
           id: "1",
