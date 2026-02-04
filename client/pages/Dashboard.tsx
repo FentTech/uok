@@ -529,13 +529,14 @@ export default function Dashboard() {
                       </div>
                     )}
                   </div>
-                  {notifications.length > 10 && (
-                    <div className="p-3 border-t border-cyan-400/20 text-center">
-                      <button className="text-cyan-400 hover:text-cyan-300 text-sm font-medium">
-                        View all notifications
-                      </button>
-                    </div>
-                  )}
+                  <div className="p-3 border-t border-cyan-400/20">
+                    <Link
+                      to="/bond-notifications"
+                      className="block text-center text-cyan-400 hover:text-cyan-300 text-sm font-medium hover:bg-white/5 py-2 rounded-lg transition"
+                    >
+                      View all notifications
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
