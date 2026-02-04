@@ -138,7 +138,7 @@ export default function Dashboard() {
 
   // Send check-in notifications to bonded contacts
   const sendCheckInNotification = (mood: string) => {
-    // Get bonded contacts from localStorage or state
+    // Get bonded contacts from localStorage
     const bondedContactsStr = localStorage.getItem("bondedContacts");
     const bondedContacts = bondedContactsStr
       ? JSON.parse(bondedContactsStr)
@@ -146,32 +146,50 @@ export default function Dashboard() {
 
     const contactCount = bondedContacts.length;
 
-    // Create notification
-    const notification: Notification = {
-      id: Date.now().toString(),
+    // Create notification for current user
+    const notification = notificationStorage.add({
       type: "checkin",
       message: `✓ Check-in sent to ${contactCount} bonded contact${contactCount !== 1 ? "s" : ""} - You're feeling ${mood}`,
       timestamp: new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
       }),
-    };
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+    });
 
-    setNotifications((prev) => [notification, ...prev]);
+    setNotifications((prev) => [notification as any, ...prev]);
 
-    // Backend integration - Send to bonded contacts
+    // Send notifications to bonded contacts
     bondedContacts.forEach((contact: any) => {
+      // Store notification for bonded contact
+      notificationStorage.add({
+        type: "checkin",
+        message: `Your bonded family member just checked in on UOK feeling ${mood}. They're doing okay! 💚`,
+        timestamp: new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        date: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+        fromContact: contact.email,
+      });
+
       console.log("📱 Check-in notification sent to bonded contact:", {
         recipient: contact.name,
+        email: contact.email,
         bondCode: contact.bondCode,
         mood: mood,
         timestamp: new Date().toISOString(),
-        message: `Your bonded family member just checked in on UOK feeling ${mood}. They're doing okay! 💚`,
       });
 
       // In production, this would call your backend API:
-      // POST /api/notifications/send
-      // Body: { bondCode, type: 'checkin', mood, message }
+      // POST /api/notifications/send-to-contact
+      // Body: { email, type: 'checkin', mood, message, timestamp }
     });
 
     // Browser notification
