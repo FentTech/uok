@@ -86,7 +86,7 @@ export default function SharedMemories() {
     memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {})
   );
 
-  // Load featured ads from localStorage
+  // Load featured ads from localStorage (only images, with 30-second timer)
   useEffect(() => {
     const featured = localStorage.getItem("featuredPartners");
     if (featured) {
@@ -96,7 +96,8 @@ export default function SharedMemories() {
         partners.forEach((partner: any) => {
           if (partner.paymentStatus === "paid" && partner.ads) {
             partner.ads.forEach((ad: any) => {
-              if (ad.active) {
+              // Only IMAGE ads in community section, with 30-second display
+              if (ad.active && ad.adType === "image") {
                 activeAds.push(ad);
               }
             });
@@ -108,6 +109,23 @@ export default function SharedMemories() {
       }
     }
   }, []);
+
+  // 30-second timer for video ads in community
+  useEffect(() => {
+    if (fullscreenVideo && adTimer > 0) {
+      const interval = setInterval(() => {
+        setAdTimer((prev) => {
+          if (prev <= 1) {
+            setFullscreenVideo(null);
+            setAdTimer(30);
+            return 30;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [fullscreenVideo, adTimer]);
 
   // Handle incoming media from Dashboard
   useEffect(() => {
