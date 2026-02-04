@@ -47,6 +47,12 @@ interface Notification {
   timestamp: string;
 }
 
+const CHECK_IN_TIMES = [
+  { slot: "morning", label: "Morning (8 AM)", icon: "🌅" },
+  { slot: "afternoon", label: "Afternoon (2 PM)", icon: "☀️" },
+  { slot: "evening", label: "Evening (8 PM)", icon: "🌙" },
+];
+
 const MOOD_EMOJIS = [
   { emoji: "😊", mood: "Great" },
   { emoji: "🙂", mood: "Good" },
