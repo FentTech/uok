@@ -108,8 +108,8 @@ export default function SetupContacts() {
             <div className="bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-12 text-white">
               <h1 className="text-3xl font-bold mb-2">Emergency Contacts</h1>
               <p className="text-cyan-50">
-                Add up to 3 trusted family or friends to be notified about your
-                check-ins
+                Generate bond codes to connect with trusted family and friends.
+                They can use these codes to bond with you in the app.
               </p>
             </div>
 
@@ -119,7 +119,7 @@ export default function SetupContacts() {
               {contacts.length > 0 && (
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 mb-4">
-                    Your Contacts ({contacts.length}/3)
+                    Your Bond Codes ({contacts.length}/3)
                   </h2>
                   <div className="space-y-3">
                     {contacts.map((contact) => (
@@ -127,29 +127,31 @@ export default function SetupContacts() {
                         key={contact.id}
                         className="flex items-center justify-between p-4 bg-cyan-50 rounded-lg border border-cyan-200"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-cyan-400 rounded-full flex items-center justify-center text-white font-semibold">
-                            {contact.name.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-slate-900">
-                              {contact.name}
-                            </p>
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
-                              {contact.type === "whatsapp" ? (
-                                <>
-                                  <MessageCircle className="w-4 h-4" />
-                                  <span>WhatsApp</span>
-                                </>
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900">
+                            {contact.name}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <code className="px-3 py-1 bg-white rounded border border-cyan-300 text-sm font-mono text-cyan-700">
+                              {contact.bondCode}
+                            </code>
+                            <button
+                              onClick={() =>
+                                handleCopyBondCode(contact.bondCode, contact.id)
+                              }
+                              className="p-2 hover:bg-cyan-100 rounded transition text-cyan-600"
+                              title="Copy bond code"
+                            >
+                              {copiedId === contact.id ? (
+                                <Check className="w-4 h-4" />
                               ) : (
-                                <>
-                                  <Phone className="w-4 h-4" />
-                                  <span>Phone</span>
-                                </>
+                                <Copy className="w-4 h-4" />
                               )}
-                              <span>{contact.phone}</span>
-                            </div>
+                            </button>
                           </div>
+                          <p className="text-xs text-slate-500 mt-2">
+                            Share this code with {contact.name} to bond
+                          </p>
                         </div>
                         <button
                           onClick={() => handleRemoveContact(contact.id)}
@@ -192,58 +194,13 @@ export default function SetupContacts() {
                       )}
                     </div>
 
-                    {/* Contact Type */}
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-900 mb-2">
-                        Contact Method
-                      </label>
-                      <select
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
-                      >
-                        <option value="whatsapp">WhatsApp</option>
-                        <option value="phone">Phone Call</option>
-                      </select>
-                    </div>
-
-                    {/* Phone Field */}
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-900 mb-2">
-                        {formData.type === "whatsapp"
-                          ? "WhatsApp Number"
-                          : "Phone Number"}
-                      </label>
-                      <div className="relative">
-                        {formData.type === "whatsapp" ? (
-                          <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        ) : (
-                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        )}
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+1 (555) 123-4567"
-                          className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
-                        />
-                      </div>
-                      {errors.phone && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.phone}
-                        </p>
-                      )}
-                    </div>
-
                     {/* Add Button */}
                     <button
                       type="submit"
                       className="w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2"
                     >
                       <Plus className="w-5 h-5" />
-                      Add Contact
+                      Generate Bond Code
                     </button>
                   </form>
                 </div>
@@ -252,11 +209,15 @@ export default function SetupContacts() {
               {/* Info Box */}
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                 <p className="text-sm text-slate-700">
-                  <span className="font-semibold">Why emergency contacts?</span>
+                  <span className="font-semibold">How it works:</span>
                   <br />
-                  Your emergency contacts will be immediately notified when you
-                  check in, and will receive an alert if you miss a check-in
-                  time by more than 60 seconds.
+                  1. Generate a bond code for each contact
+                  <br />
+                  2. Share the code with them (copy & paste, text, email)
+                  <br />
+                  3. They enter the code in their UOK app to bond with you
+                  <br />
+                  4. Once bonded, you'll see their check-in status and alerts
                 </p>
               </div>
             </div>
@@ -271,8 +232,7 @@ export default function SetupContacts() {
               </button>
               <button
                 onClick={handleContinue}
-                disabled={contacts.length === 0}
-                className="flex-1 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-200 transition"
               >
                 Continue to Dashboard
               </button>
