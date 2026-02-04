@@ -287,21 +287,21 @@ export default function SharedMemories() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-rose-50">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-purple-50">
       {/* Header */}
-      <div className="border-b border-orange-100 bg-white/60 backdrop-blur-sm sticky top-0 z-40">
+      <div className="border-b border-cyan-100 bg-white/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-orange-500 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
               UOK
             </span>
           </Link>
           <Link
             to="/dashboard"
-            className="text-orange-600 hover:text-orange-700 font-medium"
+            className="text-cyan-600 hover:text-cyan-700 font-medium"
           >
             ← Back to Dashboard
           </Link>
