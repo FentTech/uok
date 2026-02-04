@@ -576,7 +576,7 @@ export default function SharedMemories() {
                     {memory.commentsList.map((comment) => (
                       <div key={comment.id} className="bg-white rounded-lg p-3 border border-slate-200">
                         <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                          <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-rose-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
                             {comment.avatar}
                           </div>
                           <div className="flex-1">
