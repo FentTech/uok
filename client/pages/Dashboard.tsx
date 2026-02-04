@@ -96,6 +96,42 @@ export default function Dashboard() {
   const [bondedContacts, setBondedContacts] = useState<any[]>([]);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  // Play a simple notification beep/tone
+  const playNotificationSound = () => {
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext ||
+          (window as any).webkitAudioContext)();
+      }
+      const ctx = audioContextRef.current;
+
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
+
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.value = 800; // Frequency in Hz
+      oscillator.type = "sine";
+
+      gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        ctx.currentTime + 0.3
+      );
+
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.3);
+    } catch (error) {
+      console.log("Audio playback not available");
+    }
+  };
 
   // Send check-in notifications to bonded contacts
   const sendCheckInNotification = (mood: string) => {
