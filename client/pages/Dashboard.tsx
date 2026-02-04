@@ -623,6 +623,27 @@ export default function Dashboard() {
                 How are you feeling?
               </h2>
 
+              {/* Time Slot Selection */}
+              <div className="mb-6">
+                <p className="text-cyan-200 font-semibold mb-3 text-sm">Select check-in time:</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {CHECK_IN_TIMES.map((timeSlot) => (
+                    <button
+                      key={timeSlot.slot}
+                      onClick={() => setSelectedTimeSlot(timeSlot.slot as "morning" | "afternoon" | "evening")}
+                      disabled={todayCheckInCount >= 3}
+                      className={`py-2 px-3 rounded-lg font-semibold text-sm transition ${
+                        selectedTimeSlot === timeSlot.slot
+                          ? "bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-lg shadow-cyan-500/50"
+                          : "bg-white/10 text-cyan-200 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-cyan-400/30"
+                      }`}
+                    >
+                      {timeSlot.icon} {timeSlot.slot.charAt(0).toUpperCase() + timeSlot.slot.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-5 gap-3 mb-6">
                 {MOOD_EMOJIS.map((item) => (
                   <button
