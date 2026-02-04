@@ -214,18 +214,27 @@ export default function SharedMemories() {
     }
 
     try {
-      const newComment: Comment = {
+      const currentUserEmail = localStorage.getItem("userEmail") || "You";
+      const currentUserName = currentUserEmail === "You" ? "You" : currentUserEmail.split("@")[0];
+
+      const newComment: StoredComment = {
         id: Date.now().toString(),
-        username: "You",
-        avatar: "Y",
+        username: currentUserName,
+        email: currentUserEmail,
+        avatar: currentUserName.charAt(0).toUpperCase(),
         text: commentText,
         timestamp: "just now",
+        createdAt: new Date().toISOString(),
       };
 
+      // Add to persistent storage
+      sharedMomentsStorage.addComment(memoryId, newComment);
+
+      // Update local state
       setMemories((prev) =>
         prev.map((m) =>
           m.id === memoryId
-            ? { ...m, commentsList: [newComment, ...m.commentsList] }
+            ? { ...m, commentsList: [newComment as any, ...m.commentsList] }
             : m,
         ),
       );
