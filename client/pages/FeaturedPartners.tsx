@@ -89,9 +89,24 @@ export default function FeaturedPartners() {
     }
 
     try {
+      // Check content size to avoid localStorage limits
+      const contentSize = new Blob([formData.adContent]).size;
+      if (contentSize > 2 * 1024 * 1024) { // 2MB limit for ad content
+        alert("File size is too large. Please upload a file smaller than 2MB.");
+        return;
+      }
+
       const partnerId = Date.now().toString();
+      const adId = (Date.now() + 1).toString();
       const now = new Date().toISOString();
       const expiryDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString();
+
+      // Store file content separately in sessionStorage with ad ID as key
+      try {
+        sessionStorage.setItem(`ad_content_${adId}`, formData.adContent);
+      } catch (e) {
+        console.warn("SessionStorage full, content won't be stored for preview");
+      }
 
       const newPartner: Partner = {
         id: partnerId,
@@ -103,11 +118,11 @@ export default function FeaturedPartners() {
         totalViews: 0,
         ads: [
           {
-            id: (Date.now() + 1).toString(),
+            id: adId,
             partnerId: partnerId,
             partnerName: formData.partnerName,
             adType: formData.adType,
-            content: formData.adContent,
+            content: "", // Don't store large content in localStorage
             title: formData.adTitle,
             expiresAt: expiryDate,
             createdAt: now,
@@ -122,8 +137,13 @@ export default function FeaturedPartners() {
       setPartners(updatedPartners);
 
       // Store in localStorage with error handling
-      const jsonString = JSON.stringify(updatedPartners);
-      localStorage.setItem("featuredPartners", jsonString);
+      try {
+        const jsonString = JSON.stringify(updatedPartners);
+        localStorage.setItem("featuredPartners", jsonString);
+      } catch (e) {
+        console.error("LocalStorage error:", e);
+        alert("Warning: Could not save to local storage. Your data may not persist.");
+      }
 
       // Reset form
       setFormData({
@@ -135,12 +155,12 @@ export default function FeaturedPartners() {
       });
 
       alert(
-        `Partner registered! Awaiting payment. Payment link: https://paypal.me/AFenteng/1000`
+        `Partner registered! Awaiting payment. Payment link: https://paypal.me/AFenteng/1000\n\nNote: File has been uploaded. After payment, your ads will be active.`
       );
       setShowRegistrationForm(false);
     } catch (error) {
       console.error("Error registering partner:", error);
-      alert("Error registering partner. Please check the console for details.");
+      alert("Error registering partner: " + (error instanceof Error ? error.message : "Unknown error"));
     }
   };
 
