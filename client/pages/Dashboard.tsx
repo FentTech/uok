@@ -799,6 +799,22 @@ export default function Dashboard() {
           </p>
         </div>
 
+        {/* Data Retention Notice */}
+        <div className="mb-8 p-4 bg-orange-500/10 border border-orange-400/30 rounded-xl backdrop-blur-sm">
+          <p className="text-orange-300 text-sm">
+            <span className="font-semibold">📊 Data Retention:</span> All
+            check-in records are automatically deleted after 72 hours to save
+            storage space. Go to{" "}
+            <Link
+              to="/user-profile"
+              className="underline hover:text-orange-200 transition"
+            >
+              Profile Settings
+            </Link>{" "}
+            to learn more.
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-8">
           {/* Main Check-in Section */}
           <div className="md:col-span-2 space-y-8">
