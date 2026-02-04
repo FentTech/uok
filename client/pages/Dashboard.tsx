@@ -579,11 +579,22 @@ export default function Dashboard() {
     setMediaItems(mediaItems.filter((item) => item.id !== id));
   };
 
-  const refreshBondedCheckIns = () => {
+  const refreshBondedCheckIns = async () => {
     const bondedEmails = bondedContacts.map((c) => c.email);
-    const updatedCheckIns =
-      checkInStorage.getTodayFromBondedContacts(bondedEmails);
-    setBondedCheckIns(updatedCheckIns);
+
+    // Try to fetch from Firebase first
+    const firebaseCheckIns = await checkInStorage.fetchBondedCheckInsFromFirebase(
+      bondedEmails
+    );
+
+    if (firebaseCheckIns.length > 0) {
+      setBondedCheckIns(firebaseCheckIns);
+    } else {
+      // Fall back to local storage if Firebase is unavailable
+      const localCheckIns =
+        checkInStorage.getTodayFromBondedContacts(bondedEmails);
+      setBondedCheckIns(localCheckIns);
+    }
   };
 
   const addDemoBondedCheckIns = () => {
