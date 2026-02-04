@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">UOK - Understand Our Knowing</string>
+    <string name="title_activity_main">UOK - Understand Our Knowing</string>
+    <string name="package_name">com.uok.app</string>
+    <string name="custom_url_scheme">com.uok.app</string>
+</resources>
