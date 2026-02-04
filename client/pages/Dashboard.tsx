@@ -100,6 +100,15 @@ export default function Dashboard() {
     useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [bondedContacts, setBondedContacts] = useState<any[]>([]);
+  const [mediaShareModalOpen, setMediaShareModalOpen] = useState<string | null>(
+    null
+  );
+  const [shareVisibility, setShareVisibility] = useState<
+    "personal" | "bonded-contacts" | "community"
+  >("community");
+  const [selectedContactsToShare, setSelectedContactsToShare] = useState<
+    string[]
+  >([]);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
