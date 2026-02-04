@@ -452,13 +452,13 @@ export default function SharedMemories() {
           {filteredMemories.map((memory) => (
             <div
               key={memory.id}
-              className="bg-white rounded-2xl shadow-lg border border-cyan-100 overflow-hidden hover:shadow-xl transition"
+              className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden hover:shadow-xl transition"
             >
               {/* Memory Header */}
               <div className="p-6 border-b border-slate-100">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-rose-400 rounded-full flex items-center justify-center text-white font-bold">
                       {memory.avatar}
                     </div>
                     <div>
