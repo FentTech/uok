@@ -52,7 +52,7 @@ export default function FeaturedPartners() {
   });
   const [selectedAds, setSelectedAds] = useState<FeaturedAd[]>([]);
   const [activeTab, setActiveTab] = useState<"register" | "manage" | "payment">(
-    "register"
+    "register",
   );
 
   // Load partners from localStorage
@@ -92,7 +92,8 @@ export default function FeaturedPartners() {
     try {
       // Check content size to avoid localStorage limits
       const contentSize = new Blob([formData.adContent]).size;
-      if (contentSize > 2 * 1024 * 1024) { // 2MB limit for ad content
+      if (contentSize > 2 * 1024 * 1024) {
+        // 2MB limit for ad content
         alert("File size is too large. Please upload a file smaller than 2MB.");
         return;
       }
@@ -100,13 +101,17 @@ export default function FeaturedPartners() {
       const partnerId = Date.now().toString();
       const adId = (Date.now() + 1).toString();
       const now = new Date().toISOString();
-      const expiryDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString();
+      const expiryDate = new Date(
+        Date.now() + 180 * 24 * 60 * 60 * 1000,
+      ).toISOString();
 
       // Store file content separately in sessionStorage with ad ID as key
       try {
         sessionStorage.setItem(`ad_content_${adId}`, formData.adContent);
       } catch (e) {
-        console.warn("SessionStorage full, content won't be stored for preview");
+        console.warn(
+          "SessionStorage full, content won't be stored for preview",
+        );
       }
 
       const newPartner: Partner = {
@@ -143,7 +148,9 @@ export default function FeaturedPartners() {
         localStorage.setItem("featuredPartners", jsonString);
       } catch (e) {
         console.error("LocalStorage error:", e);
-        alert("Warning: Could not save to local storage. Your data may not persist.");
+        alert(
+          "Warning: Could not save to local storage. Your data may not persist.",
+        );
       }
 
       // Reset form
@@ -156,12 +163,15 @@ export default function FeaturedPartners() {
       });
 
       alert(
-        `Partner registered! Awaiting payment. Payment link: https://paypal.me/AFenteng/1000\n\nNote: File has been uploaded. After payment, your ads will be active.`
+        `Partner registered! Awaiting payment. Payment link: https://paypal.me/AFenteng/1000\n\nNote: File has been uploaded. After payment, your ads will be active.`,
       );
       setShowRegistrationForm(false);
     } catch (error) {
       console.error("Error registering partner:", error);
-      alert("Error registering partner: " + (error instanceof Error ? error.message : "Unknown error"));
+      alert(
+        "Error registering partner: " +
+          (error instanceof Error ? error.message : "Unknown error"),
+      );
     }
   };
 
@@ -172,7 +182,9 @@ export default function FeaturedPartners() {
         // Check file size (limit to 2MB for localStorage compatibility)
         const maxSize = 2 * 1024 * 1024; // 2MB
         if (file.size > maxSize) {
-          alert(`File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds 2MB limit. Please choose a smaller file.`);
+          alert(
+            `File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds 2MB limit. Please choose a smaller file.`,
+          );
           return;
         }
 
@@ -185,7 +197,9 @@ export default function FeaturedPartners() {
               adContent: content,
             });
             // Show success message
-            console.log(`File uploaded: ${file.name} (${(file.size / 1024).toFixed(2)}KB)`);
+            console.log(
+              `File uploaded: ${file.name} (${(file.size / 1024).toFixed(2)}KB)`,
+            );
           } catch (error) {
             console.error("Error setting form data:", error);
             alert("Error processing file. Please try again.");
@@ -204,7 +218,10 @@ export default function FeaturedPartners() {
         reader.readAsDataURL(file);
       } catch (error) {
         console.error("Error uploading file:", error);
-        alert("Error uploading file: " + (error instanceof Error ? error.message : "Unknown error"));
+        alert(
+          "Error uploading file: " +
+            (error instanceof Error ? error.message : "Unknown error"),
+        );
       }
     }
   };
@@ -219,15 +236,15 @@ export default function FeaturedPartners() {
       const confirmPayment = () => {
         const userConfirmed = window.confirm(
           "Have you completed the payment on PayPal? Click OK if payment was successful, Cancel if you haven't paid yet.\n\n" +
-          "Important: Your ads will ONLY activate after successful payment verification."
+            "Important: Your ads will ONLY activate after successful payment verification.",
         );
 
         if (userConfirmed) {
           // Verify payment by checking for transaction ID
           const transactionId = prompt(
             "Please enter your PayPal Transaction ID (found in your PayPal receipt):\n\n" +
-            "Without a valid transaction ID, your payment cannot be verified and ads will NOT run.",
-            ""
+              "Without a valid transaction ID, your payment cannot be verified and ads will NOT run.",
+            "",
           );
 
           if (transactionId && transactionId.trim()) {
@@ -256,25 +273,34 @@ export default function FeaturedPartners() {
 
               setPartners(updatedPartners);
               try {
-                localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+                localStorage.setItem(
+                  "featuredPartners",
+                  JSON.stringify(updatedPartners),
+                );
                 alert(
-                  "✅ Payment verified! Transaction ID: " + transactionId + "\n\n" +
-                  "Your ads are now ACTIVE and will run on the dashboard and community section for 6 months.\n\n" +
-                  "You will receive weekly email reports with view counts."
+                  "✅ Payment verified! Transaction ID: " +
+                    transactionId +
+                    "\n\n" +
+                    "Your ads are now ACTIVE and will run on the dashboard and community section for 6 months.\n\n" +
+                    "You will receive weekly email reports with view counts.",
                 );
               } catch (e) {
                 console.error("Error saving payment data:", e);
-                alert("⚠️ Payment verified but couldn't save locally. Please refresh the page.");
+                alert(
+                  "⚠️ Payment verified but couldn't save locally. Please refresh the page.",
+                );
               }
             } catch (error) {
               console.error("Error verifying payment:", error);
-              alert("❌ Error verifying payment. Please try again or contact support.");
+              alert(
+                "❌ Error verifying payment. Please try again or contact support.",
+              );
             }
           } else {
             alert(
               "❌ Payment verification cancelled.\n\n" +
-              "Your ads will NOT run without a verified PayPal transaction.\n\n" +
-              "Please complete the payment and provide your Transaction ID to activate your ads."
+                "Your ads will NOT run without a verified PayPal transaction.\n\n" +
+                "Please complete the payment and provide your Transaction ID to activate your ads.",
             );
           }
         }
@@ -292,7 +318,7 @@ export default function FeaturedPartners() {
       setTimeout(() => {
         if (paypalWindow && !paypalWindow.closed) {
           const manualVerify = window.confirm(
-            "Still paying? Click OK when you've completed payment on PayPal to verify it."
+            "Still paying? Click OK when you've completed payment on PayPal to verify it.",
           );
           if (manualVerify) {
             confirmPayment();
@@ -325,21 +351,24 @@ export default function FeaturedPartners() {
     const partner = partners.find((p) => p.id === partnerId);
     if (partner) {
       // Open PayPal payment link
-      const paypalWindow = window.open(partner.paymentLink || `https://paypal.me/AFenteng/1000`, "_blank");
+      const paypalWindow = window.open(
+        partner.paymentLink || `https://paypal.me/AFenteng/1000`,
+        "_blank",
+      );
 
       // Ask user to confirm renewal payment
       const confirmRenewal = () => {
         const userConfirmed = window.confirm(
           "Have you completed the renewal payment on PayPal? Click OK if payment was successful.\n\n" +
-          "Important: Your ads will ONLY continue after successful payment verification."
+            "Important: Your ads will ONLY continue after successful payment verification.",
         );
 
         if (userConfirmed) {
           // Verify payment by checking for transaction ID
           const transactionId = prompt(
             "Please enter your PayPal Transaction ID for the renewal (found in your PayPal receipt):\n\n" +
-            "Without a valid transaction ID, your renewal cannot be verified.",
-            ""
+              "Without a valid transaction ID, your renewal cannot be verified.",
+            "",
           );
 
           if (transactionId && transactionId.trim()) {
@@ -353,7 +382,7 @@ export default function FeaturedPartners() {
               });
 
               const expiryDate = new Date(
-                Date.now() + 180 * 24 * 60 * 60 * 1000
+                Date.now() + 180 * 24 * 60 * 60 * 1000,
               ).toISOString();
 
               // Simulate backend verification (in production, verify with PayPal API)
@@ -370,11 +399,16 @@ export default function FeaturedPartners() {
               });
 
               setPartners(updatedPartners);
-              localStorage.setItem("featuredPartners", JSON.stringify(updatedPartners));
+              localStorage.setItem(
+                "featuredPartners",
+                JSON.stringify(updatedPartners),
+              );
               alert(
-                "✅ Renewal payment verified! Transaction ID: " + transactionId + "\n\n" +
-                "Your subscription has been renewed for another 6 months.\n" +
-                "Your ads will continue to run on the dashboard and community section."
+                "✅ Renewal payment verified! Transaction ID: " +
+                  transactionId +
+                  "\n\n" +
+                  "Your subscription has been renewed for another 6 months.\n" +
+                  "Your ads will continue to run on the dashboard and community section.",
               );
             } catch (error) {
               console.error("Error verifying renewal:", error);
@@ -383,8 +417,8 @@ export default function FeaturedPartners() {
           } else {
             alert(
               "❌ Renewal verification cancelled.\n\n" +
-              "Your ads will STOP running if payment is not verified.\n\n" +
-              "Please complete the renewal payment and provide your Transaction ID."
+                "Your ads will STOP running if payment is not verified.\n\n" +
+                "Please complete the renewal payment and provide your Transaction ID.",
             );
           }
         }
@@ -402,7 +436,7 @@ export default function FeaturedPartners() {
       setTimeout(() => {
         if (paypalWindow && !paypalWindow.closed) {
           const manualVerify = window.confirm(
-            "Still renewing? Click OK when you've completed payment to verify it."
+            "Still renewing? Click OK when you've completed payment to verify it.",
           );
           if (manualVerify) {
             confirmRenewal();
@@ -417,7 +451,10 @@ export default function FeaturedPartners() {
       {/* Navigation */}
       <nav className="bg-white/10 backdrop-blur-xl border-b border-cyan-400/20 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/dashboard" className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition"
+          >
             <ArrowLeft className="w-6 h-6" />
             <span className="font-semibold">Back to Dashboard</span>
           </Link>
@@ -477,9 +514,12 @@ export default function FeaturedPartners() {
                 <div className="flex gap-3">
                   <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
                   <div>
-                    <p className="font-semibold text-cyan-100">Ads Run Continuously</p>
+                    <p className="font-semibold text-cyan-100">
+                      Ads Run Continuously
+                    </p>
                     <p className="text-sm">
-                      Your ads appear on dashboard (rotating every 2 seconds) and community shared section
+                      Your ads appear on dashboard (rotating every 2 seconds)
+                      and community shared section
                     </p>
                   </div>
                 </div>
@@ -487,9 +527,12 @@ export default function FeaturedPartners() {
                 <div className="flex gap-3">
                   <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
                   <div>
-                    <p className="font-semibold text-cyan-100">6-Month Campaign</p>
+                    <p className="font-semibold text-cyan-100">
+                      6-Month Campaign
+                    </p>
                     <p className="text-sm">
-                      Run your campaign for 6 months non-negotiable at $1,000 USD
+                      Run your campaign for 6 months non-negotiable at $1,000
+                      USD
                     </p>
                   </div>
                 </div>
@@ -497,9 +540,12 @@ export default function FeaturedPartners() {
                 <div className="flex gap-3">
                   <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
                   <div>
-                    <p className="font-semibold text-cyan-100">Analytics & Tracking</p>
+                    <p className="font-semibold text-cyan-100">
+                      Analytics & Tracking
+                    </p>
                     <p className="text-sm">
-                      Receive weekly email reports with view counts and engagement metrics
+                      Receive weekly email reports with view counts and
+                      engagement metrics
                     </p>
                   </div>
                 </div>
@@ -507,9 +553,12 @@ export default function FeaturedPartners() {
                 <div className="flex gap-3">
                   <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-1" />
                   <div>
-                    <p className="font-semibold text-cyan-100">Non-Refundable</p>
+                    <p className="font-semibold text-cyan-100">
+                      Non-Refundable
+                    </p>
                     <p className="text-sm">
-                      All sales are final. No refunds or cancellations after payment.
+                      All sales are final. No refunds or cancellations after
+                      payment.
                     </p>
                   </div>
                 </div>
@@ -518,7 +567,9 @@ export default function FeaturedPartners() {
 
             {/* Form Section */}
             <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-cyan-100 mb-6">Register Your Ad</h3>
+              <h3 className="text-xl font-bold text-cyan-100 mb-6">
+                Register Your Ad
+              </h3>
 
               <div className="space-y-4">
                 <div>
@@ -593,7 +644,9 @@ export default function FeaturedPartners() {
                     </label>
                     <input
                       type="file"
-                      accept={formData.adType === "video" ? "video/*" : "image/*"}
+                      accept={
+                        formData.adType === "video" ? "video/*" : "image/*"
+                      }
                       onChange={handleFileUpload}
                       className="w-full px-4 py-2 bg-white/10 border border-cyan-400/30 rounded-lg text-cyan-100"
                     />
@@ -648,18 +701,20 @@ export default function FeaturedPartners() {
                       </h3>
                       <p className="text-cyan-400 text-sm">{partner.email}</p>
                     </div>
-                    <div className={`px-4 py-2 rounded-full font-semibold text-sm ${
-                      partner.paymentStatus === "paid"
-                        ? "bg-green-500/20 text-green-400"
-                        : partner.paymentStatus === "expired"
-                        ? "bg-red-500/20 text-red-400"
-                        : "bg-yellow-500/20 text-yellow-400"
-                    }`}>
+                    <div
+                      className={`px-4 py-2 rounded-full font-semibold text-sm ${
+                        partner.paymentStatus === "paid"
+                          ? "bg-green-500/20 text-green-400"
+                          : partner.paymentStatus === "expired"
+                            ? "bg-red-500/20 text-red-400"
+                            : "bg-yellow-500/20 text-yellow-400"
+                      }`}
+                    >
                       {partner.paymentStatus === "paid"
                         ? "✓ Active"
                         : partner.paymentStatus === "expired"
-                        ? "⚠ Expired"
-                        : "⏳ Pending Payment"}
+                          ? "⚠ Expired"
+                          : "⏳ Pending Payment"}
                     </div>
                   </div>
 
@@ -688,7 +743,9 @@ export default function FeaturedPartners() {
                   <div className="space-y-3 mb-6">
                     <p className="text-cyan-100 font-semibold">Uploaded Ads:</p>
                     {partner.ads.length === 0 ? (
-                      <p className="text-cyan-400/60 text-sm">No ads uploaded</p>
+                      <p className="text-cyan-400/60 text-sm">
+                        No ads uploaded
+                      </p>
                     ) : (
                       partner.ads.map((ad) => (
                         <div
@@ -696,7 +753,9 @@ export default function FeaturedPartners() {
                           className="bg-white/5 rounded-lg p-4 flex justify-between items-center"
                         >
                           <div className="flex-1">
-                            <p className="text-cyan-100 font-medium">{ad.title}</p>
+                            <p className="text-cyan-100 font-medium">
+                              {ad.title}
+                            </p>
                             <p className="text-cyan-400/60 text-sm">
                               {ad.adType.toUpperCase()} • {ad.views} views
                             </p>
@@ -758,15 +817,21 @@ export default function FeaturedPartners() {
               <div className="space-y-4 mb-8">
                 <div className="flex gap-3">
                   <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
-                  <p className="text-cyan-100">Rotating ads on dashboard (every 2 seconds)</p>
+                  <p className="text-cyan-100">
+                    Rotating ads on dashboard (every 2 seconds)
+                  </p>
                 </div>
                 <div className="flex gap-3">
                   <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
-                  <p className="text-cyan-100">Display in community shared section</p>
+                  <p className="text-cyan-100">
+                    Display in community shared section
+                  </p>
                 </div>
                 <div className="flex gap-3">
                   <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
-                  <p className="text-cyan-100">Minimum 10 minutes daily visibility</p>
+                  <p className="text-cyan-100">
+                    Minimum 10 minutes daily visibility
+                  </p>
                 </div>
                 <div className="flex gap-3">
                   <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
@@ -784,7 +849,8 @@ export default function FeaturedPartners() {
                   Non-Refundable & Final Sale
                 </p>
                 <p className="text-red-200/80 text-sm mt-2">
-                  All sales are final. No refunds, cancellations, or modifications after payment is made.
+                  All sales are final. No refunds, cancellations, or
+                  modifications after payment is made.
                 </p>
               </div>
 
@@ -812,7 +878,9 @@ export default function FeaturedPartners() {
                     6-Month Cycle
                   </h4>
                   <p className="text-cyan-300/80 text-sm">
-                    Your campaign runs for exactly 6 months from the date of payment. At the end of this period, your ads will automatically stop displaying.
+                    Your campaign runs for exactly 6 months from the date of
+                    payment. At the end of this period, your ads will
+                    automatically stop displaying.
                   </p>
                 </div>
 
@@ -822,7 +890,9 @@ export default function FeaturedPartners() {
                     Renewal Notification
                   </h4>
                   <p className="text-cyan-300/80 text-sm">
-                    We'll send you an email 30 days before expiration. You can renew your subscription for another 6 months at the same $1,000 rate.
+                    We'll send you an email 30 days before expiration. You can
+                    renew your subscription for another 6 months at the same
+                    $1,000 rate.
                   </p>
                 </div>
 
@@ -832,7 +902,9 @@ export default function FeaturedPartners() {
                     Ad Management
                   </h4>
                   <p className="text-cyan-300/80 text-sm">
-                    Upload, manage, and remove multiple ads. Switch between image, video, and text formats anytime during your subscription.
+                    Upload, manage, and remove multiple ads. Switch between
+                    image, video, and text formats anytime during your
+                    subscription.
                   </p>
                 </div>
 
@@ -842,7 +914,8 @@ export default function FeaturedPartners() {
                     View Analytics
                   </h4>
                   <p className="text-cyan-300/80 text-sm">
-                    Receive weekly emails showing how many users viewed your ads. Track engagement throughout your campaign.
+                    Receive weekly emails showing how many users viewed your
+                    ads. Track engagement throughout your campaign.
                   </p>
                 </div>
               </div>

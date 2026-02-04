@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Heart, Share2, MessageCircle, ThumbsUp, Trash2, Image, Video, Search, X } from "lucide-react";
+import {
+  Heart,
+  Share2,
+  MessageCircle,
+  ThumbsUp,
+  Trash2,
+  Image,
+  Video,
+  Search,
+  X,
+} from "lucide-react";
 import RotatingAds from "../components/RotatingAds";
 
 interface Comment {
@@ -39,8 +49,12 @@ export default function SharedMemories() {
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
-  const [shareVisibility, setShareVisibility] = useState<"everyone" | "bonded-contacts" | "specific-users">("everyone");
-  const [bondedContactsForShare, setBondedContactsForShare] = useState<any[]>([]);
+  const [shareVisibility, setShareVisibility] = useState<
+    "everyone" | "bonded-contacts" | "specific-users"
+  >("everyone");
+  const [bondedContactsForShare, setBondedContactsForShare] = useState<any[]>(
+    [],
+  );
   const [memories, setMemories] = useState<SharedMemory[]>([
     {
       id: "1",
@@ -86,7 +100,7 @@ export default function SharedMemories() {
   ]);
 
   const [likedMemories, setLikedMemories] = useState<Record<string, boolean>>(
-    memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {})
+    memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {}),
   );
 
   // Load bonded contacts on mount
@@ -110,7 +124,11 @@ export default function SharedMemories() {
         const activeAds: any[] = [];
         partners.forEach((partner: any) => {
           // CRITICAL: Only load ads from partners with verified PayPal payment
-          if (partner.paymentStatus === "paid" && partner.paymentId && partner.ads) {
+          if (
+            partner.paymentStatus === "paid" &&
+            partner.paymentId &&
+            partner.ads
+          ) {
             partner.ads.forEach((ad: any) => {
               // Only IMAGE ads in community section with 30-second display timer
               // Exclude: videos, text, unpaid/unverified ads
@@ -147,7 +165,11 @@ export default function SharedMemories() {
 
   // Handle incoming media from Dashboard
   useEffect(() => {
-    const state = location.state as { mediaUrl?: string; mediaType?: "photo" | "video"; mood?: string } | null;
+    const state = location.state as {
+      mediaUrl?: string;
+      mediaType?: "photo" | "video";
+      mood?: string;
+    } | null;
     if (state?.mediaUrl && caption) {
       // Media is ready to be shared
     }
@@ -162,8 +184,8 @@ export default function SharedMemories() {
               likes: likedMemories[id] ? m.likes - 1 : m.likes + 1,
               isLiked: !likedMemories[id],
             }
-          : m
-      )
+          : m,
+      ),
     );
     setLikedMemories((prev) => ({
       ...prev,
@@ -176,7 +198,7 @@ export default function SharedMemories() {
   };
 
   const filteredMemories = memories.filter((m) =>
-    m.username.toLowerCase().includes(searchQuery.toLowerCase())
+    m.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleAddComment = (memoryId: string) => {
@@ -198,8 +220,8 @@ export default function SharedMemories() {
         prev.map((m) =>
           m.id === memoryId
             ? { ...m, commentsList: [newComment, ...m.commentsList] }
-            : m
-        )
+            : m,
+        ),
       );
 
       setCommentText("");
@@ -219,8 +241,8 @@ export default function SharedMemories() {
                 ...m,
                 commentsList: m.commentsList.filter((c) => c.id !== commentId),
               }
-            : m
-        )
+            : m,
+        ),
       );
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -229,7 +251,11 @@ export default function SharedMemories() {
   };
 
   const handleShareMemory = async () => {
-    const state = location.state as { mediaUrl?: string; mediaType?: "photo" | "video"; mood?: string } | null;
+    const state = location.state as {
+      mediaUrl?: string;
+      mediaType?: "photo" | "video";
+      mood?: string;
+    } | null;
 
     if (!caption && !state?.mediaUrl) {
       alert("Please add a caption or share a photo/video");
@@ -254,11 +280,12 @@ export default function SharedMemories() {
         commentsList: [],
         isLiked: false,
         visibility: shareVisibility,
-        sharedWith: shareVisibility === "bonded-contacts"
-          ? bondedContactsForShare.map((c: any) => c.name)
-          : shareVisibility === "specific-users"
-          ? [] // Users would select specific users, defaulting to empty for now
-          : undefined, // "everyone" - no restrictions
+        sharedWith:
+          shareVisibility === "bonded-contacts"
+            ? bondedContactsForShare.map((c: any) => c.name)
+            : shareVisibility === "specific-users"
+              ? [] // Users would select specific users, defaulting to empty for now
+              : undefined, // "everyone" - no restrictions
       };
 
       // Add to memories
@@ -272,11 +299,12 @@ export default function SharedMemories() {
       window.history.replaceState({}, document.title, window.location.pathname);
 
       // Show success message
-      const visibilityText = shareVisibility === "everyone"
-        ? "the entire community"
-        : shareVisibility === "bonded-contacts"
-        ? `${bondedContactsForShare.length} bonded contact${bondedContactsForShare.length !== 1 ? 's' : ''}`
-        : "selected users";
+      const visibilityText =
+        shareVisibility === "everyone"
+          ? "the entire community"
+          : shareVisibility === "bonded-contacts"
+            ? `${bondedContactsForShare.length} bonded contact${bondedContactsForShare.length !== 1 ? "s" : ""}`
+            : "selected users";
       alert(`✓ Memory shared with ${visibilityText}!`);
     } catch (error) {
       console.error("Error sharing memory:", error);
@@ -354,7 +382,9 @@ export default function SharedMemories() {
             {/* Media Preview from Dashboard */}
             {location.state && (location.state as any)?.mediaUrl && (
               <div className="border-t border-slate-200 pt-4">
-                <p className="text-sm text-slate-600 mb-2">📎 Media ready to share:</p>
+                <p className="text-sm text-slate-600 mb-2">
+                  📎 Media ready to share:
+                </p>
                 <div className="relative rounded-lg overflow-hidden bg-slate-900 h-32">
                   {(location.state as any)?.mediaType === "video" ? (
                     <video
@@ -375,7 +405,9 @@ export default function SharedMemories() {
 
             {/* Sharing Privacy Options */}
             <div className="border-t border-slate-200 pt-4">
-              <label className="text-sm font-semibold text-slate-900 block mb-2">Share with:</label>
+              <label className="text-sm font-semibold text-slate-900 block mb-2">
+                Share with:
+              </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setShareVisibility("everyone")}
@@ -395,7 +427,11 @@ export default function SharedMemories() {
                       : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-50"
                   }`}
                   disabled={bondedContactsForShare.length === 0}
-                  title={bondedContactsForShare.length === 0 ? "No bonded contacts" : ""}
+                  title={
+                    bondedContactsForShare.length === 0
+                      ? "No bonded contacts"
+                      : ""
+                  }
                 >
                   💚 Bonded ({bondedContactsForShare.length})
                 </button>
@@ -445,7 +481,9 @@ export default function SharedMemories() {
         <div className="space-y-6">
           {filteredMemories.length === 0 && searchQuery ? (
             <div className="text-center py-12 bg-white rounded-2xl">
-              <p className="text-slate-600">No users found matching "{searchQuery}"</p>
+              <p className="text-slate-600">
+                No users found matching "{searchQuery}"
+              </p>
             </div>
           ) : null}
 
@@ -465,7 +503,9 @@ export default function SharedMemories() {
                       <p className="font-semibold text-slate-900">
                         {memory.username}
                       </p>
-                      <p className="text-sm text-slate-600">{memory.timestamp}</p>
+                      <p className="text-sm text-slate-600">
+                        {memory.timestamp}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -477,7 +517,9 @@ export default function SharedMemories() {
                 </div>
 
                 {/* Caption */}
-                <p className="text-slate-800 leading-relaxed">{memory.caption}</p>
+                <p className="text-slate-800 leading-relaxed">
+                  {memory.caption}
+                </p>
               </div>
 
               {/* Memory Media */}
@@ -554,7 +596,8 @@ export default function SharedMemories() {
                     setSelectedMemoryId(memory.id);
                     setOpenCommentId(memory.id);
                   }}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+                  className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
+                >
                   <MessageCircle className="w-5 h-5" />
                   <span className="hidden sm:inline">Comment</span>
                 </button>
@@ -571,28 +614,41 @@ export default function SharedMemories() {
               {/* Comments Section */}
               {memory.commentsList.length > 0 && (
                 <div className="px-6 py-4 border-t border-slate-100 bg-slate-50">
-                  <h4 className="font-semibold text-slate-900 mb-3">Comments</h4>
+                  <h4 className="font-semibold text-slate-900 mb-3">
+                    Comments
+                  </h4>
                   <div className="space-y-3 max-h-64 overflow-y-auto">
                     {memory.commentsList.map((comment) => (
-                      <div key={comment.id} className="bg-white rounded-lg p-3 border border-slate-200">
+                      <div
+                        key={comment.id}
+                        className="bg-white rounded-lg p-3 border border-slate-200"
+                      >
                         <div className="flex items-start gap-3">
                           <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
                             {comment.avatar}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
-                              <p className="font-semibold text-slate-900 text-sm">{comment.username}</p>
+                              <p className="font-semibold text-slate-900 text-sm">
+                                {comment.username}
+                              </p>
                               {comment.username === "You" && (
                                 <button
-                                  onClick={() => handleDeleteComment(memory.id, comment.id)}
+                                  onClick={() =>
+                                    handleDeleteComment(memory.id, comment.id)
+                                  }
                                   className="text-red-600 hover:text-red-700 text-xs"
                                 >
                                   Delete
                                 </button>
                               )}
                             </div>
-                            <p className="text-slate-700 text-sm">{comment.text}</p>
-                            <p className="text-xs text-slate-500 mt-1">{comment.timestamp}</p>
+                            <p className="text-slate-700 text-sm">
+                              {comment.text}
+                            </p>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {comment.timestamp}
+                            </p>
                           </div>
                         </div>
                       </div>

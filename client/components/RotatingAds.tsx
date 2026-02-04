@@ -30,7 +30,11 @@ export default function RotatingAds() {
           const activeAds: Ad[] = [];
           partners.forEach((partner: any) => {
             // CRITICAL: Only load ads from partners with confirmed payment
-            if (partner.paymentStatus === "paid" && partner.paymentId && partner.ads) {
+            if (
+              partner.paymentStatus === "paid" &&
+              partner.paymentId &&
+              partner.ads
+            ) {
               partner.ads.forEach((ad: Ad) => {
                 // Only include IMAGE type ads that are active
                 // Exclude: videos, text, unpaid ads
@@ -41,7 +45,9 @@ export default function RotatingAds() {
             }
           });
           setAds(activeAds);
-          console.log(`✅ Loaded ${activeAds.length} verified ads from ${partners.filter((p: any) => p.paymentStatus === "paid" && p.paymentId).length} paid partners`);
+          console.log(
+            `✅ Loaded ${activeAds.length} verified ads from ${partners.filter((p: any) => p.paymentStatus === "paid" && p.paymentId).length} paid partners`,
+          );
         } catch (e) {
           console.error("Error loading ads:", e);
         }

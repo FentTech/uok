@@ -84,7 +84,9 @@ export default function Dashboard() {
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [todayCheckInCount, setTodayCheckInCount] = useState(0);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<"morning" | "afternoon" | "evening" | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<
+    "morning" | "afternoon" | "evening" | null
+  >(null);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
@@ -625,12 +627,18 @@ export default function Dashboard() {
 
               {/* Time Slot Selection */}
               <div className="mb-6">
-                <p className="text-cyan-200 font-semibold mb-3 text-sm">Select check-in time:</p>
+                <p className="text-cyan-200 font-semibold mb-3 text-sm">
+                  Select check-in time:
+                </p>
                 <div className="grid grid-cols-3 gap-3">
                   {CHECK_IN_TIMES.map((timeSlot) => (
                     <button
                       key={timeSlot.slot}
-                      onClick={() => setSelectedTimeSlot(timeSlot.slot as "morning" | "afternoon" | "evening")}
+                      onClick={() =>
+                        setSelectedTimeSlot(
+                          timeSlot.slot as "morning" | "afternoon" | "evening",
+                        )
+                      }
                       disabled={todayCheckInCount >= 3}
                       className={`py-2 px-3 rounded-lg font-semibold text-sm transition ${
                         selectedTimeSlot === timeSlot.slot
@@ -638,7 +646,9 @@ export default function Dashboard() {
                           : "bg-white/10 text-cyan-200 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-cyan-400/30"
                       }`}
                     >
-                      {timeSlot.icon} {timeSlot.slot.charAt(0).toUpperCase() + timeSlot.slot.slice(1)}
+                      {timeSlot.icon}{" "}
+                      {timeSlot.slot.charAt(0).toUpperCase() +
+                        timeSlot.slot.slice(1)}
                     </button>
                   ))}
                 </div>
