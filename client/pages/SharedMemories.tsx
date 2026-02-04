@@ -34,7 +34,7 @@ export default function SharedMemories() {
   const [shareLoading, setShareLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [fullscreenVideo, setFullscreenVideo] = useState<string | null>(null);
-  const [adTimer, setAdTimer] = useState(30); // 30 second timer for video ads
+  const [adTimer, setAdTimer] = useState(10); // 10 second timer for video ads
   const [featuredAds, setFeaturedAds] = useState<any[]>([]);
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
