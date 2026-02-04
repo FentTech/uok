@@ -22,6 +22,12 @@ import {
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
 import RotatingAds from "../components/RotatingAds";
+import {
+  mediaStorage,
+  notificationStorage,
+  notificationHelpers,
+  type StoredMedia,
+} from "../lib/dataStorage";
 
 interface CheckIn {
   id: string;
