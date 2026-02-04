@@ -12,6 +12,12 @@ import {
   X,
 } from "lucide-react";
 import RotatingAds from "../components/RotatingAds";
+import {
+  sharedMomentsStorage,
+  notificationStorage,
+  type StoredSharedMoment,
+  type StoredComment,
+} from "../lib/dataStorage";
 
 interface Comment {
   id: string;
