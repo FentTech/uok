@@ -128,15 +128,15 @@ export default function SharedMemories() {
     }
   }, []);
 
-  // 30-second timer for video ads in community
+  // 10-second timer for video ads in community
   useEffect(() => {
     if (fullscreenVideo && adTimer > 0) {
       const interval = setInterval(() => {
         setAdTimer((prev) => {
           if (prev <= 1) {
             setFullscreenVideo(null);
-            setAdTimer(30);
-            return 30;
+            setAdTimer(10);
+            return 10;
           }
           return prev - 1;
         });
