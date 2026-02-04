@@ -248,6 +248,11 @@ export default function Dashboard() {
       return;
     }
 
+    if (!selectedTimeSlot) {
+      alert("Please select a check-in time (Morning, Afternoon, or Evening)");
+      return;
+    }
+
     const now = new Date();
     const newCheckIn: CheckIn = {
       id: Date.now().toString(),
@@ -258,6 +263,7 @@ export default function Dashboard() {
         minute: "2-digit",
       }),
       date: "Today",
+      timeSlot: selectedTimeSlot,
     };
 
     setCheckIns([newCheckIn, ...checkIns]);
@@ -268,7 +274,10 @@ export default function Dashboard() {
     sendCheckInNotification(mood);
 
     // Show confirmation
-    setTimeout(() => setSelectedMood(null), 2000);
+    setTimeout(() => {
+      setSelectedMood(null);
+      setSelectedTimeSlot(null);
+    }, 2000);
   };
 
   // Share media to community
