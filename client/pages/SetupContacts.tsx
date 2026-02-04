@@ -140,6 +140,9 @@ export default function SetupContacts() {
                           <p className="font-semibold text-slate-900">
                             {contact.name}
                           </p>
+                          <p className="text-sm text-slate-600 mt-1">
+                            {contact.email}
+                          </p>
                           <div className="flex items-center gap-2 mt-2">
                             <code className="px-3 py-1 bg-white rounded border border-cyan-300 text-sm font-mono text-cyan-700">
                               {contact.bondCode}
