@@ -5,6 +5,7 @@ import { Heart, Plus, X, Copy, Check } from "lucide-react";
 interface BondedContact {
   id: string;
   name: string;
+  email: string;
   bondCode: string;
   status: "pending" | "bonded";
   bondedAt?: string;
@@ -14,6 +15,7 @@ export default function SetupContacts() {
   const [contacts, setContacts] = useState<BondedContact[]>([]);
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -24,6 +26,12 @@ export default function SetupContacts() {
 
     if (!formData.name.trim()) {
       newErrors.name = "Contact name is required";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email address is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
     }
 
     setErrors(newErrors);
@@ -54,11 +62,12 @@ export default function SetupContacts() {
       const newContact: BondedContact = {
         id: Date.now().toString(),
         name: formData.name,
+        email: formData.email,
         bondCode: generateBondCode(),
         status: "pending",
       };
       setContacts([...contacts, newContact]);
-      setFormData({ name: "" });
+      setFormData({ name: "", email: "" });
       setErrors({});
     }
   };
@@ -190,6 +199,26 @@ export default function SetupContacts() {
                       {errors.name && (
                         <p className="text-red-500 text-sm mt-1">
                           {errors.name}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Email Field */}
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-900 mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="e.g., mom@example.com"
+                        className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.email}
                         </p>
                       )}
                     </div>
