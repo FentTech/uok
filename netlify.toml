@@ -1,13 +1,28 @@
 [build]
   command = "npm run build"
   publish = "dist/spa"
+  environment = { NODE_VERSION = "18" }
 
+# SPA routing - redirect all non-file requests to index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# Cache busting for assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML files - don't cache
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 [dev]
   framework = "vite"
+  command = "npm run dev"
   port = 3000
   publish = "dist/spa"
