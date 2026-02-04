@@ -89,6 +89,18 @@ export default function SharedMemories() {
     memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {})
   );
 
+  // Load bonded contacts on mount
+  useEffect(() => {
+    const bondedContactsStr = localStorage.getItem("bondedContacts");
+    if (bondedContactsStr) {
+      try {
+        setBondedContactsForShare(JSON.parse(bondedContactsStr));
+      } catch (e) {
+        console.error("Error loading bonded contacts:", e);
+      }
+    }
+  }, []);
+
   // Load featured ads from localStorage (only images, only verified payments)
   useEffect(() => {
     const featured = localStorage.getItem("featuredPartners");
