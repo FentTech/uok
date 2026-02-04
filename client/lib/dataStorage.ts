@@ -458,6 +458,42 @@ export const checkInStorage = {
     return checkInStorage.getTodayForUser(userEmail).length;
   },
 
+  // Fetch bonded contacts' check-ins from Firebase (real-time sync)
+  fetchBondedCheckInsFromFirebase: async (
+    bondedEmails: string[],
+  ): Promise<StoredCheckIn[]> => {
+    try {
+      const { firebaseCheckInService } = await import("./firebase");
+
+      const today = new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+
+      const firebaseCheckIns = await firebaseCheckInService.getBondedCheckIns(
+        "",
+        bondedEmails,
+        today,
+      );
+
+      // Convert Firebase documents to StoredCheckIn format
+      return firebaseCheckIns.map((doc) => ({
+        id: doc.id,
+        userEmail: doc.userEmail,
+        userName: doc.userName,
+        emoji: doc.emoji,
+        mood: doc.mood,
+        timestamp: doc.timestamp,
+        date: doc.date,
+        timeSlot: doc.timeSlot,
+        createdAt: doc.createdAt?.toDate?.()?.toISOString?.() || new Date().toISOString(),
+      }));
+    } catch (error) {
+      console.log("Firebase not available, returning local check-ins only");
+      return [];
+    }
+  },
+
   // Delete check-ins older than 72 hours
   cleanupOldCheckIns: (): number => {
     const allCheckIns = checkInStorage.getAll();
