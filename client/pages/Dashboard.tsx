@@ -1188,9 +1188,19 @@ export default function Dashboard() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-purple-300/80 text-sm">
-                    No check-ins from bonded members yet today
-                  </p>
+                  <div className="space-y-3">
+                    <p className="text-purple-300/80 text-sm">
+                      No check-ins from bonded members yet today
+                    </p>
+                    {bondedContacts.length > 0 && (
+                      <button
+                        onClick={addDemoBondedCheckIns}
+                        className="w-full px-4 py-2 text-sm bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 hover:text-purple-200 font-semibold rounded-lg transition border border-purple-400/30"
+                      >
+                        📋 Add Demo Check-ins (Test)
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
