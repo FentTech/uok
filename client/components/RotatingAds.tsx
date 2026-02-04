@@ -19,19 +19,20 @@ export default function RotatingAds() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const currentAd = ads.length > 0 ? ads[currentAdIndex] : null;
 
-  // Load active ads from localStorage
+  // Load active ads from localStorage (only images on dashboard)
   useEffect(() => {
     const loadAds = () => {
       const featured = localStorage.getItem("featuredPartners");
       if (featured) {
         try {
           const partners = JSON.parse(featured);
-          // Get all active ads from paid partners
+          // Get all active IMAGE ads from paid partners (no videos)
           const activeAds: Ad[] = [];
           partners.forEach((partner: any) => {
             if (partner.paymentStatus === "paid" && partner.ads) {
               partner.ads.forEach((ad: Ad) => {
-                if (ad.active) {
+                // Only include IMAGE type ads, exclude videos and text
+                if (ad.active && ad.adType === "image") {
                   activeAds.push(ad);
                 }
               });
