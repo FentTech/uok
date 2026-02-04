@@ -337,17 +337,17 @@ export default function SharedMemories() {
         </div>
 
         {/* Share Memory Prompt */}
-        <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 mb-8">
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-rose-400 rounded-full flex items-center justify-center text-white font-bold">
                 Y
               </div>
               <textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="Share how you're feeling today..."
-                className="flex-1 bg-slate-100 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none h-24"
+                className="flex-1 bg-orange-50 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none h-24"
               />
             </div>
 
