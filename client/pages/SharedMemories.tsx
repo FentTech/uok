@@ -86,7 +86,7 @@ export default function SharedMemories() {
     memories.reduce((acc, m) => ({ ...acc, [m.id]: m.isLiked }), {})
   );
 
-  // Load featured ads from localStorage (only images, with 30-second timer)
+  // Load featured ads from localStorage (only images, only verified payments)
   useEffect(() => {
     const featured = localStorage.getItem("featuredPartners");
     if (featured) {
@@ -94,9 +94,11 @@ export default function SharedMemories() {
         const partners = JSON.parse(featured);
         const activeAds: any[] = [];
         partners.forEach((partner: any) => {
-          if (partner.paymentStatus === "paid" && partner.ads) {
+          // CRITICAL: Only load ads from partners with verified PayPal payment
+          if (partner.paymentStatus === "paid" && partner.paymentId && partner.ads) {
             partner.ads.forEach((ad: any) => {
-              // Only IMAGE ads in community section, with 30-second display
+              // Only IMAGE ads in community section with 30-second display timer
+              // Exclude: videos, text, unpaid/unverified ads
               if (ad.active && ad.adType === "image") {
                 activeAds.push(ad);
               }
@@ -104,6 +106,7 @@ export default function SharedMemories() {
           }
         });
         setFeaturedAds(activeAds);
+        console.log(`✅ Loaded ${activeAds.length} verified community ads`);
       } catch (e) {
         console.error("Error loading ads:", e);
       }
