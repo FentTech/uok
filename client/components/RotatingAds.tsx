@@ -19,19 +19,21 @@ export default function RotatingAds() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const currentAd = ads.length > 0 ? ads[currentAdIndex] : null;
 
-  // Load active ads from localStorage (only images on dashboard)
+  // Load active ads from localStorage (only images on dashboard, only paid partners)
   useEffect(() => {
     const loadAds = () => {
       const featured = localStorage.getItem("featuredPartners");
       if (featured) {
         try {
           const partners = JSON.parse(featured);
-          // Get all active IMAGE ads from paid partners (no videos)
+          // Get all active IMAGE ads from PAID partners ONLY
           const activeAds: Ad[] = [];
           partners.forEach((partner: any) => {
-            if (partner.paymentStatus === "paid" && partner.ads) {
+            // CRITICAL: Only load ads from partners with confirmed payment
+            if (partner.paymentStatus === "paid" && partner.paymentId && partner.ads) {
               partner.ads.forEach((ad: Ad) => {
-                // Only include IMAGE type ads, exclude videos and text
+                // Only include IMAGE type ads that are active
+                // Exclude: videos, text, unpaid ads
                 if (ad.active && ad.adType === "image") {
                   activeAds.push(ad);
                 }
@@ -39,6 +41,7 @@ export default function RotatingAds() {
             }
           });
           setAds(activeAds);
+          console.log(`✅ Loaded ${activeAds.length} verified ads from ${partners.filter((p: any) => p.paymentStatus === "paid" && p.paymentId).length} paid partners`);
         } catch (e) {
           console.error("Error loading ads:", e);
         }
