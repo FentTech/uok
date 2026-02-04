@@ -563,6 +563,14 @@ export default function Dashboard() {
     setMediaItems(mediaItems.filter((item) => item.id !== id));
   };
 
+  const refreshBondedCheckIns = () => {
+    const bondedEmails = bondedContacts.map((c) => c.email);
+    const updatedCheckIns = checkInStorage.getTodayFromBondedContacts(
+      bondedEmails
+    );
+    setBondedCheckIns(updatedCheckIns);
+  };
+
   const status = checkInStatus();
   const StatusIcon = status.icon;
 
