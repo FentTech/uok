@@ -5,6 +5,7 @@
 The "Bonded Family Check-ins" section shows "No check-ins from bonded members yet today" because the app currently uses **localStorage only** - which stores data locally on each person's device.
 
 ### Current Architecture:
+
 - **Person A** checks in → data saved to Person A's browser
 - **Person B** checks in → data saved to Person B's browser
 - **Person A's dashboard** can only see Person A's check-ins (stored locally)
@@ -23,14 +24,15 @@ You need a **backend database** to sync check-ins between users. Here's how:
 Create `server/routes/checkins.js`:
 
 ```javascript
-const express = require('express');
-const db = require('../database'); // Your database connection
+const express = require("express");
+const db = require("../database"); // Your database connection
 const router = express.Router();
 
 // Save a check-in to database
-router.post('/save', async (req, res) => {
+router.post("/save", async (req, res) => {
   try {
-    const { userEmail, userName, emoji, mood, timestamp, date, timeSlot } = req.body;
+    const { userEmail, userName, emoji, mood, timestamp, date, timeSlot } =
+      req.body;
 
     const checkIn = {
       userEmail,
@@ -44,7 +46,7 @@ router.post('/save', async (req, res) => {
     };
 
     // Save to database
-    await db.collection('checkins').insertOne(checkIn);
+    await db.collection("checkins").insertOne(checkIn);
 
     res.json({ success: true, checkIn });
   } catch (error) {
@@ -53,21 +55,21 @@ router.post('/save', async (req, res) => {
 });
 
 // Get check-ins from bonded contacts
-router.get('/bonded/:userEmail', async (req, res) => {
+router.get("/bonded/:userEmail", async (req, res) => {
   try {
     const userEmail = req.params.userEmail;
-    const today = new Date().toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
+    const today = new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     });
 
     // Get user's bonded contacts
-    const user = await db.collection('users').findOne({ email: userEmail });
+    const user = await db.collection("users").findOne({ email: userEmail });
     const bondedEmails = user?.bondedContacts?.map((c) => c.email) || [];
 
     // Get today's check-ins from bonded contacts
     const checkins = await db
-      .collection('checkins')
+      .collection("checkins")
       .find({
         userEmail: { $in: bondedEmails },
         date: today,
@@ -92,7 +94,9 @@ export const checkInStorage = {
   // ... existing functions ...
 
   // Save check-in to BOTH localStorage and backend
-  add: async (checkIn: Omit<StoredCheckIn, "id" | "createdAt">): Promise<StoredCheckIn> => {
+  add: async (
+    checkIn: Omit<StoredCheckIn, "id" | "createdAt">,
+  ): Promise<StoredCheckIn> => {
     // Save to localStorage (offline support)
     const allCheckIns = checkInStorage.getAll();
     const newCheckIn: StoredCheckIn = {
@@ -134,7 +138,7 @@ export const checkInStorage = {
       return data.checkins || [];
     } catch (error) {
       console.log(
-        "Cannot fetch bonded check-ins (backend unavailable or not set up)"
+        "Cannot fetch bonded check-ins (backend unavailable or not set up)",
       );
       return [];
     }
@@ -223,7 +227,14 @@ useEffect(() => {
 ### Option 1: Firebase (Easiest)
 
 ```typescript
-import { getFirestore, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 const db = getFirestore();
 
@@ -243,7 +254,7 @@ await addDoc(collection(db, "checkins"), {
 const q = query(
   collection(db, "checkins"),
   where("userEmail", "in", bondedEmails),
-  where("date", "==", today)
+  where("date", "==", today),
 );
 const snapshot = await getDocs(q);
 ```
@@ -315,6 +326,7 @@ const { data: checkins, error: fetchError } = await supabase
 For now, I've added a "📋 Add Demo Check-ins (Test)" button in the Bonded Family Check-ins section.
 
 **To test:**
+
 1. Go to Dashboard
 2. Click Settings ⚙️ → Add Emergency Contacts
 3. Add some bonded contacts (with email addresses)
@@ -328,15 +340,16 @@ This simulates what will happen once the backend is connected!
 
 ## Summary
 
-| Component | Current | With Backend |
-|-----------|---------|--------------|
-| Check-in Data | Stored locally on user's device | Stored in shared database |
-| Bonded Visibility | User can only see their own | User can see bonded contacts' |
-| Real-time Sync | None | Every 10 seconds |
-| Works Offline | Yes (local only) | Yes (with sync when online) |
-| Multiple Devices | No (data on one device) | Yes (synced across devices) |
+| Component         | Current                         | With Backend                  |
+| ----------------- | ------------------------------- | ----------------------------- |
+| Check-in Data     | Stored locally on user's device | Stored in shared database     |
+| Bonded Visibility | User can only see their own     | User can see bonded contacts' |
+| Real-time Sync    | None                            | Every 10 seconds              |
+| Works Offline     | Yes (local only)                | Yes (with sync when online)   |
+| Multiple Devices  | No (data on one device)         | Yes (synced across devices)   |
 
 **Next Steps:**
+
 1. Choose a database (Firebase/MongoDB/Supabase)
 2. Set up backend API endpoints
 3. Update frontend to call backend API

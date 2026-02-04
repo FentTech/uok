@@ -5,6 +5,7 @@ Your app is ready to send emails! Here's how to connect it to an actual email se
 ## Option 1: Using SendGrid (Recommended - Free tier available)
 
 ### Step 1: Create SendGrid Account
+
 1. Go to https://sendgrid.com
 2. Sign up for a free account
 3. Go to Settings → API Keys
@@ -15,14 +16,14 @@ Your app is ready to send emails! Here's how to connect it to an actual email se
 Create a new file `server/routes/emails.js`:
 
 ```javascript
-const express = require('express');
-const sgMail = require('@sendgrid/mail');
+const express = require("express");
+const sgMail = require("@sendgrid/mail");
 const router = express.Router();
 
 // Set your SendGrid API key from environment variable
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-router.post('/send', async (req, res) => {
+router.post("/send", async (req, res) => {
   try {
     const { to, subject, message } = req.body;
 
@@ -47,9 +48,9 @@ router.post('/send', async (req, res) => {
     };
 
     await sgMail.send(msg);
-    res.json({ success: true, message: 'Email sent successfully' });
+    res.json({ success: true, message: "Email sent successfully" });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error("Error sending email:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -62,16 +63,16 @@ module.exports = router;
 In your main server file (e.g., `server/index.js`):
 
 ```javascript
-const express = require('express');
-const emailRoutes = require('./routes/emails');
-require('dotenv').config();
+const express = require("express");
+const emailRoutes = require("./routes/emails");
+require("dotenv").config();
 
 const app = express();
 
 app.use(express.json());
 
 // Email routes
-app.use('/api/emails', emailRoutes);
+app.use("/api/emails", emailRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
@@ -100,10 +101,10 @@ export const notificationHelpers = {
     message: string,
   ): Promise<void> => {
     try {
-      const response = await fetch('/api/emails/send', {
-        method: 'POST',
+      const response = await fetch("/api/emails/send", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           to: recipientEmail,
@@ -113,28 +114,28 @@ export const notificationHelpers = {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send email');
+        throw new Error("Failed to send email");
       }
 
       const data = await response.json();
-      console.log('📧 Email sent successfully:', {
+      console.log("📧 Email sent successfully:", {
         to: recipientEmail,
         subject,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
       // Still add notification even if email fails
       notificationStorage.add({
-        type: 'checkin',
+        type: "checkin",
         message: `Email sending failed for ${recipientEmail}. In-app notification created instead.`,
-        timestamp: new Date().toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
+        timestamp: new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
         }),
-        date: new Date().toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
+        date: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
         }),
       });
     }
@@ -162,11 +163,14 @@ npm install @sendgrid/mail express dotenv
 4. Create email route similar to SendGrid:
 
 ```javascript
-const mailgun = require('mailgun.js');
-const FormData = require('form-data');
-const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_API_KEY});
+const mailgun = require("mailgun.js");
+const FormData = require("form-data");
+const mg = mailgun.client({
+  username: "api",
+  key: process.env.MAILGUN_API_KEY,
+});
 
-router.post('/send', async (req, res) => {
+router.post("/send", async (req, res) => {
   try {
     const { to, subject, message } = req.body;
 
@@ -201,17 +205,17 @@ npm install nodemailer
 4. Create email route:
 
 ```javascript
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASSWORD, // Use the App Password, not your regular password
   },
 });
 
-router.post('/send', async (req, res) => {
+router.post("/send", async (req, res) => {
   try {
     const { to, subject, message } = req.body;
 
@@ -252,7 +256,7 @@ If you're using Netlify, you can use Netlify Functions instead of a separate bac
 Create `netlify/functions/send-email.js`:
 
 ```javascript
-const sgMail = require('@sendgrid/mail');
+const sgMail = require("@sendgrid/mail");
 
 exports.handler = async (event) => {
   try {
@@ -283,8 +287,8 @@ exports.handler = async (event) => {
 ### Step 2: Update Frontend to Call Function
 
 ```typescript
-const response = await fetch('/.netlify/functions/send-email', {
-  method: 'POST',
+const response = await fetch("/.netlify/functions/send-email", {
+  method: "POST",
   body: JSON.stringify({
     to: recipientEmail,
     subject: subject,
@@ -300,16 +304,19 @@ const response = await fetch('/.netlify/functions/send-email', {
 ### Test with SendGrid:
 
 1. In browser console, run:
+
 ```javascript
-fetch('/api/emails/send', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+fetch("/api/emails/send", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    to: 'test@example.com',
-    subject: 'UOK Test Email',
-    message: 'This is a test email from UOK'
-  })
-}).then(r => r.json()).then(console.log);
+    to: "test@example.com",
+    subject: "UOK Test Email",
+    message: "This is a test email from UOK",
+  }),
+})
+  .then((r) => r.json())
+  .then(console.log);
 ```
 
 2. Check if email was received (may take 1-2 minutes)
@@ -335,4 +342,3 @@ Both have free tiers that support thousands of emails per month, which is plenty
 4. **Test** - Send test emails through check-in flow
 
 Once you set this up, whenever users check in or bonded contacts are alerted, real emails will be sent to their registered email addresses!
-

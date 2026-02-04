@@ -622,7 +622,7 @@ export default function Dashboard() {
     // Refresh the display
     refreshBondedCheckIns();
     alert(
-      `✓ Demo check-ins added for ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}!`
+      `✓ Demo check-ins added for ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}!`,
     );
   };
 
