@@ -1085,10 +1085,19 @@ export default function Dashboard() {
 
             {/* Bonded Family Check-ins - Futuristic */}
             <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-2xl p-6 hover:border-purple-400/60 transition">
-              <h3 className="text-lg font-bold text-purple-100 mb-4 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-purple-400" />
-                Bonded Family Check-ins
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-purple-100 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-purple-400" />
+                  Bonded Family Check-ins
+                </h3>
+                <button
+                  onClick={refreshBondedCheckIns}
+                  className="text-purple-400 hover:text-purple-300 transition text-xs font-semibold px-2 py-1 rounded hover:bg-purple-500/20"
+                  title="Refresh check-ins"
+                >
+                  🔄 Refresh
+                </button>
+              </div>
 
               <div className="space-y-3">
                 {bondedCheckIns && bondedCheckIns.length > 0 ? (
