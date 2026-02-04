@@ -168,20 +168,23 @@ export default function FeaturedPartners() {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        // Check file size (limit to 5MB)
-        const maxSize = 5 * 1024 * 1024;
+        // Check file size (limit to 2MB for localStorage compatibility)
+        const maxSize = 2 * 1024 * 1024; // 2MB
         if (file.size > maxSize) {
-          alert("File size exceeds 5MB limit. Please choose a smaller file.");
+          alert(`File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds 2MB limit. Please choose a smaller file.`);
           return;
         }
 
         const reader = new FileReader();
         reader.onload = (event) => {
           try {
+            const content = event.target?.result as string;
             setFormData({
               ...formData,
-              adContent: event.target?.result as string,
+              adContent: content,
             });
+            // Show success message
+            console.log(`File uploaded: ${file.name} (${(file.size / 1024).toFixed(2)}KB)`);
           } catch (error) {
             console.error("Error setting form data:", error);
             alert("Error processing file. Please try again.");
@@ -191,10 +194,16 @@ export default function FeaturedPartners() {
           console.error("Error reading file");
           alert("Error reading file. Please try again.");
         };
+        reader.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = (event.loaded / event.total) * 100;
+            console.log(`Upload progress: ${percentComplete.toFixed(2)}%`);
+          }
+        };
         reader.readAsDataURL(file);
       } catch (error) {
         console.error("Error uploading file:", error);
-        alert("Error uploading file. Please try again.");
+        alert("Error uploading file: " + (error instanceof Error ? error.message : "Unknown error"));
       }
     }
   };
