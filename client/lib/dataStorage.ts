@@ -407,4 +407,27 @@ export const checkInStorage = {
   getTodayCountForUser: (userEmail: string): number => {
     return checkInStorage.getTodayForUser(userEmail).length;
   },
+
+  // Delete check-ins older than 72 hours
+  cleanupOldCheckIns: (): number => {
+    const allCheckIns = checkInStorage.getAll();
+    const now = new Date().getTime();
+    const seventyTwoHoursInMs = 72 * 60 * 60 * 1000;
+
+    const filtered = allCheckIns.filter((c) => {
+      const checkInTime = new Date(c.createdAt).getTime();
+      return now - checkInTime < seventyTwoHoursInMs;
+    });
+
+    const deletedCount = allCheckIns.length - filtered.length;
+
+    if (deletedCount > 0) {
+      localStorage.setItem("uok_checkins", JSON.stringify(filtered));
+      console.log(
+        `🧹 Cleaned up ${deletedCount} check-in(s) older than 72 hours`
+      );
+    }
+
+    return deletedCount;
+  },
 };
