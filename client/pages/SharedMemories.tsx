@@ -332,22 +332,22 @@ export default function SharedMemories() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search users by username..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-orange-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full pl-10 pr-4 py-3 bg-white border border-cyan-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           />
         </div>
 
         {/* Share Memory Prompt */}
-        <div className="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6 mb-8">
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-rose-400 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
                 Y
               </div>
               <textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="Share how you're feeling today..."
-                className="flex-1 bg-orange-50 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none h-24"
+                className="flex-1 bg-slate-100 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none h-24"
               />
             </div>
 
@@ -381,7 +381,7 @@ export default function SharedMemories() {
                   onClick={() => setShareVisibility("everyone")}
                   className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
                     shareVisibility === "everyone"
-                      ? "bg-indigo-600 text-white border border-indigo-600"
+                      ? "bg-cyan-600 text-white border border-cyan-600"
                       : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-50"
                   }`}
                 >
@@ -391,7 +391,7 @@ export default function SharedMemories() {
                   onClick={() => setShareVisibility("bonded-contacts")}
                   className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
                     shareVisibility === "bonded-contacts"
-                      ? "bg-indigo-600 text-white border border-indigo-600"
+                      ? "bg-cyan-600 text-white border border-cyan-600"
                       : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-50"
                   }`}
                   disabled={bondedContactsForShare.length === 0}
@@ -403,7 +403,7 @@ export default function SharedMemories() {
                   onClick={() => setShareVisibility("specific-users")}
                   className={`px-3 py-2 rounded-lg font-medium text-sm transition ${
                     shareVisibility === "specific-users"
-                      ? "bg-indigo-600 text-white border border-indigo-600"
+                      ? "bg-cyan-600 text-white border border-cyan-600"
                       : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-50"
                   }`}
                 >
@@ -415,7 +415,7 @@ export default function SharedMemories() {
             <button
               onClick={handleShareMemory}
               disabled={shareLoading}
-              className="w-full px-6 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Share2 className="w-5 h-5" />
               <span>{shareLoading ? "Sharing..." : "Share Memory"}</span>
@@ -452,13 +452,13 @@ export default function SharedMemories() {
           {filteredMemories.map((memory) => (
             <div
               key={memory.id}
-              className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden hover:shadow-xl transition"
+              className="bg-white rounded-2xl shadow-lg border border-cyan-100 overflow-hidden hover:shadow-xl transition"
             >
               {/* Memory Header */}
               <div className="p-6 border-b border-slate-100">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-rose-400 rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
                       {memory.avatar}
                     </div>
                     <div>
@@ -576,7 +576,7 @@ export default function SharedMemories() {
                     {memory.commentsList.map((comment) => (
                       <div key={comment.id} className="bg-white rounded-lg p-3 border border-slate-200">
                         <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-rose-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                          <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
                             {comment.avatar}
                           </div>
                           <div className="flex-1">
@@ -603,7 +603,7 @@ export default function SharedMemories() {
 
               {/* Add Comment Form */}
               {openCommentId === memory.id && (
-                <div className="px-6 py-4 border-t border-slate-100 bg-orange-50">
+                <div className="px-6 py-4 border-t border-slate-100 bg-cyan-50">
                   <div className="flex gap-3">
                     <input
                       type="text"
@@ -615,11 +615,11 @@ export default function SharedMemories() {
                         }
                       }}
                       placeholder="Add a comment..."
-                      className="flex-1 px-3 py-2 bg-white border border-orange-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="flex-1 px-3 py-2 bg-white border border-cyan-200 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     />
                     <button
                       onClick={() => handleAddComment(memory.id)}
-                      className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition"
+                      className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium transition"
                     >
                       Post
                     </button>
