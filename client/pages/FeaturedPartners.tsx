@@ -37,6 +37,7 @@ interface Partner {
   totalViews: number;
   ads: FeaturedAd[];
   paymentLink?: string;
+  paymentId?: string; // PayPal transaction ID - required for ads to run
 }
 
 export default function FeaturedPartners() {
