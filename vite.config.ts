@@ -32,7 +32,8 @@ export default defineConfig(({ mode }) => {
         },
         onwarn(warning: any, warn: any) {
           // Only suppress warnings we don't care about
-          const message = `${warning.message} ${warning.source || ""}`.toLowerCase();
+          const message =
+            `${warning.message} ${warning.source || ""}`.toLowerCase();
 
           // Suppress Firebase-related warnings since it's loaded dynamically
           if (message.includes("firebase")) {
