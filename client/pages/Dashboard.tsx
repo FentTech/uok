@@ -243,7 +243,11 @@ export default function Dashboard() {
       if (bondedContactsStr) {
         try {
           const parsed = JSON.parse(bondedContactsStr);
-          console.log("✅ Loaded bonded contacts from localStorage:", parsed);
+          console.log("✅ Loaded bonded contacts from localStorage:");
+          console.log(
+            `  Found ${parsed.length} bonded contact(s):`,
+            parsed.map((c: any) => ({ name: c.name, email: c.email })),
+          );
           setBondedContacts(parsed);
           return; // Exit early, the loadBondedCheckIns effect will handle the rest
         } catch (e) {
