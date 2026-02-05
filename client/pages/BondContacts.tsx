@@ -46,7 +46,7 @@ export default function BondContacts() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleBondUser = () => {
+  const handleBondUser = async () => {
     setBondError("");
     setBondSuccess(false);
 
@@ -93,6 +93,19 @@ export default function BondContacts() {
     setBondedContacts((prev) => {
       const updated = [newContact, ...prev];
       localStorage.setItem("bondedContacts", JSON.stringify(updated));
+
+      // Sync to Firebase for cross-device availability
+      const userEmail = localStorage.getItem("userEmail");
+      if (userEmail) {
+        import("../lib/firebase").then(({ firebaseUserSyncService }) => {
+          firebaseUserSyncService
+            .syncBondedContacts(userEmail, updated)
+            .catch((error) =>
+              console.log("Firebase sync not available:", error),
+            );
+        });
+      }
+
       return updated;
     });
     setBondSuccess(true);
