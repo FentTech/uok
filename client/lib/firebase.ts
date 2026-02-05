@@ -13,10 +13,13 @@ import {
 // Get these values from your Firebase Console (Project Settings)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-key",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "uok-demo.firebaseapp.com",
+  authDomain:
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "uok-demo.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "uok-demo",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "uok-demo.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "uok-demo.appspot.com",
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef",
 };
 
@@ -40,7 +43,10 @@ export const firebaseCheckInService = {
   }): Promise<boolean> => {
     try {
       // Only save if Firebase is properly configured
-      if (!firebaseConfig.projectId || firebaseConfig.projectId === "uok-demo") {
+      if (
+        !firebaseConfig.projectId ||
+        firebaseConfig.projectId === "uok-demo"
+      ) {
         console.log("Firebase not configured yet, saving locally only");
         return false;
       }
@@ -62,11 +68,14 @@ export const firebaseCheckInService = {
   getBondedCheckIns: async (
     userEmail: string,
     bondedEmails: string[],
-    today: string
+    today: string,
   ): Promise<any[]> => {
     try {
       // Only fetch if Firebase is properly configured
-      if (!firebaseConfig.projectId || firebaseConfig.projectId === "uok-demo") {
+      if (
+        !firebaseConfig.projectId ||
+        firebaseConfig.projectId === "uok-demo"
+      ) {
         console.log("Firebase not configured yet, returning empty");
         return [];
       }
@@ -79,7 +88,7 @@ export const firebaseCheckInService = {
       const q = query(
         collection(db, "checkins"),
         where("userEmail", "in", bondedEmails),
-        where("date", "==", today)
+        where("date", "==", today),
       );
 
       const snapshot = await getDocs(q);
@@ -92,7 +101,9 @@ export const firebaseCheckInService = {
         });
       });
 
-      console.log(`📥 Fetched ${checkins.length} bonded check-ins from Firebase`);
+      console.log(
+        `📥 Fetched ${checkins.length} bonded check-ins from Firebase`,
+      );
       return checkins;
     } catch (error) {
       console.warn("⚠️ Failed to fetch from Firebase:", error);

@@ -21,7 +21,10 @@ export default defineConfig(({ mode }) => ({
       },
       onwarn(warning, warn) {
         // Suppress unresolved import warnings that don't actually break the build
-        if (warning.code === "UNRESOLVED_IMPORT" && warning.source?.startsWith("firebase")) {
+        if (
+          warning.code === "UNRESOLVED_IMPORT" &&
+          warning.source?.startsWith("firebase")
+        ) {
           return;
         }
         warn(warning);
