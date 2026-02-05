@@ -394,45 +394,14 @@ export default function Dashboard() {
         timestamp: new Date().toISOString(),
       });
 
-      // Send email notification via API (non-blocking)
+      // Email notifications: Contact info is saved but email delivery requires backend setup
+      // To enable email notifications, set up Supabase Edge Functions or Zapier automation
       if (contact.email) {
-        try {
-          fetch("/api/notifications/send-checkin-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              recipientEmail: contact.email,
-              senderName: userEmail.split("@")[0] || "Your contact",
-              senderMood: mood,
-              timestamp: new Date().toISOString(),
-            }),
-            signal: AbortSignal.timeout(5000), // 5 second timeout
-          })
-            .then((res) => {
-              if (!res.ok) {
-                console.warn(
-                  `⚠️ Email notification API returned status ${res.status}`,
-                );
-              } else {
-                console.log("✅ Email notification sent successfully");
-              }
-            })
-            .catch((error) => {
-              if (error.name === "AbortError") {
-                console.warn("⚠️ Email notification request timed out");
-              } else {
-                console.warn(
-                  "⚠️ Failed to send email notification (non-blocking):",
-                  error.message,
-                );
-              }
-            });
-        } catch (error) {
-          console.warn(
-            "⚠️ Error initiating email notification:",
-            error instanceof Error ? error.message : String(error),
-          );
-        }
+        console.log(
+          "📧 Check-in notification would be sent to:",
+          contact.email,
+          "- Backend email service required for delivery",
+        );
       }
     });
 
