@@ -13,9 +13,11 @@ export default defineConfig(({ mode }) => {
         allow: ["./client", "./shared"],
         deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
       },
+      sourcemap: false, // Disable sourcemaps in dev to prevent 404 errors
     },
     build: {
       outDir: "dist/spa",
+      sourcemap: false, // Disable sourcemaps in production builds
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, "index.html"),
