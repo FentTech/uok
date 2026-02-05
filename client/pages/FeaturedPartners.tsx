@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -12,6 +13,7 @@ import {
   DollarSign,
   CreditCard,
 } from "lucide-react";
+import { advertiserAuthService } from "../lib/advertiserAuth";
 
 interface FeaturedAd {
   id: string;
