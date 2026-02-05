@@ -60,6 +60,16 @@ export default function BondContacts() {
       return;
     }
 
+    if (!bondEmail.trim()) {
+      setBondError("Please enter their email address");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bondEmail)) {
+      setBondError("Please enter a valid email address");
+      return;
+    }
+
     if (manualBondCode === userBondCode) {
       setBondError("You cannot bond with yourself!");
       return;
@@ -73,6 +83,7 @@ export default function BondContacts() {
     const newContact: BondedContact = {
       id: Date.now().toString(),
       name: bondName,
+      email: bondEmail,
       bondCode: manualBondCode,
       status: "bonded",
       bondedAt: new Date().toLocaleString(),
@@ -87,6 +98,7 @@ export default function BondContacts() {
     setBondSuccess(true);
     setManualBondCode("");
     setBondName("");
+    setBondEmail("");
 
     setTimeout(() => {
       setBondSuccess(false);
