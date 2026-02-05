@@ -275,4 +275,238 @@ export const firebaseUserSyncService = {
       return [];
     }
   },
+
+  // Save user's check-ins to Firebase
+  syncCheckIns: async (userEmail: string, checkIns: any[]): Promise<boolean> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        console.log("Firebase not configured, skipping check-ins sync");
+        return false;
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, setDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      await setDoc(doc(db, "userCheckIns", userEmail), {
+        checkIns: checkIns,
+        lastUpdated: new Date().toISOString(),
+      });
+
+      console.log("✅ Check-ins synced to Firebase");
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to sync check-ins:", error);
+      return false;
+    }
+  },
+
+  // Fetch user's check-ins from Firebase
+  fetchCheckIns: async (userEmail: string): Promise<any[]> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        return [];
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, getDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const docSnapshot = await getDoc(doc(db, "userCheckIns", userEmail));
+      if (docSnapshot.exists()) {
+        console.log("📥 Fetched check-ins from Firebase");
+        return docSnapshot.data().checkIns || [];
+      }
+
+      return [];
+    } catch (error) {
+      console.warn("⚠️ Failed to fetch check-ins:", error);
+      return [];
+    }
+  },
+
+  // Save user's media to Firebase
+  syncMedia: async (userEmail: string, media: any[]): Promise<boolean> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        console.log("Firebase not configured, skipping media sync");
+        return false;
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, setDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      await setDoc(doc(db, "userMedia", userEmail), {
+        media: media,
+        lastUpdated: new Date().toISOString(),
+      });
+
+      console.log("✅ Media synced to Firebase");
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to sync media:", error);
+      return false;
+    }
+  },
+
+  // Fetch user's media from Firebase
+  fetchMedia: async (userEmail: string): Promise<any[]> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        return [];
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, getDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const docSnapshot = await getDoc(doc(db, "userMedia", userEmail));
+      if (docSnapshot.exists()) {
+        console.log("📥 Fetched media from Firebase");
+        return docSnapshot.data().media || [];
+      }
+
+      return [];
+    } catch (error) {
+      console.warn("⚠️ Failed to fetch media:", error);
+      return [];
+    }
+  },
+
+  // Save user's shared moments to Firebase
+  syncSharedMoments: async (
+    userEmail: string,
+    moments: any[],
+  ): Promise<boolean> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        console.log("Firebase not configured, skipping shared moments sync");
+        return false;
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, setDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      await setDoc(doc(db, "userSharedMoments", userEmail), {
+        moments: moments,
+        lastUpdated: new Date().toISOString(),
+      });
+
+      console.log("✅ Shared moments synced to Firebase");
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to sync shared moments:", error);
+      return false;
+    }
+  },
+
+  // Fetch user's shared moments from Firebase
+  fetchSharedMoments: async (userEmail: string): Promise<any[]> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        return [];
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, getDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const docSnapshot = await getDoc(doc(db, "userSharedMoments", userEmail));
+      if (docSnapshot.exists()) {
+        console.log("📥 Fetched shared moments from Firebase");
+        return docSnapshot.data().moments || [];
+      }
+
+      return [];
+    } catch (error) {
+      console.warn("⚠️ Failed to fetch shared moments:", error);
+      return [];
+    }
+  },
 };
