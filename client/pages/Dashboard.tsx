@@ -286,7 +286,9 @@ export default function Dashboard() {
   // Auto-refresh bonded check-ins every 10 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
-      const bondedEmails = bondedContacts.map((c) => c.email);
+      const bondedEmails = bondedContacts
+        .map((c) => c.email)
+        .filter(Boolean); // Filter out undefined emails
       if (bondedEmails.length > 0) {
         // Try Firebase first
         const firebaseCheckIns = await checkInStorage.fetchBondedCheckInsFromFirebase(
