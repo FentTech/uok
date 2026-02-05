@@ -1098,12 +1098,16 @@ export default function Dashboard() {
                       `⚠️ Media share notification API returned status ${res.status}`,
                     );
                   } else {
-                    console.log("✅ Media share notification sent successfully");
+                    console.log(
+                      "✅ Media share notification sent successfully",
+                    );
                   }
                 })
                 .catch((error) => {
                   if (error.name === "AbortError") {
-                    console.warn("⚠️ Media share notification request timed out");
+                    console.warn(
+                      "⚠️ Media share notification request timed out",
+                    );
                   } else {
                     console.warn(
                       "⚠️ Failed to send media share notification (non-blocking):",

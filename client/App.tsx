@@ -49,7 +49,10 @@ export default function App() {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       if (event.reason instanceof TypeError) {
         const message = event.reason.message || "";
-        if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        if (
+          message.includes("Failed to fetch") ||
+          message.includes("NetworkError")
+        ) {
           console.warn(
             "⚠️ Network error detected - API call failed, app will continue with fallback data",
           );
@@ -62,7 +65,10 @@ export default function App() {
 
     return () => {
       window.removeEventListener("error", handleError);
-      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+      window.removeEventListener(
+        "unhandledrejection",
+        handleUnhandledRejection,
+      );
     };
   }, []);
 

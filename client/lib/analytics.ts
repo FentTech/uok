@@ -371,15 +371,14 @@ export const analyticsService = {
           return false;
         }
       } catch (fetchError) {
-        if (
-          fetchError instanceof Error &&
-          fetchError.name === "AbortError"
-        ) {
+        if (fetchError instanceof Error && fetchError.name === "AbortError") {
           console.warn("⚠️ Weekly report API request timed out");
         } else {
           console.warn(
             "⚠️ Weekly report API unavailable (non-blocking):",
-            fetchError instanceof Error ? fetchError.message : String(fetchError),
+            fetchError instanceof Error
+              ? fetchError.message
+              : String(fetchError),
           );
         }
         return false;

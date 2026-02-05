@@ -64,7 +64,10 @@ export const supabaseCheckInService = {
       return true;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      if (errorMsg.includes("Failed to fetch") || errorMsg.includes("NetworkError")) {
+      if (
+        errorMsg.includes("Failed to fetch") ||
+        errorMsg.includes("NetworkError")
+      ) {
         console.warn("⚠️ Network error: Cannot save check-in to Supabase");
       } else {
         console.warn("⚠️ Failed to save check-in to Supabase:", errorMsg);
@@ -93,10 +96,18 @@ export const supabaseCheckInService = {
       return data || [];
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      if (errorMsg.includes("Failed to fetch") || errorMsg.includes("NetworkError")) {
-        console.warn("⚠️ Network error: Cannot fetch bonded check-ins from Supabase");
+      if (
+        errorMsg.includes("Failed to fetch") ||
+        errorMsg.includes("NetworkError")
+      ) {
+        console.warn(
+          "⚠️ Network error: Cannot fetch bonded check-ins from Supabase",
+        );
       } else {
-        console.warn("⚠️ Failed to fetch bonded check-ins from Supabase:", errorMsg);
+        console.warn(
+          "⚠️ Failed to fetch bonded check-ins from Supabase:",
+          errorMsg,
+        );
       }
       return [];
     }
