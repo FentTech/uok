@@ -45,7 +45,10 @@ export const firebaseCheckInService = {
   }): Promise<boolean> => {
     try {
       // Check if Firebase is configured
-      if (!firebaseConfig.projectId || firebaseConfig.projectId === "uok-demo") {
+      if (
+        !firebaseConfig.projectId ||
+        firebaseConfig.projectId === "uok-demo"
+      ) {
         console.log("Firebase not configured yet, saving locally only");
         return false;
       }
@@ -72,7 +75,10 @@ export const firebaseCheckInService = {
   ): Promise<any[]> => {
     try {
       // Check if Firebase is configured
-      if (!firebaseConfig.projectId || firebaseConfig.projectId === "uok-demo") {
+      if (
+        !firebaseConfig.projectId ||
+        firebaseConfig.projectId === "uok-demo"
+      ) {
         console.log("Firebase not configured yet, returning empty");
         return [];
       }
