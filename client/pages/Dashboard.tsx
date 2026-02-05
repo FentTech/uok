@@ -394,20 +394,45 @@ export default function Dashboard() {
         timestamp: new Date().toISOString(),
       });
 
-      // Send email notification via API
+      // Send email notification via API (non-blocking)
       if (contact.email) {
-        fetch("/api/notifications/send-checkin-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            recipientEmail: contact.email,
-            senderName: userEmail.split("@")[0] || "Your contact",
-            senderMood: mood,
-            timestamp: new Date().toISOString(),
-          }),
-        }).catch((error) =>
-          console.error("Failed to send email notification:", error),
-        );
+        try {
+          fetch("/api/notifications/send-checkin-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              recipientEmail: contact.email,
+              senderName: userEmail.split("@")[0] || "Your contact",
+              senderMood: mood,
+              timestamp: new Date().toISOString(),
+            }),
+            signal: AbortSignal.timeout(5000), // 5 second timeout
+          })
+            .then((res) => {
+              if (!res.ok) {
+                console.warn(
+                  `⚠️ Email notification API returned status ${res.status}`,
+                );
+              } else {
+                console.log("✅ Email notification sent successfully");
+              }
+            })
+            .catch((error) => {
+              if (error.name === "AbortError") {
+                console.warn("⚠️ Email notification request timed out");
+              } else {
+                console.warn(
+                  "⚠️ Failed to send email notification (non-blocking):",
+                  error.message,
+                );
+              }
+            });
+        } catch (error) {
+          console.warn(
+            "⚠️ Error initiating email notification:",
+            error instanceof Error ? error.message : String(error),
+          );
+        }
       }
     });
 
