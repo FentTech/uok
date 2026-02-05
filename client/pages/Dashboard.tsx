@@ -367,7 +367,7 @@ export default function Dashboard() {
         console.log("⚠️ No user email found, cannot load user data");
         // Still initialize demo data even without user email for testing
         initializeDemoData();
-        loadDemoBondedContacts();
+        loadDemoBondedContacts(setBondedContacts);
         return;
       }
 
