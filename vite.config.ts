@@ -20,10 +20,14 @@ export default defineConfig(({ mode }) => ({
         main: path.resolve(__dirname, "index.html"),
       },
       onwarn(warning, warn) {
-        // Suppress unresolved import warnings that don't actually break the build
+        // Suppress unresolved import and external module warnings
+        // These are safe to ignore for Firebase modules
         if (
-          warning.code === "UNRESOLVED_IMPORT" &&
-          warning.source?.startsWith("firebase")
+          (warning.code === "UNRESOLVED_IMPORT" ||
+            warning.code === "EXTERNAL_NO_EXTERNAL" ||
+            warning.message?.includes("externalize")) &&
+          (warning.source?.includes("firebase") ||
+            warning.message?.includes("firebase"))
         ) {
           return;
         }
@@ -31,6 +35,7 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
+  logLevel: "warn",
   publicDir: "public",
   plugins: [react(), expressPlugin()],
   resolve: {
