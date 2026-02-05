@@ -13,6 +13,7 @@ import {
 interface BondedContact {
   id: string;
   name: string;
+  email?: string;
   bondCode: string;
   status: "pending" | "bonded";
   bondedAt: string;
