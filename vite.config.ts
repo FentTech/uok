@@ -19,9 +19,15 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
-      onwarn() {
-        // Suppress all warnings during build - they will appear at runtime if needed
-        return;
+      external: [/^firebase\/.*/],
+      onwarn(warning) {
+        // Suppress Firebase-related warnings
+        if (
+          warning.code === "UNRESOLVED_IMPORT" &&
+          warning.source?.includes("firebase")
+        ) {
+          return;
+        }
       },
     },
   },
