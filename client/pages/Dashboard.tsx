@@ -335,71 +335,178 @@ export default function Dashboard() {
     }
   };
 
-  // Load bonded contacts on mount
+  // Load all user data on mount (bonded contacts, check-ins, media, shared moments)
   useEffect(() => {
-    const loadBondedContacts = async () => {
-      // Load bonded contacts from localStorage (do this every time)
-      let bondedContactsStr = localStorage.getItem("bondedContacts");
-      let foundLocally = !!bondedContactsStr;
+    const loadAllUserData = async () => {
+      const userEmail = localStorage.getItem("userEmail");
 
-      if (bondedContactsStr) {
-        try {
-          const parsed = JSON.parse(bondedContactsStr);
-          console.log("✅ Loaded bonded contacts from localStorage:");
-          console.log(
-            `  Found ${parsed.length} bonded contact(s):`,
-            parsed.map((c: any) => ({ name: c.name, email: c.email })),
-          );
-          setBondedContacts(parsed);
-          return; // Exit early, the loadBondedCheckIns effect will handle the rest
-        } catch (e) {
-          console.error("Error loading bonded contacts:", e);
-        }
+      if (!userEmail) {
+        console.log("⚠️ No user email found, cannot load user data");
+        return;
       }
 
-      // If not found locally, try to fetch from Firebase (for cross-device sync)
-      const userEmail = localStorage.getItem("userEmail");
-      if (userEmail) {
-        try {
-          const { firebaseUserSyncService } = await import("../lib/firebase");
+      console.log("🔄 Loading user data for:", userEmail);
+
+      try {
+        const { firebaseUserSyncService } = await import("../lib/firebase");
+
+        // Load bonded contacts
+        let bondedContactsStr = localStorage.getItem("bondedContacts");
+        let bondedContacts = [];
+
+        if (bondedContactsStr) {
+          try {
+            bondedContacts = JSON.parse(bondedContactsStr);
+            console.log(
+              "✅ Loaded bonded contacts from localStorage:",
+              bondedContacts.length,
+            );
+          } catch (e) {
+            console.error("Error parsing bonded contacts:", e);
+          }
+        }
+
+        // If not found locally, try Firebase
+        if (bondedContacts.length === 0) {
+          console.log("📥 Fetching bonded contacts from Firebase...");
           const firebaseBondedContacts =
             await firebaseUserSyncService.fetchBondedContacts(userEmail);
+
           if (firebaseBondedContacts.length > 0) {
             console.log(
-              "📥 Loaded bonded contacts from Firebase (cross-device sync):",
-              firebaseBondedContacts,
+              "✅ Loaded bonded contacts from Firebase:",
+              firebaseBondedContacts.length,
             );
             localStorage.setItem(
               "bondedContacts",
               JSON.stringify(firebaseBondedContacts),
             );
-            setBondedContacts(firebaseBondedContacts);
-            return;
+            bondedContacts = firebaseBondedContacts;
           }
-        } catch (error) {
-          console.log("Firebase bonded contacts sync not available");
         }
-      }
 
-      // If no bonded contacts found anywhere, initialize demo data for testing
-      console.log(
-        "ℹ️ No bonded contacts found. Initializing demo data for testing...",
-      );
-      initializeDemoData();
+        // Load check-ins
+        let checkInsData = [];
+        let checkInsStr = localStorage.getItem("uok_checkins");
 
-      // Load the newly created demo bonded contacts
-      const demoBondedContactsStr = localStorage.getItem("bondedContacts");
-      if (demoBondedContactsStr) {
-        try {
-          const parsed = JSON.parse(demoBondedContactsStr);
-          setBondedContacts(parsed);
-        } catch (e) {
-          console.error("Error loading demo bonded contacts:", e);
+        if (checkInsStr) {
+          try {
+            checkInsData = JSON.parse(checkInsStr);
+            console.log(
+              "✅ Loaded check-ins from localStorage:",
+              checkInsData.length,
+            );
+          } catch (e) {
+            console.error("Error parsing check-ins:", e);
+          }
         }
+
+        // If not found locally, try Firebase
+        if (checkInsData.length === 0) {
+          console.log("📥 Fetching check-ins from Firebase...");
+          const firebaseCheckIns =
+            await firebaseUserSyncService.fetchCheckIns(userEmail);
+
+          if (firebaseCheckIns.length > 0) {
+            console.log("✅ Loaded check-ins from Firebase:", firebaseCheckIns.length);
+            localStorage.setItem(
+              "uok_checkins",
+              JSON.stringify(firebaseCheckIns),
+            );
+            checkInsData = firebaseCheckIns;
+          }
+        }
+
+        // Load media
+        let mediaData = [];
+        let mediaStr = localStorage.getItem("uok_media");
+
+        if (mediaStr) {
+          try {
+            mediaData = JSON.parse(mediaStr);
+            console.log("✅ Loaded media from localStorage:", mediaData.length);
+          } catch (e) {
+            console.error("Error parsing media:", e);
+          }
+        }
+
+        // If not found locally, try Firebase
+        if (mediaData.length === 0) {
+          console.log("📥 Fetching media from Firebase...");
+          const firebaseMedia = await firebaseUserSyncService.fetchMedia(
+            userEmail,
+          );
+
+          if (firebaseMedia.length > 0) {
+            console.log("✅ Loaded media from Firebase:", firebaseMedia.length);
+            localStorage.setItem("uok_media", JSON.stringify(firebaseMedia));
+            mediaData = firebaseMedia;
+          }
+        }
+
+        // Load shared moments
+        let sharedMomentsData = [];
+        let sharedMomentsStr = localStorage.getItem("uok_shared_moments");
+
+        if (sharedMomentsStr) {
+          try {
+            sharedMomentsData = JSON.parse(sharedMomentsStr);
+            console.log(
+              "✅ Loaded shared moments from localStorage:",
+              sharedMomentsData.length,
+            );
+          } catch (e) {
+            console.error("Error parsing shared moments:", e);
+          }
+        }
+
+        // If not found locally, try Firebase
+        if (sharedMomentsData.length === 0) {
+          console.log("📥 Fetching shared moments from Firebase...");
+          const firebaseSharedMoments =
+            await firebaseUserSyncService.fetchSharedMoments(userEmail);
+
+          if (firebaseSharedMoments.length > 0) {
+            console.log(
+              "✅ Loaded shared moments from Firebase:",
+              firebaseSharedMoments.length,
+            );
+            localStorage.setItem(
+              "uok_shared_moments",
+              JSON.stringify(firebaseSharedMoments),
+            );
+            sharedMomentsData = firebaseSharedMoments;
+          }
+        }
+
+        // Set bonded contacts
+        if (bondedContacts.length > 0) {
+          setBondedContacts(bondedContacts);
+        } else {
+          // If no bonded contacts found anywhere, initialize demo data for testing
+          console.log(
+            "ℹ️ No bonded contacts found. Initializing demo data for testing...",
+          );
+          initializeDemoData();
+
+          // Load the newly created demo bonded contacts
+          const demoBondedContactsStr = localStorage.getItem("bondedContacts");
+          if (demoBondedContactsStr) {
+            try {
+              const parsed = JSON.parse(demoBondedContactsStr);
+              setBondedContacts(parsed);
+            } catch (e) {
+              console.error("Error loading demo bonded contacts:", e);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error loading user data from Firebase:", error);
+        // Fall back to using what's in localStorage
       }
     };
 
-    loadBondedContacts();
+    loadAllUserData();
   }, []);
 
   // Load bonded contacts' check-ins whenever bonded contacts change
