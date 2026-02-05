@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { notificationsRouter } from "./routes/notifications";
+import { analyticsRouter } from "./routes/analytics";
 
 export function createServer() {
   const app = express();
@@ -22,6 +23,9 @@ export function createServer() {
 
   // Notifications API
   app.use("/api/notifications", notificationsRouter);
+
+  // Analytics API
+  app.use("/api/analytics", analyticsRouter);
 
   return app;
 }
