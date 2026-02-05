@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart3,
   TrendingUp,
@@ -22,7 +22,6 @@ export default function AdvertiserAnalytics() {
   const [testMode, setTestMode] = useState(false);
   const advertiserEmail = localStorage.getItem("advertiserEmail");
 
-  // Check if advertiser is authenticated
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("advertiserLoggedIn");
     if (!isLoggedIn) {
@@ -58,7 +57,6 @@ export default function AdvertiserAnalytics() {
     const userEmail = advertiserEmail || "advertiser@wellness.com";
     const today = new Date().toISOString().split("T")[0];
 
-    // Generate demo events
     for (let i = 0; i < 25; i++) {
       analyticsService.trackEvent({
         type: "view",
@@ -140,7 +138,6 @@ export default function AdvertiserAnalytics() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Navigation */}
       <nav className="border-b border-purple-500/20 backdrop-blur-xl bg-black/20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -151,9 +148,7 @@ export default function AdvertiserAnalytics() {
               <h1 className="text-xl font-bold text-white">
                 Private Advertiser Analytics
               </h1>
-              <p className="text-purple-300/60 text-xs">
-                {advertiserEmail}
-              </p>
+              <p className="text-purple-300/60 text-xs">{advertiserEmail}</p>
             </div>
           </div>
           <button
@@ -166,9 +161,7 @@ export default function AdvertiserAnalytics() {
         </div>
       </nav>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Heading */}
         <div className="mb-8">
           <h2 className="text-4xl font-bold text-white mb-2">
             Your Analytics Dashboard
@@ -179,7 +172,6 @@ export default function AdvertiserAnalytics() {
           </p>
         </div>
 
-        {/* Security Badge */}
         <div className="mb-8 p-4 bg-green-500/10 border border-green-400/30 rounded-lg flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
           <span className="text-green-300 text-sm">
@@ -188,7 +180,6 @@ export default function AdvertiserAnalytics() {
           </span>
         </div>
 
-        {/* Test Mode Toggle */}
         <div className="mb-8 p-4 bg-purple-500/10 border border-purple-400/30 rounded-lg">
           <div className="flex items-center justify-between">
             <div>
@@ -212,7 +203,6 @@ export default function AdvertiserAnalytics() {
           </div>
         </div>
 
-        {/* Test Controls */}
         {testMode && (
           <div className="mb-8 grid md:grid-cols-2 gap-4">
             <button
@@ -232,14 +222,12 @@ export default function AdvertiserAnalytics() {
           </div>
         )}
 
-        {/* Success Message */}
         {reportSent && (
           <div className="mb-8 p-4 bg-green-500/10 border border-green-400/30 rounded-lg text-green-300">
             ✓ Weekly report sent successfully to {advertiserEmail}
           </div>
         )}
 
-        {/* Stats Grid */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
@@ -297,7 +285,6 @@ export default function AdvertiserAnalytics() {
           </div>
         </div>
 
-        {/* Detailed Ad Performance */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -396,7 +383,6 @@ export default function AdvertiserAnalytics() {
           </div>
         </div>
 
-        {/* Send Report */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-6">
           <h3 className="text-xl font-bold text-white mb-2">
             Send Weekly Report
