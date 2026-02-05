@@ -1,33 +1,33 @@
-// Firebase imports are dynamically loaded to avoid build-time issues
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  Timestamp,
+} from "firebase/firestore";
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-key",
+  authDomain:
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "uok-demo.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "uok-demo",
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "uok-demo.appspot.com",
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef",
+};
+
 let db: any = null;
 
-async function initFirebase() {
+function initFirebase() {
   if (db) return db;
-
-  const { initializeApp } = await import("firebase/app");
-  const { getFirestore } = await import("firebase/firestore");
-
-  const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-key",
-    authDomain:
-      import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "uok-demo.firebaseapp.com",
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "uok-demo",
-    storageBucket:
-      import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "uok-demo.appspot.com",
-    messagingSenderId:
-      import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef",
-  };
-
   const app = initializeApp(firebaseConfig);
   db = getFirestore(app);
-  return db;
-}
-
-function getDb() {
-  if (!db) {
-    throw new Error("Firebase not initialized. Call initFirebase() first.");
-  }
   return db;
 }
 
