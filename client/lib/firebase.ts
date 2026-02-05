@@ -117,7 +117,10 @@ export const firebaseCheckInService = {
 // Firebase User Sync Service
 export const firebaseUserSyncService = {
   // Save user profile and bonded contacts to Firebase
-  syncUserProfile: async (userEmail: string, userData: any): Promise<boolean> => {
+  syncUserProfile: async (
+    userEmail: string,
+    userData: any,
+  ): Promise<boolean> => {
     try {
       const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
       if (!projectId || projectId === "uok-demo") {
@@ -260,9 +263,7 @@ export const firebaseUserSyncService = {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      const docSnapshot = await getDoc(
-        doc(db, "bondedContacts", userEmail),
-      );
+      const docSnapshot = await getDoc(doc(db, "bondedContacts", userEmail));
       if (docSnapshot.exists()) {
         console.log("📥 Fetched bonded contacts from Firebase");
         return docSnapshot.data().contacts || [];

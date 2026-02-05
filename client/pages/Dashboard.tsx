@@ -257,9 +257,7 @@ export default function Dashboard() {
         const userEmail = localStorage.getItem("userEmail");
         if (userEmail) {
           try {
-            const { firebaseUserSyncService } = await import(
-              "../lib/firebase"
-            );
+            const { firebaseUserSyncService } = await import("../lib/firebase");
             const firebaseBondedContacts =
               await firebaseUserSyncService.fetchBondedContacts(userEmail);
             if (firebaseBondedContacts.length > 0) {
@@ -1269,7 +1267,8 @@ export default function Dashboard() {
                     const currentContact = bondedContacts.find(
                       (c) => c.email === checkIn.userEmail,
                     );
-                    const displayName = currentContact?.name || checkIn.userName;
+                    const displayName =
+                      currentContact?.name || checkIn.userName;
                     const displayEmoji = currentContact?.emoji || checkIn.emoji;
 
                     return (
