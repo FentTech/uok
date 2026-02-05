@@ -1159,42 +1159,69 @@ export default function Dashboard() {
     const files = e.target.files;
     if (files) {
       Array.from(files).forEach((file) => {
-        // Use createObjectURL for video playback
-        const url = URL.createObjectURL(file);
-        const timestamp = new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        const date = new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        });
+        // Validate video file
+        if (!file.type.startsWith("video/")) {
+          console.error("File is not a valid video:", file.type);
+          alert("Please select a valid video file");
+          return;
+        }
 
-        // Save to persistent storage
-        const savedMedia = mediaStorage.add({
-          type: "video",
-          url: url,
-          timestamp,
-          date,
-          mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
-          visibility: "personal",
-        });
+        // Check file size (max 100MB)
+        const maxSize = 100 * 1024 * 1024;
+        if (file.size > maxSize) {
+          console.error("Video file is too large:", file.size);
+          alert("Video file is too large. Maximum size is 100MB");
+          return;
+        }
 
-        // Update local state
-        setMediaItems((prev) => [savedMedia as any, ...prev]);
+        try {
+          // Use createObjectURL for video playback
+          const url = URL.createObjectURL(file);
+          const timestamp = new Date().toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const date = new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
 
-        // Sync to Supabase (fire and forget)
-        const userEmail = localStorage.getItem("userEmail");
-        if (userEmail && userEmail !== "user") {
-          import("../lib/supabase")
-            .then(({ supabaseUserSyncService }) => {
-              const allMedia = mediaStorage.getActive();
-              return supabaseUserSyncService.syncMedia(userEmail, allMedia);
-            })
-            .then(() => console.log("✅ Video synced to Firebase"))
-            .catch((error) =>
-              console.log("⚠️ Could not sync video to Firebase:", error),
-            );
+          console.log("📹 Video file loaded:", {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            url: url,
+          });
+
+          // Save to persistent storage
+          const savedMedia = mediaStorage.add({
+            type: "video",
+            url: url,
+            timestamp,
+            date,
+            mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+            visibility: "personal",
+          });
+
+          // Update local state
+          setMediaItems((prev) => [savedMedia as any, ...prev]);
+
+          // Sync to Supabase (fire and forget)
+          const userEmail = localStorage.getItem("userEmail");
+          if (userEmail && userEmail !== "user") {
+            import("../lib/supabase")
+              .then(({ supabaseUserSyncService }) => {
+                const allMedia = mediaStorage.getActive();
+                return supabaseUserSyncService.syncMedia(userEmail, allMedia);
+              })
+              .then(() => console.log("✅ Video synced to Supabase"))
+              .catch((error) =>
+                console.log("⚠️ Could not sync video to Supabase:", error),
+              );
+          }
+        } catch (error) {
+          console.error("Error processing video file:", error);
+          alert("Error processing video file. Please try again.");
         }
       });
     }
