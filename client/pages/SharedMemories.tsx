@@ -70,19 +70,60 @@ export default function SharedMemories() {
   // Load bonded contacts and shared moments on mount
   useEffect(() => {
     // Load bonded contacts
+    let bondedContactsList: any[] = [];
     const bondedContactsStr = localStorage.getItem("bondedContacts");
     if (bondedContactsStr) {
       try {
-        setBondedContactsForShare(JSON.parse(bondedContactsStr));
+        bondedContactsList = JSON.parse(bondedContactsStr);
+        setBondedContactsForShare(bondedContactsList);
       } catch (e) {
         console.error("Error loading bonded contacts:", e);
       }
     }
 
+    // Get current user email
+    const currentUserEmail = localStorage.getItem("userEmail") || "";
+    const bondedEmails = bondedContactsList.map((c: any) => c.email);
+
     // Load shared moments from persistent storage
     const storedMoments = sharedMomentsStorage.getActive();
+
+    // Filter moments based on visibility for the current user
+    const visibleMoments = storedMoments.filter((m) => {
+      // Creator can always see their own moments
+      if (m.email === currentUserEmail) {
+        return true;
+      }
+
+      // Check visibility
+      if (m.visibility === "everyone") {
+        return true; // Everyone can see
+      }
+
+      if (m.visibility === "community") {
+        return true; // Community section - everyone can see
+      }
+
+      if (
+        m.visibility === "bonded-contacts" &&
+        (bondedEmails.includes(currentUserEmail) ||
+          m.sharedWith?.includes(currentUserEmail))
+      ) {
+        return true; // User is a bonded contact or explicitly shared with
+      }
+
+      if (
+        m.visibility === "specific-users" &&
+        m.sharedWith?.includes(currentUserEmail)
+      ) {
+        return true; // User is explicitly in sharedWith list
+      }
+
+      return false; // User doesn't have access to this moment
+    });
+
     // Convert stored moments to SharedMemory format
-    const convertedMemories: SharedMemory[] = storedMoments.map((m) => ({
+    const convertedMemories: SharedMemory[] = visibleMoments.map((m) => ({
       id: m.id,
       username: m.username,
       avatar: m.avatar,
