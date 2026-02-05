@@ -63,7 +63,12 @@ export const supabaseCheckInService = {
       console.log("✅ Check-in saved to Supabase");
       return true;
     } catch (error) {
-      console.warn("⚠️ Failed to save check-in to Supabase:", error);
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      if (errorMsg.includes("Failed to fetch") || errorMsg.includes("NetworkError")) {
+        console.warn("⚠️ Network error: Cannot save check-in to Supabase");
+      } else {
+        console.warn("⚠️ Failed to save check-in to Supabase:", errorMsg);
+      }
       return false;
     }
   },
