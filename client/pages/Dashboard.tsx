@@ -179,6 +179,9 @@ export default function Dashboard() {
 
     setNotifications((prev) => [notification as any, ...prev]);
 
+    // Get user's name/email
+    const userEmail = localStorage.getItem("userEmail") || "User";
+
     // Send notifications to bonded contacts
     bondedContacts.forEach((contact: any) => {
       // Store notification for bonded contact
@@ -204,9 +207,21 @@ export default function Dashboard() {
         timestamp: new Date().toISOString(),
       });
 
-      // In production, this would call your backend API:
-      // POST /api/notifications/send-to-contact
-      // Body: { email, type: 'checkin', mood, message, timestamp }
+      // Send email notification via API
+      if (contact.email) {
+        fetch("/api/notifications/send-checkin-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            recipientEmail: contact.email,
+            senderName: userEmail.split("@")[0] || "Your contact",
+            senderMood: mood,
+            timestamp: new Date().toISOString(),
+          }),
+        }).catch((error) =>
+          console.error("Failed to send email notification:", error)
+        );
+      }
     });
 
     // Browser notification
