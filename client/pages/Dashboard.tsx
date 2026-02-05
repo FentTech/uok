@@ -1926,6 +1926,20 @@ export default function Dashboard() {
               </p>
             </Link>
 
+            {/* Analytics Dashboard Link */}
+            <Link
+              to="/analytics"
+              className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 text-green-50 rounded-2xl border border-green-400/40 p-6 hover:border-green-400/60 hover:shadow-lg hover:shadow-green-500/20 transition block backdrop-blur-xl"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <BarChart3 className="w-5 h-5 text-green-400" />
+                <h3 className="text-lg font-bold">Analytics</h3>
+              </div>
+              <p className="text-sm text-green-300/80">
+                View your weekly analytics & ad performance
+              </p>
+            </Link>
+
             {/* Tip Section - Futuristic */}
             <div className="bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl border border-cyan-400/30 p-6 backdrop-blur-xl">
               <h3 className="text-lg font-bold text-cyan-100 mb-3">
