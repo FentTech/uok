@@ -477,6 +477,13 @@ export const checkInStorage = {
     }
   },
 
+  // Backward-compatible alias for the old Firebase method name
+  fetchBondedCheckInsFromFirebase: async (
+    bondedEmails: string[],
+  ): Promise<StoredCheckIn[]> => {
+    return checkInStorage.fetchBondedCheckInsFromSupabase(bondedEmails);
+  },
+
   // Delete check-ins older than 72 hours
   cleanupOldCheckIns: (): number => {
     const allCheckIns = checkInStorage.getAll();
