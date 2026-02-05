@@ -192,6 +192,9 @@ export const advertiserAuthService = {
       credentials[index].password = newPassword;
       localStorage.setItem(ADVERTISER_STORAGE_KEY, JSON.stringify(credentials));
 
+      // Sync to Supabase
+      advertiserAuthService.syncToSupabase();
+
       return true;
     } catch (error) {
       console.error("Error updating password:", error);
