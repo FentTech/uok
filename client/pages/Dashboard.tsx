@@ -1024,6 +1024,21 @@ export default function Dashboard() {
 
         // Update local state
         setMediaItems((prev) => [savedMedia as any, ...prev]);
+
+        // Sync to Firebase
+        const userEmail = localStorage.getItem("userEmail");
+        if (userEmail && userEmail !== "user") {
+          try {
+            const { firebaseUserSyncService } = await import(
+              "../lib/firebase"
+            );
+            const allMedia = mediaStorage.getActive();
+            await firebaseUserSyncService.syncMedia(userEmail, allMedia);
+            console.log("✅ Video synced to Firebase");
+          } catch (error) {
+            console.log("⚠️ Could not sync video to Firebase:", error);
+          }
+        }
       });
     }
     // Reset input
