@@ -190,20 +190,36 @@ const initializeDemoData = () => {
   });
 
   // Get existing check-ins and add demo ones
-  const existingCheckIns = localStorage.getItem("uok_checkins");
-  const allCheckIns = existingCheckIns ? JSON.parse(existingCheckIns) : [];
+  try {
+    const existingCheckIns = localStorage.getItem("uok_checkins");
+    let allCheckIns: StoredCheckIn[] = [];
 
-  // Add demo check-ins if not already present
-  const demoCheckInIds = new Set(demoCheckIns.map((c) => c.id));
-  const filteredExisting = allCheckIns.filter(
-    (c: StoredCheckIn) => !demoCheckInIds.has(c.id),
-  );
+    if (existingCheckIns) {
+      try {
+        allCheckIns = JSON.parse(existingCheckIns);
+        if (!Array.isArray(allCheckIns)) {
+          allCheckIns = [];
+        }
+      } catch (e) {
+        console.warn("⚠️ Clearing corrupted check-ins data");
+        allCheckIns = [];
+      }
+    }
 
-  const finalCheckIns = [...filteredExisting, ...demoCheckIns];
-  localStorage.setItem("uok_checkins", JSON.stringify(finalCheckIns));
+    // Add demo check-ins if not already present
+    const demoCheckInIds = new Set(demoCheckIns.map((c) => c.id));
+    const filteredExisting = allCheckIns.filter(
+      (c: StoredCheckIn) => !demoCheckInIds.has(c.id),
+    );
 
-  console.log("✅ Demo check-ins created:", demoCheckIns);
-  console.log("✅ Total check-ins in storage:", finalCheckIns.length);
+    const finalCheckIns = [...filteredExisting, ...demoCheckIns];
+    localStorage.setItem("uok_checkins", JSON.stringify(finalCheckIns));
+
+    console.log("✅ Demo check-ins created:", demoCheckIns);
+    console.log("✅ Total check-ins in storage:", finalCheckIns.length);
+  } catch (error) {
+    console.error("Failed to save demo check-ins to localStorage:", error);
+  }
 };
 
 // Helper function to load demo bonded contacts from localStorage
