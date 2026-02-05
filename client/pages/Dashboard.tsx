@@ -1622,7 +1622,14 @@ export default function Dashboard() {
                     {mediaItems.map((item) => (
                       <div
                         key={item.id}
-                        className="relative group rounded-lg overflow-hidden bg-slate-900 border border-cyan-400/30 hover:border-cyan-400/60 transition"
+                        onClick={() => {
+                          // Show pre-roll ad before viewing media (for videos)
+                          if (item.type === "video") {
+                            setShowPreRollAd(true);
+                          }
+                          setFullscreenMedia(item);
+                        }}
+                        className="relative group rounded-lg overflow-hidden bg-slate-900 border border-cyan-400/30 hover:border-cyan-400/60 transition cursor-pointer"
                       >
                         {item.type === "photo" ? (
                           <img
