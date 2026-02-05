@@ -19,13 +19,9 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
-      external: [/^firebase\/.*/],
       onwarn(warning, warn) {
-        // Suppress unresolved external module warnings for firebase
-        if (
-          warning.code === "UNRESOLVED_IMPORT" &&
-          warning.source?.includes("firebase")
-        ) {
+        // Suppress unresolved external module warnings
+        if (warning.code === "UNRESOLVED_IMPORT") {
           return;
         }
         warn(warning);
@@ -33,7 +29,12 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    include: ["firebase/app", "firebase/firestore"],
+    include: [
+      "firebase/app",
+      "firebase/firestore",
+      "firebase/util",
+      "firebase/component",
+    ],
   },
   publicDir: "public",
   plugins: [react(), expressPlugin()],
