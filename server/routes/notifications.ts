@@ -10,7 +10,8 @@ notificationsRouter.post("/send-checkin-email", async (req, res) => {
     // Validate inputs
     if (!recipientEmail || !senderName || !senderMood) {
       return res.status(400).json({
-        error: "Missing required fields: recipientEmail, senderName, senderMood",
+        error:
+          "Missing required fields: recipientEmail, senderName, senderMood",
       });
     }
 
@@ -56,7 +57,7 @@ notificationsRouter.post("/send-media-shared", async (req, res) => {
     }
 
     console.log(
-      `📧 Media shared notification sent to ${recipientEmail} for ${mediaType}`
+      `📧 Media shared notification sent to ${recipientEmail} for ${mediaType}`,
     );
 
     res.json({

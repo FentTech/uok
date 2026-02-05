@@ -219,7 +219,7 @@ export default function Dashboard() {
             timestamp: new Date().toISOString(),
           }),
         }).catch((error) =>
-          console.error("Failed to send email notification:", error)
+          console.error("Failed to send email notification:", error),
         );
       }
     });
@@ -301,14 +301,11 @@ export default function Dashboard() {
   // Auto-refresh bonded check-ins every 10 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
-      const bondedEmails = bondedContacts
-        .map((c) => c.email)
-        .filter(Boolean); // Filter out undefined emails
+      const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean); // Filter out undefined emails
       if (bondedEmails.length > 0) {
         // Try Firebase first
-        const firebaseCheckIns = await checkInStorage.fetchBondedCheckInsFromFirebase(
-          bondedEmails
-        );
+        const firebaseCheckIns =
+          await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
 
         if (firebaseCheckIns.length > 0) {
           setBondedCheckIns(firebaseCheckIns);
@@ -612,9 +609,7 @@ export default function Dashboard() {
   };
 
   const refreshBondedCheckIns = async () => {
-    const bondedEmails = bondedContacts
-      .map((c) => c.email)
-      .filter(Boolean); // Filter out undefined emails
+    const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean); // Filter out undefined emails
 
     if (bondedEmails.length === 0) {
       setBondedCheckIns([]);
@@ -622,9 +617,8 @@ export default function Dashboard() {
     }
 
     // Try to fetch from Firebase first
-    const firebaseCheckIns = await checkInStorage.fetchBondedCheckInsFromFirebase(
-      bondedEmails
-    );
+    const firebaseCheckIns =
+      await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
 
     if (firebaseCheckIns.length > 0) {
       setBondedCheckIns(firebaseCheckIns);
