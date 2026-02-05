@@ -21,6 +21,7 @@
 6. Click "Run" to execute all commands
 
 **What this does:**
+
 - Creates 9 database tables for your app
 - Sets up indexes for faster queries
 - Enables Row Level Security
@@ -43,7 +44,8 @@ VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
-**Important:** 
+**Important:**
+
 - Never commit these secrets to git
 - Use `.env.local` for local development
 - Set environment variables in your deployment platform (Netlify, Vercel, etc.)
@@ -53,6 +55,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 The migration is complete! Here's what changed:
 
 ### Files Modified:
+
 - `client/lib/supabase.ts` - New Supabase service (replaces Firebase)
 - `client/lib/dataStorage.ts` - Updated to use Supabase
 - `client/pages/Dashboard.tsx` - Updated all Firebase imports
@@ -60,9 +63,11 @@ The migration is complete! Here's what changed:
 - `client/pages/SharedMemories.tsx` - Updated all Firebase imports
 
 ### Files No Longer Used:
+
 - `client/lib/firebase.ts` (can be deleted)
 
 ### What Still Works:
+
 - All localStorage functionality (works as before)
 - Analytics tracking (now stored in Supabase)
 - Cross-device sync (via Supabase)
@@ -83,15 +88,18 @@ The migration is complete! Here's what changed:
 ## Troubleshooting
 
 ### "Supabase not configured" message
+
 - Check that `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set
 - Restart your dev server after updating `.env.local`
 
 ### Data not syncing
+
 - Check the browser console for error messages
 - Verify API keys are correct in your environment variables
 - Ensure Row Level Security policies allow access
 
 ### Cross-device sync not working
+
 - Make sure you're using the same email account on both devices
 - Wait a moment for sync to complete (usually instant)
 - Check Supabase dashboard to see if data is being saved
@@ -107,10 +115,12 @@ The migration is complete! Here's what changed:
 ## Cost Comparison
 
 **Firebase:**
+
 - Free tier: Limited to 50K reads/day
 - After that: ~$5-50/month+
 
 **Supabase:**
+
 - Free tier: 500MB DB + 1GB storage (very generous)
 - Pro tier: $25/month for 8GB DB + 100GB storage
 

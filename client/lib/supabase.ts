@@ -32,18 +32,16 @@ export const supabaseCheckInService = {
         return false;
       }
 
-      const { error } = await supabase
-        .from("check_ins")
-        .insert([
-          {
-            user_email: checkInData.userEmail,
-            timestamp: checkInData.timestamp,
-            date: checkInData.date,
-            mood: checkInData.mood,
-            notes: checkInData.notes,
-            created_at: new Date().toISOString(),
-          },
-        ]);
+      const { error } = await supabase.from("check_ins").insert([
+        {
+          user_email: checkInData.userEmail,
+          timestamp: checkInData.timestamp,
+          date: checkInData.date,
+          mood: checkInData.mood,
+          notes: checkInData.notes,
+          created_at: new Date().toISOString(),
+        },
+      ]);
 
       if (error) throw error;
 
@@ -83,7 +81,10 @@ export const supabaseCheckInService = {
 // Supabase User Sync Service
 export const supabaseUserSyncService = {
   // Save user profile to Supabase
-  syncUserProfile: async (userEmail: string, profile: any): Promise<boolean> => {
+  syncUserProfile: async (
+    userEmail: string,
+    profile: any,
+  ): Promise<boolean> => {
     try {
       const supabase = getSupabaseClient();
       if (!supabase) {
@@ -91,16 +92,14 @@ export const supabaseUserSyncService = {
         return false;
       }
 
-      const { error } = await supabase
-        .from("user_profiles")
-        .upsert(
-          {
-            email: userEmail,
-            profile_data: profile,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "email" },
-        );
+      const { error } = await supabase.from("user_profiles").upsert(
+        {
+          email: userEmail,
+          profile_data: profile,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "email" },
+      );
 
       if (error) throw error;
 
@@ -148,16 +147,14 @@ export const supabaseUserSyncService = {
         return false;
       }
 
-      const { error } = await supabase
-        .from("bonded_contacts")
-        .upsert(
-          {
-            user_email: userEmail,
-            contacts: contacts,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_email" },
-        );
+      const { error } = await supabase.from("bonded_contacts").upsert(
+        {
+          user_email: userEmail,
+          contacts: contacts,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_email" },
+      );
 
       if (error) throw error;
 
@@ -194,7 +191,10 @@ export const supabaseUserSyncService = {
   },
 
   // Save user's check-ins to Supabase
-  syncCheckIns: async (userEmail: string, checkIns: any[]): Promise<boolean> => {
+  syncCheckIns: async (
+    userEmail: string,
+    checkIns: any[],
+  ): Promise<boolean> => {
     try {
       const supabase = getSupabaseClient();
       if (!supabase) {
@@ -202,16 +202,14 @@ export const supabaseUserSyncService = {
         return false;
       }
 
-      const { error } = await supabase
-        .from("user_check_ins")
-        .upsert(
-          {
-            user_email: userEmail,
-            check_ins: checkIns,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_email" },
-        );
+      const { error } = await supabase.from("user_check_ins").upsert(
+        {
+          user_email: userEmail,
+          check_ins: checkIns,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_email" },
+      );
 
       if (error) throw error;
 
@@ -256,16 +254,14 @@ export const supabaseUserSyncService = {
         return false;
       }
 
-      const { error } = await supabase
-        .from("user_media")
-        .upsert(
-          {
-            user_email: userEmail,
-            media: media,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_email" },
-        );
+      const { error } = await supabase.from("user_media").upsert(
+        {
+          user_email: userEmail,
+          media: media,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_email" },
+      );
 
       if (error) throw error;
 
@@ -313,16 +309,14 @@ export const supabaseUserSyncService = {
         return false;
       }
 
-      const { error } = await supabase
-        .from("shared_moments")
-        .upsert(
-          {
-            user_email: userEmail,
-            shared_moments: sharedMoments,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_email" },
-        );
+      const { error } = await supabase.from("shared_moments").upsert(
+        {
+          user_email: userEmail,
+          shared_moments: sharedMoments,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_email" },
+      );
 
       if (error) throw error;
 

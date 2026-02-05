@@ -110,20 +110,18 @@ export const analyticsService = {
           const supabase = getSupabase();
           if (!supabase) return;
 
-          return supabase
-            .from("analytics_events")
-            .insert([
-              {
-                event_id: newEvent.id,
-                event_type: newEvent.type,
-                target_id: newEvent.targetId,
-                target_type: newEvent.targetType,
-                user_email: newEvent.userEmail,
-                timestamp: newEvent.timestamp,
-                event_date: newEvent.date,
-                metadata: newEvent.metadata,
-              },
-            ]);
+          return supabase.from("analytics_events").insert([
+            {
+              event_id: newEvent.id,
+              event_type: newEvent.type,
+              target_id: newEvent.targetId,
+              target_type: newEvent.targetType,
+              user_email: newEvent.userEmail,
+              timestamp: newEvent.timestamp,
+              event_date: newEvent.date,
+              metadata: newEvent.metadata,
+            },
+          ]);
         })
         .catch((error) => {
           console.log("⚠️ Failed to sync analytics event to Supabase:", error);

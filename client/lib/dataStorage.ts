@@ -465,9 +465,8 @@ export const checkInStorage = {
     try {
       const { supabaseCheckInService } = await import("./supabase");
 
-      const supabaseCheckIns = await supabaseCheckInService.getBondedCheckIns(
-        bondedEmails,
-      );
+      const supabaseCheckIns =
+        await supabaseCheckInService.getBondedCheckIns(bondedEmails);
 
       // Supabase check-ins are already in StoredCheckIn format
       return supabaseCheckIns as StoredCheckIn[];

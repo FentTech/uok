@@ -224,18 +224,16 @@ export const advertiserAuthService = {
 
           return Promise.all(
             credentials.map((cred) =>
-              supabase
-                .from("advertiser_credentials")
-                .upsert(
-                  {
-                    email: cred.email,
-                    password: cred.password,
-                    company_name: cred.companyName,
-                    registered_at: cred.registeredAt,
-                    verified: cred.verified,
-                  },
-                  { onConflict: "email" },
-                ),
+              supabase.from("advertiser_credentials").upsert(
+                {
+                  email: cred.email,
+                  password: cred.password,
+                  company_name: cred.companyName,
+                  registered_at: cred.registeredAt,
+                  verified: cred.verified,
+                },
+                { onConflict: "email" },
+              ),
             ),
           );
         })
