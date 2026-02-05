@@ -348,26 +348,44 @@ export const analyticsService = {
 
       const report = analyticsService.generateWeeklyReport();
 
-      // Call backend API to send email
-      const response = await fetch("/api/send-weekly-report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userEmail,
-          report,
-        }),
-      });
+      // Call backend API to send email (with timeout)
+      try {
+        const response = await fetch("/api/send-weekly-report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userEmail,
+            report,
+          }),
+          signal: AbortSignal.timeout(10000), // 10 second timeout
+        });
 
-      if (response.ok) {
-        analyticsService.markWeeklyReportSent();
-        console.log("✅ Weekly report email sent to:", userEmail);
-        return true;
-      } else {
-        console.error("❌ Failed to send weekly report email");
+        if (response.ok) {
+          analyticsService.markWeeklyReportSent();
+          console.log("✅ Weekly report email sent to:", userEmail);
+          return true;
+        } else {
+          console.warn(
+            `⚠️ Weekly report API returned status ${response.status}`,
+          );
+          return false;
+        }
+      } catch (fetchError) {
+        if (
+          fetchError instanceof Error &&
+          fetchError.name === "AbortError"
+        ) {
+          console.warn("⚠️ Weekly report API request timed out");
+        } else {
+          console.warn(
+            "⚠️ Weekly report API unavailable (non-blocking):",
+            fetchError instanceof Error ? fetchError.message : String(fetchError),
+          );
+        }
         return false;
       }
     } catch (error) {
-      console.error("❌ Error sending weekly report:", error);
+      console.warn("⚠️ Error preparing weekly report:", error);
       return false;
     }
   },
