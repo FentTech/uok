@@ -235,30 +235,64 @@ export default function Dashboard() {
 
   // Initialize with sample check-ins and load bonded contacts
   useEffect(() => {
-    // Load bonded contacts from localStorage (do this every time)
-    const bondedContactsStr = localStorage.getItem("bondedContacts");
-    const bondedContactsList: any[] = [];
-    if (bondedContactsStr) {
-      try {
-        const parsed = JSON.parse(bondedContactsStr);
-        setBondedContacts(parsed);
-        bondedContactsList.push(...parsed);
-      } catch (e) {
-        console.error("Error loading bonded contacts:", e);
-      }
-    }
+    const loadBondedContacts = async () => {
+      // Load bonded contacts from localStorage (do this every time)
+      const bondedContactsStr = localStorage.getItem("bondedContacts");
+      const bondedContactsList: any[] = [];
+      let foundLocally = false;
 
-    // Load bonded contacts' check-ins
-    if (bondedContactsList.length > 0) {
-      const bondedEmails = bondedContactsList
-        .map((c) => c.email)
-        .filter(Boolean); // Filter out undefined emails
-      if (bondedEmails.length > 0) {
-        const bondedCheckins =
-          checkInStorage.getTodayFromBondedContacts(bondedEmails);
-        setBondedCheckIns(bondedCheckins);
+      if (bondedContactsStr) {
+        try {
+          const parsed = JSON.parse(bondedContactsStr);
+          setBondedContacts(parsed);
+          bondedContactsList.push(...parsed);
+          foundLocally = true;
+        } catch (e) {
+          console.error("Error loading bonded contacts:", e);
+        }
       }
-    }
+
+      // If not found locally, try to fetch from Firebase (for cross-device sync)
+      if (!foundLocally) {
+        const userEmail = localStorage.getItem("userEmail");
+        if (userEmail) {
+          try {
+            const { firebaseUserSyncService } = await import(
+              "../lib/firebase"
+            );
+            const firebaseBondedContacts =
+              await firebaseUserSyncService.fetchBondedContacts(userEmail);
+            if (firebaseBondedContacts.length > 0) {
+              console.log(
+                "📥 Loaded bonded contacts from Firebase (cross-device sync)",
+              );
+              localStorage.setItem(
+                "bondedContacts",
+                JSON.stringify(firebaseBondedContacts),
+              );
+              setBondedContacts(firebaseBondedContacts);
+              bondedContactsList.push(...firebaseBondedContacts);
+            }
+          } catch (error) {
+            console.log("Firebase bonded contacts sync not available");
+          }
+        }
+      }
+
+      // Load bonded contacts' check-ins
+      if (bondedContactsList.length > 0) {
+        const bondedEmails = bondedContactsList
+          .map((c) => c.email)
+          .filter(Boolean); // Filter out undefined emails
+        if (bondedEmails.length > 0) {
+          const bondedCheckins =
+            checkInStorage.getTodayFromBondedContacts(bondedEmails);
+          setBondedCheckIns(bondedCheckins);
+        }
+      }
+    };
+
+    loadBondedContacts();
 
     // Only initialize static content once
     if (!hasInitializedRef.current) {
