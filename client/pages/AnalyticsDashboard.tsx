@@ -9,10 +9,7 @@ import {
   Lock,
   TrendingUp,
 } from "lucide-react";
-import {
-  analyticsService,
-  type WeeklyReport,
-} from "../lib/analytics";
+import { analyticsService, type WeeklyReport } from "../lib/analytics";
 
 export default function AnalyticsDashboard() {
   const [weeklyReport, setWeeklyReport] = useState<WeeklyReport | null>(null);
@@ -120,8 +117,7 @@ export default function AnalyticsDashboard() {
                       <Heart className="w-4 h-4" /> {memory.likes} likes
                     </span>
                     <span className="flex items-center gap-1">
-                      <MessageCircle className="w-4 h-4" />{" "}
-                      {memory.comments}
+                      <MessageCircle className="w-4 h-4" /> {memory.comments}
                       comments
                     </span>
                   </div>
@@ -141,9 +137,7 @@ export default function AnalyticsDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-6">
             <Zap className="w-6 h-6 text-yellow-400" />
-            <h3 className="text-2xl font-bold text-white">
-              Most Engaging Ads
-            </h3>
+            <h3 className="text-2xl font-bold text-white">Most Engaging Ads</h3>
           </div>
 
           {weeklyReport.topAds.length > 0 ? (

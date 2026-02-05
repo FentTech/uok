@@ -65,9 +65,7 @@ export default function AdvertiserLogin() {
             <div className="mb-6 p-4 bg-red-500/10 border border-red-400/30 rounded-lg flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-red-300 text-sm font-medium">
-                  Login Failed
-                </p>
+                <p className="text-red-300 text-sm font-medium">Login Failed</p>
                 <p className="text-red-200/80 text-sm">{error}</p>
               </div>
             </div>
@@ -128,7 +126,8 @@ export default function AdvertiserLogin() {
           </h3>
           <div className="space-y-2 text-sm text-purple-300/80">
             <div>
-              <span className="font-medium">Email:</span> advertiser@wellness.com
+              <span className="font-medium">Email:</span>{" "}
+              advertiser@wellness.com
             </div>
             <div>
               <span className="font-medium">Password:</span> admin123
@@ -142,8 +141,9 @@ export default function AdvertiserLogin() {
             ℹ️ Private Analytics
           </h3>
           <p className="text-blue-300/80 text-xs">
-            This portal is exclusively for authorized advertisers. Your detailed ad performance data,
-            engagement metrics, and campaign analytics are private and secure.
+            This portal is exclusively for authorized advertisers. Your detailed
+            ad performance data, engagement metrics, and campaign analytics are
+            private and secure.
           </p>
         </div>
 

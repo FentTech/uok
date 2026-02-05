@@ -13,7 +13,11 @@ import {
   LogOut,
   Lock,
 } from "lucide-react";
-import { analyticsService, DEMO_ADS, type WeeklyReport } from "../lib/analytics";
+import {
+  analyticsService,
+  DEMO_ADS,
+  type WeeklyReport,
+} from "../lib/analytics";
 
 export default function AdvertiserAnalytics() {
   const navigate = useNavigate();
@@ -253,9 +257,7 @@ export default function AdvertiserAnalytics() {
               {weeklyReport.metrics.totalLikes +
                 weeklyReport.metrics.totalComments}
             </p>
-            <p className="text-xs text-purple-300/60 mt-2">
-              Likes + Comments
-            </p>
+            <p className="text-xs text-purple-300/60 mt-2">Likes + Comments</p>
           </div>
 
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
