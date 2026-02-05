@@ -312,23 +312,39 @@ export default function Dashboard() {
         }
 
         // Fall back to local storage - check by email AND by name
-        const localCheckIns = checkInStorage
-          .getAll()
-          .filter((c) => {
-            const today = new Date().toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            });
-            if (c.date !== today) return false;
+        const allStoredCheckIns = checkInStorage.getAll();
+        const today = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+        const todayCheckIns = allStoredCheckIns.filter((c) => c.date === today);
 
-            // Match by email if email exists
-            if (bondedEmails.includes(c.userEmail)) return true;
+        console.log(
+          "📥 All stored check-ins:",
+          allStoredCheckIns.length,
+          "| Today's check-ins:",
+          todayCheckIns.length,
+        );
+        console.log("📥 Today's check-ins detail:", todayCheckIns);
 
-            // Also match by userName for backwards compatibility
-            if (bondNames.includes(c.userName)) return true;
+        const localCheckIns = todayCheckIns.filter((c) => {
+          // Match by email if email exists
+          if (bondedEmails.includes(c.userEmail)) {
+            console.log(`✅ Matched check-in by email: ${c.userEmail}`);
+            return true;
+          }
 
-            return false;
-          });
+          // Also match by userName for backwards compatibility
+          if (bondNames.includes(c.userName)) {
+            console.log(`✅ Matched check-in by userName: ${c.userName}`);
+            return true;
+          }
+
+          console.log(
+            `❌ Check-in ${c.id} not matched - userEmail: ${c.userEmail}, userName: ${c.userName}`,
+          );
+          return false;
+        });
 
         if (localCheckIns.length > 0) {
           console.log(
