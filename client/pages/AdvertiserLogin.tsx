@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Lock, Mail, AlertCircle } from "lucide-react";
+import { advertiserAuthService } from "../lib/advertiserAuth";
 
 export default function AdvertiserLogin() {
   const navigate = useNavigate();
@@ -9,22 +10,20 @@ export default function AdvertiserLogin() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Initialize demo advertiser on component mount
+  useEffect(() => {
+    advertiserAuthService.initializeDemoAdvertiser();
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    // Simple hardcoded advertiser credentials for demo
-    // In production, this would check against a real database
-    const DEMO_ADVERTISERS = [
-      { email: "advertiser@wellness.com", password: "admin123" },
-      { email: "partner@uok.app", password: "partner123" },
-    ];
-
-    const isValidAdvertiser = DEMO_ADVERTISERS.some(
-      (advertiser) =>
-        advertiser.email.toLowerCase() === email.toLowerCase() &&
-        advertiser.password === password,
+    // Verify against stored credentials
+    const isValidAdvertiser = advertiserAuthService.verifyLogin(
+      email,
+      password,
     );
 
     if (isValidAdvertiser) {
