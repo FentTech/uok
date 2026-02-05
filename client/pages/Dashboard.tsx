@@ -1000,7 +1000,7 @@ export default function Dashboard() {
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).forEach((file) => {
+      Array.from(files).forEach(async (file) => {
         // Use createObjectURL for video playback
         const url = URL.createObjectURL(file);
         const timestamp = new Date().toLocaleTimeString("en-US", {
