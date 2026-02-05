@@ -952,7 +952,7 @@ export default function Dashboard() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).forEach((file) => {
+      Array.from(files).forEach(async (file) => {
         // Use createObjectURL for better performance and compatibility
         const url = URL.createObjectURL(file);
         const timestamp = new Date().toLocaleTimeString("en-US", {
