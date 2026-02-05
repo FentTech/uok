@@ -19,6 +19,7 @@ import {
   X,
   Bell,
   Zap,
+  Lock,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
 import RotatingAds from "../components/RotatingAds";
