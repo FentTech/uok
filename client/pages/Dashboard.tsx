@@ -374,9 +374,27 @@ export default function Dashboard() {
               JSON.stringify(firebaseBondedContacts),
             );
             setBondedContacts(firebaseBondedContacts);
+            return;
           }
         } catch (error) {
           console.log("Firebase bonded contacts sync not available");
+        }
+      }
+
+      // If no bonded contacts found anywhere, initialize demo data for testing
+      console.log(
+        "ℹ️ No bonded contacts found. Initializing demo data for testing...",
+      );
+      initializeDemoData();
+
+      // Load the newly created demo bonded contacts
+      const demoBondedContactsStr = localStorage.getItem("bondedContacts");
+      if (demoBondedContactsStr) {
+        try {
+          const parsed = JSON.parse(demoBondedContactsStr);
+          setBondedContacts(parsed);
+        } catch (e) {
+          console.error("Error loading demo bonded contacts:", e);
         }
       }
     };
