@@ -348,6 +348,9 @@ export default function Dashboard() {
 
       if (!userEmail) {
         console.log("⚠️ No user email found, cannot load user data");
+        // Still initialize demo data even without user email for testing
+        initializeDemoData();
+        loadDemoBondedContacts();
         return;
       }
 
@@ -372,22 +375,22 @@ export default function Dashboard() {
           }
         }
 
-        // If not found locally, try Firebase
+        // If not found locally, try Supabase
         if (bondedContacts.length === 0) {
           console.log("📥 Fetching bonded contacts from Supabase...");
-          const firebaseBondedContacts =
+          const supabaseBondedContacts =
             await supabaseUserSyncService.fetchBondedContacts(userEmail);
 
-          if (firebaseBondedContacts.length > 0) {
+          if (supabaseBondedContacts.length > 0) {
             console.log(
               "✅ Loaded bonded contacts from Supabase:",
-              firebaseBondedContacts.length,
+              supabaseBondedContacts.length,
             );
             localStorage.setItem(
               "bondedContacts",
-              JSON.stringify(firebaseBondedContacts),
+              JSON.stringify(supabaseBondedContacts),
             );
-            bondedContacts = firebaseBondedContacts;
+            bondedContacts = supabaseBondedContacts;
           }
         }
 
@@ -407,7 +410,7 @@ export default function Dashboard() {
           }
         }
 
-        // If not found locally, try Firebase
+        // If not found locally, try Supabase
         if (checkInsData.length === 0) {
           console.log("📥 Fetching check-ins from Supabase...");
           const supabaseCheckIns =
@@ -439,7 +442,7 @@ export default function Dashboard() {
           }
         }
 
-        // If not found locally, try Firebase
+        // If not found locally, try Supabase
         if (mediaData.length === 0) {
           console.log("📥 Fetching media from Supabase...");
           const supabaseMedia =
@@ -468,7 +471,7 @@ export default function Dashboard() {
           }
         }
 
-        // If not found locally, try Firebase
+        // If not found locally, try Supabase
         if (sharedMomentsData.length === 0) {
           console.log("📥 Fetching shared moments from Supabase...");
           const supabaseSharedMoments =
@@ -493,7 +496,7 @@ export default function Dashboard() {
           console.log("✅ Check-ins set to state:", checkInsData.length);
         }
 
-        // Set bonded contacts
+        // Set bonded contacts to state
         if (bondedContacts.length > 0) {
           setBondedContacts(bondedContacts);
           console.log(
@@ -506,25 +509,12 @@ export default function Dashboard() {
             "ℹ️ No bonded contacts found. Initializing demo data for testing...",
           );
           initializeDemoData();
-
-          // Load the newly created demo bonded contacts
-          const demoBondedContactsStr = localStorage.getItem("bondedContacts");
-          if (demoBondedContactsStr) {
-            try {
-              const parsed = JSON.parse(demoBondedContactsStr);
-              setBondedContacts(parsed);
-              console.log(
-                "✅ Demo bonded contacts set to state:",
-                parsed.length,
-              );
-            } catch (e) {
-              console.error("Error loading demo bonded contacts:", e);
-            }
-          }
+          loadDemoBondedContacts();
         }
       } catch (error) {
         console.error("Error loading user data from Supabase:", error);
         // Fall back to using what's in localStorage
+        loadDemoBondedContacts();
       }
     };
 
