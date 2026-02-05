@@ -36,13 +36,19 @@ export default function App() {
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       if (event.message && event.message.includes("NetworkError")) {
+        // Ignore CORS errors from external services (Builder.io, FullStory, etc)
+        if (
+          event.message.includes("builder.io") ||
+          event.message.includes("fullstory") ||
+          event.message.includes("fly.dev")
+        ) {
+          return;
+        }
         console.warn(
           "⚠️ NetworkError caught:",
           event.message,
           "Source:",
           event.filename,
-          "Line:",
-          event.lineno,
         );
       }
     };
@@ -50,16 +56,19 @@ export default function App() {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       if (event.reason instanceof TypeError) {
         const message = event.reason.message || "";
+        // Ignore CORS errors from external services
+        if (
+          message.includes("builder.io") ||
+          message.includes("fullstory") ||
+          message.includes("fly.dev")
+        ) {
+          return;
+        }
         if (
           message.includes("Failed to fetch") ||
           message.includes("NetworkError")
         ) {
-          console.warn(
-            "⚠️ Network error in promise:",
-            message,
-            "Stack:",
-            event.reason.stack,
-          );
+          console.warn("⚠️ Network error in promise:", message);
         }
       }
     };
@@ -67,30 +76,12 @@ export default function App() {
     window.addEventListener("error", handleError);
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
-    // Also monitor fetch requests
-    const originalFetch = window.fetch;
-    window.fetch = function (...args: any[]) {
-      console.log("📡 Fetch request:", args[0]);
-      return originalFetch
-        .apply(window, args)
-        .catch((error: any) => {
-          console.error(
-            "❌ Fetch failed for:",
-            args[0],
-            "Error:",
-            error.message,
-          );
-          throw error;
-        });
-    };
-
     return () => {
       window.removeEventListener("error", handleError);
       window.removeEventListener(
         "unhandledrejection",
         handleUnhandledRejection,
       );
-      window.fetch = originalFetch;
     };
   }, []);
 
