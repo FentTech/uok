@@ -611,27 +611,25 @@ export default function Dashboard() {
 
   // Sync bonded contacts to Firebase whenever they change
   useEffect(() => {
-    const syncBondedContactsToFirebase = async () => {
-      if (bondedContacts.length > 0) {
-        const userEmail = localStorage.getItem("userEmail");
-        if (userEmail && userEmail !== "user") {
-          try {
-            const { firebaseUserSyncService } = await import(
-              "../lib/firebase"
+    if (bondedContacts.length > 0) {
+      const userEmail = localStorage.getItem("userEmail");
+      if (userEmail && userEmail !== "user") {
+        import("../lib/firebase")
+          .then(({ firebaseUserSyncService }) => {
+            return firebaseUserSyncService.syncBondedContacts(
+              userEmail,
+              bondedContacts,
             );
-            await firebaseUserSyncService
-              .syncBondedContacts(userEmail, bondedContacts)
-              .catch(() => {
-                console.log("Firebase sync not available");
-              });
-          } catch (error) {
-            console.log("⚠️ Could not sync bonded contacts to Firebase:", error);
-          }
-        }
+          })
+          .then(() => console.log("✅ Bonded contacts synced to Firebase"))
+          .catch((error) =>
+            console.log(
+              "⚠️ Could not sync bonded contacts to Firebase:",
+              error,
+            ),
+          );
       }
-    };
-
-    syncBondedContactsToFirebase();
+    }
   }, [bondedContacts]);
 
   // Initialize static content once
