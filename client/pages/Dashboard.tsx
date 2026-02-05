@@ -400,21 +400,56 @@ export default function Dashboard() {
   // Auto-refresh bonded check-ins every 10 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
-      const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean); // Filter out undefined emails
-      if (bondedEmails.length > 0) {
-        // Try Firebase first
-        const firebaseCheckIns =
-          await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
+      if (bondedContacts.length === 0) return;
 
-        if (firebaseCheckIns.length > 0) {
-          setBondedCheckIns(firebaseCheckIns);
-        } else {
-          // Fall back to local storage
-          const localCheckIns =
-            checkInStorage.getTodayFromBondedContacts(bondedEmails);
-          setBondedCheckIns(localCheckIns);
+      const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean);
+      const bondNames = bondedContacts.map((c) => c.name).filter(Boolean);
+
+      let allCheckIns: StoredCheckIn[] = [];
+
+      // Try Firebase first
+      if (bondedEmails.length > 0) {
+        try {
+          const firebaseCheckIns =
+            await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
+
+          if (firebaseCheckIns.length > 0) {
+            allCheckIns.push(...firebaseCheckIns);
+          }
+        } catch (error) {
+          console.log("Firebase auto-refresh failed");
         }
       }
+
+      // Fall back to local storage - check by email AND by name
+      const localCheckIns = checkInStorage
+        .getAll()
+        .filter((c) => {
+          const today = new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+          if (c.date !== today) return false;
+
+          // Match by email if email exists
+          if (bondedEmails.includes(c.userEmail)) return true;
+
+          // Also match by userName for backwards compatibility
+          if (bondNames.includes(c.userName)) return true;
+
+          return false;
+        });
+
+      if (localCheckIns.length > 0) {
+        allCheckIns.push(...localCheckIns);
+      }
+
+      // Remove duplicates
+      const uniqueCheckIns = Array.from(
+        new Map(allCheckIns.map((c) => [c.id, c])).values(),
+      );
+
+      setBondedCheckIns(uniqueCheckIns);
     }, 10000); // 10 seconds
 
     return () => clearInterval(interval);
