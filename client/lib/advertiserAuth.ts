@@ -106,16 +106,37 @@ export const advertiserAuthService = {
   verifyLogin: (email: string, password: string): boolean => {
     try {
       const stored = localStorage.getItem(ADVERTISER_STORAGE_KEY);
-      if (!stored) return false;
+      if (!stored) {
+        console.warn("No advertiser credentials found in storage");
+        return false;
+      }
 
       const credentials: AdvertiserCredentials[] = JSON.parse(stored);
+      if (!Array.isArray(credentials)) {
+        console.warn("Invalid credentials format");
+        return false;
+      }
+
+      const trimmedEmail = email.trim().toLowerCase();
+      const trimmedPassword = password.trim();
+
       const advertiser = credentials.find(
         (cred) =>
-          cred.email.toLowerCase() === email.toLowerCase() &&
-          cred.password === password,
+          cred.email.toLowerCase() === trimmedEmail &&
+          cred.password === trimmedPassword,
       );
 
-      return advertiser !== undefined;
+      if (advertiser) {
+        console.log(`✅ Valid login found for: ${advertiser.email}`);
+        return true;
+      } else {
+        // Debug: log available credentials
+        console.log(
+          "Available advertisers:",
+          credentials.map((c) => c.email),
+        );
+        return false;
+      }
     } catch (error) {
       console.error("Error verifying login:", error);
       return false;
