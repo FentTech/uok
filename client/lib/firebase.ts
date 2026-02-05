@@ -53,7 +53,11 @@ export const firebaseCheckInService = {
 
       // Initialize Firebase and get Firestore
       const database = await initFirebase();
-      const { collection: fbCollection, addDoc: fbAddDoc, Timestamp: fbTimestamp } = await import("firebase/firestore");
+      const {
+        collection: fbCollection,
+        addDoc: fbAddDoc,
+        Timestamp: fbTimestamp,
+      } = await import("firebase/firestore");
 
       await fbAddDoc(fbCollection(database, "checkins"), {
         ...checkInData,
@@ -88,7 +92,12 @@ export const firebaseCheckInService = {
 
       // Initialize Firebase and get Firestore
       const database = await initFirebase();
-      const { collection: fbCollection, query: fbQuery, where: fbWhere, getDocs: fbGetDocs } = await import("firebase/firestore");
+      const {
+        collection: fbCollection,
+        query: fbQuery,
+        where: fbWhere,
+        getDocs: fbGetDocs,
+      } = await import("firebase/firestore");
 
       // Query for today's check-ins from bonded contacts
       const q = fbQuery(
