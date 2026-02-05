@@ -619,11 +619,11 @@ export default function Dashboard() {
             const { firebaseUserSyncService } = await import(
               "../lib/firebase"
             );
-            await firebaseUserSyncService.syncBondedContacts(
-              userEmail,
-              bondedContacts,
-            );
-            console.log("✅ Bonded contacts synced to Firebase");
+            await firebaseUserSyncService
+              .syncBondedContacts(userEmail, bondedContacts)
+              .catch(() => {
+                console.log("Firebase sync not available");
+              });
           } catch (error) {
             console.log("⚠️ Could not sync bonded contacts to Firebase:", error);
           }
