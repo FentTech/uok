@@ -1768,15 +1768,19 @@ export default function Dashboard() {
                             className="w-full h-48 object-cover group-hover:scale-105 transition"
                           />
                         ) : (
-                          <div className="w-full h-48 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative">
+                          <div className="w-full h-48 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative overflow-hidden">
                             <video
-                              key={item.id}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                               controls
-                              style={{ maxWidth: "100%", maxHeight: "100%" }}
+                              controlsList="nodownload"
+                              preload="metadata"
+                              onError={(e) =>
+                                console.error("Video playback error:", e)
+                              }
                             >
                               <source src={item.url} type="video/mp4" />
                               <source src={item.url} type="video/webm" />
+                              <source src={item.url} type="video/ogg" />
                               Your browser does not support the video tag.
                             </video>
                           </div>
