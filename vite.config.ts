@@ -36,9 +36,10 @@ export default defineConfig(({ mode }) => ({
     {
       name: "firebase-resolver",
       apply: "build",
+      enforce: "pre",
       resolveId(id) {
-        // Don't try to resolve firebase imports - they'll be loaded at runtime
-        if (id.includes("firebase")) {
+        // Mark firebase modules as external to prevent bundling
+        if (id.startsWith("firebase/")) {
           return { id, external: true };
         }
       },
