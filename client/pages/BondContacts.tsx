@@ -123,6 +123,19 @@ export default function BondContacts() {
     setBondedContacts((prev) => {
       const updated = prev.filter((c) => c.id !== id);
       localStorage.setItem("bondedContacts", JSON.stringify(updated));
+
+      // Sync to Firebase for cross-device availability
+      const userEmail = localStorage.getItem("userEmail");
+      if (userEmail) {
+        import("../lib/firebase").then(({ firebaseUserSyncService }) => {
+          firebaseUserSyncService
+            .syncBondedContacts(userEmail, updated)
+            .catch((error) =>
+              console.log("Firebase sync not available:", error),
+            );
+        });
+      }
+
       return updated;
     });
   };
