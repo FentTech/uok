@@ -1078,20 +1078,45 @@ export default function Dashboard() {
             fromContact: contact.email,
           });
 
-          // Send email notification via API
+          // Send email notification via API (non-blocking)
           if (contact.email) {
-            fetch("/api/notifications/send-media-shared", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                recipientEmail: contact.email,
-                senderName: userEmail.split("@")[0] || "Your contact",
-                mediaType: item.type,
-                timestamp: new Date().toISOString(),
-              }),
-            }).catch((error) =>
-              console.error("Failed to send media share notification:", error),
-            );
+            try {
+              fetch("/api/notifications/send-media-shared", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  recipientEmail: contact.email,
+                  senderName: userEmail.split("@")[0] || "Your contact",
+                  mediaType: item.type,
+                  timestamp: new Date().toISOString(),
+                }),
+                signal: AbortSignal.timeout(5000), // 5 second timeout
+              })
+                .then((res) => {
+                  if (!res.ok) {
+                    console.warn(
+                      `⚠️ Media share notification API returned status ${res.status}`,
+                    );
+                  } else {
+                    console.log("✅ Media share notification sent successfully");
+                  }
+                })
+                .catch((error) => {
+                  if (error.name === "AbortError") {
+                    console.warn("⚠️ Media share notification request timed out");
+                  } else {
+                    console.warn(
+                      "⚠️ Failed to send media share notification (non-blocking):",
+                      error.message,
+                    );
+                  }
+                });
+            } catch (error) {
+              console.warn(
+                "⚠️ Error initiating media share notification:",
+                error instanceof Error ? error.message : String(error),
+              );
+            }
           }
         }
       });
