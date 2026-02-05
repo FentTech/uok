@@ -487,9 +487,16 @@ export default function Dashboard() {
           }
         }
 
+        // Set check-ins to state
+        if (checkInsData.length > 0) {
+          setCheckIns(checkInsData);
+          console.log("✅ Check-ins set to state:", checkInsData.length);
+        }
+
         // Set bonded contacts
         if (bondedContacts.length > 0) {
           setBondedContacts(bondedContacts);
+          console.log("✅ Bonded contacts set to state:", bondedContacts.length);
         } else {
           // If no bonded contacts found anywhere, initialize demo data for testing
           console.log(
@@ -503,6 +510,7 @@ export default function Dashboard() {
             try {
               const parsed = JSON.parse(demoBondedContactsStr);
               setBondedContacts(parsed);
+              console.log("✅ Demo bonded contacts set to state:", parsed.length);
             } catch (e) {
               console.error("Error loading demo bonded contacts:", e);
             }
