@@ -3,7 +3,10 @@
 
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client
+// Initialize Supabase client with error handling
+let supabaseClientInstance: ReturnType<typeof createClient> | null = null;
+let lastInitAttempt = 0;
+
 const getSupabaseClient = () => {
   const url = import.meta.env.VITE_SUPABASE_URL;
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -13,7 +16,19 @@ const getSupabaseClient = () => {
     return null;
   }
 
-  return createClient(url, key);
+  try {
+    // Only create client once and reuse it
+    if (!supabaseClientInstance) {
+      supabaseClientInstance = createClient(url, key);
+    }
+    return supabaseClientInstance;
+  } catch (error) {
+    console.warn(
+      "⚠️ Failed to initialize Supabase client:",
+      error instanceof Error ? error.message : String(error),
+    );
+    return null;
+  }
 };
 
 export const supabaseCheckInService = {
