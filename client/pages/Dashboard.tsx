@@ -1024,7 +1024,7 @@ export default function Dashboard() {
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).forEach(async (file) => {
+      Array.from(files).forEach((file) => {
         // Use createObjectURL for video playback
         const url = URL.createObjectURL(file);
         const timestamp = new Date().toLocaleTimeString("en-US", {
@@ -1049,19 +1049,18 @@ export default function Dashboard() {
         // Update local state
         setMediaItems((prev) => [savedMedia as any, ...prev]);
 
-        // Sync to Firebase
+        // Sync to Firebase (fire and forget)
         const userEmail = localStorage.getItem("userEmail");
         if (userEmail && userEmail !== "user") {
-          try {
-            const { firebaseUserSyncService } = await import(
-              "../lib/firebase"
+          import("../lib/firebase")
+            .then(({ firebaseUserSyncService }) => {
+              const allMedia = mediaStorage.getActive();
+              return firebaseUserSyncService.syncMedia(userEmail, allMedia);
+            })
+            .then(() => console.log("✅ Video synced to Firebase"))
+            .catch((error) =>
+              console.log("⚠️ Could not sync video to Firebase:", error),
             );
-            const allMedia = mediaStorage.getActive();
-            await firebaseUserSyncService.syncMedia(userEmail, allMedia);
-            console.log("✅ Video synced to Firebase");
-          } catch (error) {
-            console.log("⚠️ Could not sync video to Firebase:", error);
-          }
         }
       });
     }
