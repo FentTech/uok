@@ -609,6 +609,31 @@ export default function Dashboard() {
     loadBondedCheckIns();
   }, [bondedContacts]);
 
+  // Sync bonded contacts to Firebase whenever they change
+  useEffect(() => {
+    const syncBondedContactsToFirebase = async () => {
+      if (bondedContacts.length > 0) {
+        const userEmail = localStorage.getItem("userEmail");
+        if (userEmail && userEmail !== "user") {
+          try {
+            const { firebaseUserSyncService } = await import(
+              "../lib/firebase"
+            );
+            await firebaseUserSyncService.syncBondedContacts(
+              userEmail,
+              bondedContacts,
+            );
+            console.log("✅ Bonded contacts synced to Firebase");
+          } catch (error) {
+            console.log("⚠️ Could not sync bonded contacts to Firebase:", error);
+          }
+        }
+      }
+    };
+
+    syncBondedContactsToFirebase();
+  }, [bondedContacts]);
+
   // Initialize static content once
   useEffect(() => {
     // Only initialize static content once
