@@ -1,37 +1,5 @@
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-} from "firebase/firestore";
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-key",
-  authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "uok-demo.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "uok-demo",
-  storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "uok-demo.appspot.com",
-  messagingSenderId:
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef",
-};
-
-let db: any = null;
-
-function initFirebase() {
-  if (db) return db;
-  const app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  return db;
-}
-
 // Firebase Check-in Service
+// Uses completely dynamic imports to avoid build-time resolution issues
 export const firebaseCheckInService = {
   // Save check-in to Firebase
   saveCheckIn: async (checkInData: {
@@ -45,16 +13,31 @@ export const firebaseCheckInService = {
   }): Promise<boolean> => {
     try {
       // Check if Firebase is configured
-      if (
-        !firebaseConfig.projectId ||
-        firebaseConfig.projectId === "uok-demo"
-      ) {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
         console.log("Firebase not configured yet, saving locally only");
         return false;
       }
 
-      const database = initFirebase();
-      await addDoc(collection(database, "checkins"), {
+      // Dynamically import Firebase modules only when needed
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, addDoc, Timestamp } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      await addDoc(collection(db, "checkins"), {
         ...checkInData,
         createdAt: Timestamp.now(),
       });
@@ -71,14 +54,12 @@ export const firebaseCheckInService = {
   getBondedCheckIns: async (
     userEmail: string,
     bondedEmails: string[],
-    today: string,
+    today: string
   ): Promise<any[]> => {
     try {
       // Check if Firebase is configured
-      if (
-        !firebaseConfig.projectId ||
-        firebaseConfig.projectId === "uok-demo"
-      ) {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
         console.log("Firebase not configured yet, returning empty");
         return [];
       }
@@ -87,13 +68,29 @@ export const firebaseCheckInService = {
         return [];
       }
 
-      const database = initFirebase();
+      // Dynamically import Firebase modules only when needed
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, query, where, getDocs } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
       // Query for today's check-ins from bonded contacts
       const q = query(
-        collection(database, "checkins"),
+        collection(db, "checkins"),
         where("userEmail", "in", bondedEmails),
-        where("date", "==", today),
+        where("date", "==", today)
       );
 
       const snapshot = await getDocs(q);
@@ -107,7 +104,7 @@ export const firebaseCheckInService = {
       });
 
       console.log(
-        `📥 Fetched ${checkins.length} bonded check-ins from Firebase`,
+        `📥 Fetched ${checkins.length} bonded check-ins from Firebase`
       );
       return checkins;
     } catch (error) {
