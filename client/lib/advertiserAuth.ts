@@ -95,6 +95,10 @@ export const advertiserAuthService = {
       console.log(
         `✅ Advertiser registered: ${email} with password: ${password}`,
       );
+
+      // Sync to Supabase
+      advertiserAuthService.syncToSupabase();
+
       return { password, success: true };
     } catch (error) {
       console.error("Error registering advertiser:", error);
