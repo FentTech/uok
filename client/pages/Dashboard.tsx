@@ -148,7 +148,10 @@ const initializeDemoData = () => {
     localStorage.setItem("bondedContacts", JSON.stringify(demoBondedContacts));
     console.log("✅ Demo bonded contacts created:", demoBondedContacts);
   } catch (error) {
-    console.error("Failed to save demo bonded contacts to localStorage:", error);
+    console.error(
+      "Failed to save demo bonded contacts to localStorage:",
+      error,
+    );
     return;
   }
 
@@ -249,11 +252,17 @@ const loadDemoBondedContacts = (setBondedContacts: any) => {
 
     if (parsed.length > 0) {
       setBondedContacts(parsed);
-      console.log("✅ Demo bonded contacts loaded and set to state:", parsed.length);
+      console.log(
+        "✅ Demo bonded contacts loaded and set to state:",
+        parsed.length,
+      );
     }
     return parsed;
   } catch (error) {
-    console.warn("⚠️ Failed to load bonded contacts from localStorage, clearing corrupted data:", error);
+    console.warn(
+      "⚠️ Failed to load bonded contacts from localStorage, clearing corrupted data:",
+      error,
+    );
     try {
       localStorage.removeItem("bondedContacts");
     } catch (clearError) {
@@ -447,7 +456,10 @@ export default function Dashboard() {
               );
             }
           } catch (e) {
-            console.warn("⚠️ Error parsing bonded contacts, clearing corrupted data:", e);
+            console.warn(
+              "⚠️ Error parsing bonded contacts, clearing corrupted data:",
+              e,
+            );
             localStorage.removeItem("bondedContacts");
             bondedContacts = [];
           }
@@ -490,7 +502,10 @@ export default function Dashboard() {
               );
             }
           } catch (e) {
-            console.warn("⚠️ Error parsing check-ins, clearing corrupted data:", e);
+            console.warn(
+              "⚠️ Error parsing check-ins, clearing corrupted data:",
+              e,
+            );
             localStorage.removeItem("uok_checkins");
             checkInsData = [];
           }
@@ -527,7 +542,10 @@ export default function Dashboard() {
               localStorage.removeItem("uok_media");
               mediaData = [];
             } else {
-              console.log("✅ Loaded media from localStorage:", mediaData.length);
+              console.log(
+                "✅ Loaded media from localStorage:",
+                mediaData.length,
+              );
             }
           } catch (e) {
             console.warn("⚠️ Error parsing media, clearing corrupted data:", e);
@@ -567,7 +585,10 @@ export default function Dashboard() {
               );
             }
           } catch (e) {
-            console.warn("⚠️ Error parsing shared moments, clearing corrupted data:", e);
+            console.warn(
+              "⚠️ Error parsing shared moments, clearing corrupted data:",
+              e,
+            );
             localStorage.removeItem("uok_shared_moments");
             sharedMomentsData = [];
           }
