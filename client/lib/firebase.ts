@@ -277,7 +277,10 @@ export const firebaseUserSyncService = {
   },
 
   // Save user's check-ins to Firebase
-  syncCheckIns: async (userEmail: string, checkIns: any[]): Promise<boolean> => {
+  syncCheckIns: async (
+    userEmail: string,
+    checkIns: any[],
+  ): Promise<boolean> => {
     try {
       const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
       if (!projectId || projectId === "uok-demo") {

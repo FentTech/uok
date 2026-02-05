@@ -94,7 +94,9 @@ const initializeDemoData = () => {
   // Check if bonded contacts already exist
   const existingBondedContacts = localStorage.getItem("bondedContacts");
   if (existingBondedContacts) {
-    console.log("✅ Bonded contacts already exist, skipping demo data initialization");
+    console.log(
+      "✅ Bonded contacts already exist, skipping demo data initialization",
+    );
     return;
   }
 
@@ -185,10 +187,7 @@ const initializeDemoData = () => {
   localStorage.setItem("uok_checkins", JSON.stringify(finalCheckIns));
 
   console.log("✅ Demo check-ins created:", demoCheckIns);
-  console.log(
-    "✅ Total check-ins in storage:",
-    finalCheckIns.length,
-  );
+  console.log("✅ Total check-ins in storage:", finalCheckIns.length);
 };
 
 export default function Dashboard() {
@@ -408,7 +407,10 @@ export default function Dashboard() {
             await firebaseUserSyncService.fetchCheckIns(userEmail);
 
           if (firebaseCheckIns.length > 0) {
-            console.log("✅ Loaded check-ins from Firebase:", firebaseCheckIns.length);
+            console.log(
+              "✅ Loaded check-ins from Firebase:",
+              firebaseCheckIns.length,
+            );
             localStorage.setItem(
               "uok_checkins",
               JSON.stringify(firebaseCheckIns),
@@ -433,9 +435,8 @@ export default function Dashboard() {
         // If not found locally, try Firebase
         if (mediaData.length === 0) {
           console.log("📥 Fetching media from Firebase...");
-          const firebaseMedia = await firebaseUserSyncService.fetchMedia(
-            userEmail,
-          );
+          const firebaseMedia =
+            await firebaseUserSyncService.fetchMedia(userEmail);
 
           if (firebaseMedia.length > 0) {
             console.log("✅ Loaded media from Firebase:", firebaseMedia.length);
