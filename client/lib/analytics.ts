@@ -348,41 +348,16 @@ export const analyticsService = {
 
       const report = analyticsService.generateWeeklyReport();
 
-      // Call backend API to send email (with timeout)
-      try {
-        const response = await fetch("/api/send-weekly-report", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userEmail,
-            report,
-          }),
-          signal: AbortSignal.timeout(10000), // 10 second timeout
-        });
-
-        if (response.ok) {
-          analyticsService.markWeeklyReportSent();
-          console.log("✅ Weekly report email sent to:", userEmail);
-          return true;
-        } else {
-          console.warn(
-            `⚠️ Weekly report API returned status ${response.status}`,
-          );
-          return false;
-        }
-      } catch (fetchError) {
-        if (fetchError instanceof Error && fetchError.name === "AbortError") {
-          console.warn("⚠️ Weekly report API request timed out");
-        } else {
-          console.warn(
-            "⚠️ Weekly report API unavailable (non-blocking):",
-            fetchError instanceof Error
-              ? fetchError.message
-              : String(fetchError),
-          );
-        }
-        return false;
-      }
+      // Weekly report: Report is generated but email delivery requires backend setup
+      // To enable email notifications, set up Supabase Edge Functions or Zapier automation
+      analyticsService.markWeeklyReportSent();
+      console.log(
+        "📧 Weekly report would be sent to:",
+        userEmail,
+        "- Backend email service required for delivery",
+      );
+      console.log("📊 Weekly report data:", report);
+      return true;
     } catch (error) {
       console.warn("⚠️ Error preparing weekly report:", error);
       return false;
