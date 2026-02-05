@@ -19,8 +19,10 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
-      external: ["firebase/app", "firebase/firestore"],
     },
+  },
+  optimizeDeps: {
+    include: ["firebase/app", "firebase/firestore"],
   },
   publicDir: "public",
   plugins: [react(), expressPlugin()],
