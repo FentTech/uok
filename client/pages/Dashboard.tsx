@@ -522,9 +522,17 @@ export default function Dashboard() {
         if (mediaStr) {
           try {
             mediaData = JSON.parse(mediaStr);
-            console.log("✅ Loaded media from localStorage:", mediaData.length);
+            if (!Array.isArray(mediaData)) {
+              console.warn("⚠️ Media is not an array, clearing...");
+              localStorage.removeItem("uok_media");
+              mediaData = [];
+            } else {
+              console.log("✅ Loaded media from localStorage:", mediaData.length);
+            }
           } catch (e) {
-            console.error("Error parsing media:", e);
+            console.warn("⚠️ Error parsing media, clearing corrupted data:", e);
+            localStorage.removeItem("uok_media");
+            mediaData = [];
           }
         }
 
