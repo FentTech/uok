@@ -94,14 +94,14 @@ export default function BondContacts() {
       const updated = [newContact, ...prev];
       localStorage.setItem("bondedContacts", JSON.stringify(updated));
 
-      // Sync to Firebase for cross-device availability
+      // Sync to Supabase for cross-device availability
       const userEmail = localStorage.getItem("userEmail");
       if (userEmail) {
-        import("../lib/firebase").then(({ firebaseUserSyncService }) => {
-          firebaseUserSyncService
+        import("../lib/supabase").then(({ supabaseUserSyncService }) => {
+          supabaseUserSyncService
             .syncBondedContacts(userEmail, updated)
             .catch((error) =>
-              console.log("Firebase sync not available:", error),
+              console.log("Supabase sync not available:", error),
             );
         });
       }
@@ -124,14 +124,14 @@ export default function BondContacts() {
       const updated = prev.filter((c) => c.id !== id);
       localStorage.setItem("bondedContacts", JSON.stringify(updated));
 
-      // Sync to Firebase for cross-device availability
+      // Sync to Supabase for cross-device availability
       const userEmail = localStorage.getItem("userEmail");
       if (userEmail) {
-        import("../lib/firebase").then(({ firebaseUserSyncService }) => {
-          firebaseUserSyncService
+        import("../lib/supabase").then(({ supabaseUserSyncService }) => {
+          supabaseUserSyncService
             .syncBondedContacts(userEmail, updated)
             .catch((error) =>
-              console.log("Firebase sync not available:", error),
+              console.log("Supabase sync not available:", error),
             );
         });
       }
