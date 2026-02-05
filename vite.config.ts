@@ -31,8 +31,24 @@ export default defineConfig(({ mode }) => {
           },
         },
         onwarn(warning: any, warn: any) {
-          // Suppress all warnings - safe because Firebase is loaded dynamically
-          return;
+          // Only suppress warnings we don't care about
+          const message = `${warning.message} ${warning.source || ""}`.toLowerCase();
+
+          // Suppress Firebase-related warnings since it's loaded dynamically
+          if (message.includes("firebase")) {
+            return;
+          }
+
+          // Suppress unresolved import warnings for external modules
+          if (
+            warning.code === "UNRESOLVED_IMPORT" &&
+            message.includes("external")
+          ) {
+            return;
+          }
+
+          // Log other warnings
+          warn(warning);
         },
       },
     },
