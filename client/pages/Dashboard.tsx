@@ -595,7 +595,14 @@ export default function Dashboard() {
   };
 
   const refreshBondedCheckIns = async () => {
-    const bondedEmails = bondedContacts.map((c) => c.email);
+    const bondedEmails = bondedContacts
+      .map((c) => c.email)
+      .filter(Boolean); // Filter out undefined emails
+
+    if (bondedEmails.length === 0) {
+      setBondedCheckIns([]);
+      return;
+    }
 
     // Try to fetch from Firebase first
     const firebaseCheckIns = await checkInStorage.fetchBondedCheckInsFromFirebase(
