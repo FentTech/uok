@@ -483,6 +483,107 @@ export default function FeaturedPartners() {
         </div>
       </nav>
 
+      {/* New Advertiser Password Modal */}
+      {newAdvertiserPassword && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-purple-900 to-slate-900 border border-purple-500/50 rounded-2xl p-8 max-w-md w-full">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                ✅ Registration Successful!
+              </h2>
+              <p className="text-purple-300">
+                Your advertiser account has been created. Save your login
+                credentials now.
+              </p>
+            </div>
+
+            <div className="bg-purple-950/50 rounded-lg p-4 mb-6 space-y-3">
+              <div>
+                <label className="text-purple-300 text-sm font-semibold block mb-1">
+                  Email:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newAdvertiserPassword.email}
+                    readOnly
+                    className="flex-1 bg-purple-900/30 border border-purple-400/30 rounded px-3 py-2 text-white text-sm"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        newAdvertiserPassword.email,
+                      );
+                      alert("Email copied!");
+                    }}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-purple-300 text-sm font-semibold block mb-1">
+                  Password:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newAdvertiserPassword.password}
+                    readOnly
+                    className="flex-1 bg-purple-900/30 border border-purple-400/30 rounded px-3 py-2 text-white text-sm font-mono"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        newAdvertiserPassword.password,
+                      );
+                      alert("Password copied!");
+                    }}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
+              <p className="text-yellow-300 text-sm">
+                <strong>⚠️ Important:</strong> Save these credentials in a safe
+                place. You'll need them to login to your advertiser analytics
+                portal.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setNewAdvertiserPassword(null);
+                  alert(
+                    `Partner registered! Awaiting payment.\n\nPayment link: https://paypal.me/AFenteng/1000\n\nNote: File has been uploaded. After payment, your ads will be active.`,
+                  );
+                }}
+                className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 rounded-lg transition"
+              >
+                Got It! (Proceed to Payment)
+              </button>
+              <button
+                onClick={() => {
+                  const creds = `Email: ${newAdvertiserPassword.email}\nPassword: ${newAdvertiserPassword.password}`;
+                  navigator.clipboard.writeText(creds);
+                  alert("All credentials copied to clipboard!");
+                }}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-lg transition"
+              >
+                Copy All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
