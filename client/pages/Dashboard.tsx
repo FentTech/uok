@@ -631,6 +631,60 @@ export default function Dashboard() {
     loadAllUserData();
   }, []);
 
+  // Load notifications from Supabase (completely free, real-time)
+  useEffect(() => {
+    const loadNotificationsFromSupabase = async () => {
+      const userEmail = localStorage.getItem("userEmail");
+      if (!userEmail) return;
+
+      try {
+        const { supabaseNotificationService } = await import(
+          "../lib/supabase"
+        );
+        const supabaseNotifications =
+          await supabaseNotificationService.getNotifications(userEmail, 50);
+
+        if (supabaseNotifications.length > 0) {
+          console.log(
+            "✅ Loaded notifications from Supabase:",
+            supabaseNotifications.length,
+          );
+          // Convert Supabase notifications to local format and prepend to existing notifications
+          const convertedNotifications = supabaseNotifications.map(
+            (notif: any) => ({
+              id: notif.id,
+              type: notif.notification_type,
+              message: notif.message,
+              timestamp: new Date(notif.created_at).toLocaleTimeString(
+                "en-US",
+                { hour: "2-digit", minute: "2-digit" },
+              ),
+              fromContact: notif.sender_email,
+            }),
+          );
+
+          setNotifications((prev) => {
+            // Avoid duplicates by checking if notification already exists
+            const newNotifs = convertedNotifications.filter(
+              (newNotif: any) => !prev.some((p) => p.id === newNotif.id),
+            );
+            return [...newNotifs, ...prev];
+          });
+        }
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to load notifications from Supabase:",
+          error,
+        );
+      }
+    };
+
+    loadNotificationsFromSupabase();
+    // Poll for new notifications every 5 seconds
+    const interval = setInterval(loadNotificationsFromSupabase, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Load bonded contacts' check-ins whenever bonded contacts change
   useEffect(() => {
     const loadBondedCheckIns = async () => {
