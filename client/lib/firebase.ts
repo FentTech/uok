@@ -113,3 +113,165 @@ export const firebaseCheckInService = {
     }
   },
 };
+
+// Firebase User Sync Service
+export const firebaseUserSyncService = {
+  // Save user profile and bonded contacts to Firebase
+  syncUserProfile: async (userEmail: string, userData: any): Promise<boolean> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        console.log("Firebase not configured, skipping profile sync");
+        return false;
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, setDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      await setDoc(doc(db, "users", userEmail), {
+        ...userData,
+        lastUpdated: new Date().toISOString(),
+      });
+
+      console.log("✅ User profile synced to Firebase");
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to sync user profile:", error);
+      return false;
+    }
+  },
+
+  // Fetch user profile from Firebase
+  fetchUserProfile: async (userEmail: string): Promise<any | null> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        return null;
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, getDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const docSnapshot = await getDoc(doc(db, "users", userEmail));
+      if (docSnapshot.exists()) {
+        console.log("📥 Fetched user profile from Firebase");
+        return docSnapshot.data();
+      }
+
+      return null;
+    } catch (error) {
+      console.warn("⚠️ Failed to fetch user profile:", error);
+      return null;
+    }
+  },
+
+  // Save bonded contacts to Firebase
+  syncBondedContacts: async (
+    userEmail: string,
+    bondedContacts: any[],
+  ): Promise<boolean> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        console.log("Firebase not configured, skipping bonded contacts sync");
+        return false;
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, setDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      await setDoc(doc(db, "bondedContacts", userEmail), {
+        contacts: bondedContacts,
+        lastUpdated: new Date().toISOString(),
+      });
+
+      console.log("✅ Bonded contacts synced to Firebase");
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to sync bonded contacts:", error);
+      return false;
+    }
+  },
+
+  // Fetch bonded contacts from Firebase
+  fetchBondedContacts: async (userEmail: string): Promise<any[]> => {
+    try {
+      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+      if (!projectId || projectId === "uok-demo") {
+        return [];
+      }
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, doc, getDoc } = await import(
+        "firebase/firestore"
+      );
+
+      const firebaseConfig = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: projectId,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const docSnapshot = await getDoc(
+        doc(db, "bondedContacts", userEmail),
+      );
+      if (docSnapshot.exists()) {
+        console.log("📥 Fetched bonded contacts from Firebase");
+        return docSnapshot.data().contacts || [];
+      }
+
+      return [];
+    } catch (error) {
+      console.warn("⚠️ Failed to fetch bonded contacts:", error);
+      return [];
+    }
+  },
+};
