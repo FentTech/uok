@@ -21,7 +21,10 @@ export default defineConfig(({ mode }) => ({
       },
       onwarn(warning, warn) {
         // Suppress unresolved external module warnings for firebase
-        if (warning.code === "UNRESOLVED_IMPORT" && warning.source?.includes("firebase")) {
+        if (
+          warning.code === "UNRESOLVED_IMPORT" &&
+          warning.source?.includes("firebase")
+        ) {
           return;
         }
         warn(warning);

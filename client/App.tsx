@@ -29,22 +29,25 @@ export default function App() {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/setup-contacts" element={<SetupContacts />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/bond-contacts" element={<BondContacts />} />
-            <Route path="/bond-notifications" element={<BondNotifications />} />
-            <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/wellness-insights" element={<WellnessInsights />} />
-            <Route path="/shared-memories" element={<SharedMemories />} />
-            <Route path="/featured-partners" element={<FeaturedPartners />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/setup-contacts" element={<SetupContacts />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/bond-contacts" element={<BondContacts />} />
+              <Route
+                path="/bond-notifications"
+                element={<BondNotifications />}
+              />
+              <Route path="/user-profile" element={<UserProfile />} />
+              <Route path="/wellness-insights" element={<WellnessInsights />} />
+              <Route path="/shared-memories" element={<SharedMemories />} />
+              <Route path="/featured-partners" element={<FeaturedPartners />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
