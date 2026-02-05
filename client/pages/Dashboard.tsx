@@ -213,6 +213,8 @@ export default function Dashboard() {
   const [mediaShareModalOpen, setMediaShareModalOpen] = useState<string | null>(
     null,
   );
+  const [showPreRollAd, setShowPreRollAd] = useState(false);
+  const [fullscreenMedia, setFullscreenMedia] = useState<MediaItem | null>(null);
   const [shareVisibility, setShareVisibility] = useState<
     "personal" | "bonded-contacts" | "community"
   >("community");
