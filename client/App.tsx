@@ -45,6 +45,7 @@ export default function App() {
               <Route path="/wellness-insights" element={<WellnessInsights />} />
               <Route path="/shared-memories" element={<SharedMemories />} />
               <Route path="/featured-partners" element={<FeaturedPartners />} />
+              <Route path="/analytics" element={<AnalyticsDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
