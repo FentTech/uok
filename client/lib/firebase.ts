@@ -54,7 +54,7 @@ export const firebaseCheckInService = {
   getBondedCheckIns: async (
     userEmail: string,
     bondedEmails: string[],
-    today: string
+    today: string,
   ): Promise<any[]> => {
     try {
       // Check if Firebase is configured
@@ -90,7 +90,7 @@ export const firebaseCheckInService = {
       const q = query(
         collection(db, "checkins"),
         where("userEmail", "in", bondedEmails),
-        where("date", "==", today)
+        where("date", "==", today),
       );
 
       const snapshot = await getDocs(q);
@@ -104,7 +104,7 @@ export const firebaseCheckInService = {
       });
 
       console.log(
-        `📥 Fetched ${checkins.length} bonded check-ins from Firebase`
+        `📥 Fetched ${checkins.length} bonded check-ins from Firebase`,
       );
       return checkins;
     } catch (error) {
