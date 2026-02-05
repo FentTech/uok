@@ -389,5 +389,151 @@ export const supabaseUserSyncService = {
   },
 };
 
+// Notification Service - Real-time notifications for bonded contacts
+export const supabaseNotificationService = {
+  // Send notification to bonded contacts (completely free, no email needed)
+  sendCheckInNotification: async (
+    recipientEmail: string,
+    senderEmail: string,
+    senderName: string,
+    mood: string,
+    emoji: string,
+  ): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        console.log(
+          "Supabase not configured, notification saved to localStorage only",
+        );
+        return false;
+      }
+
+      const { error } = await supabase.from("notifications").insert([
+        {
+          recipient_email: recipientEmail,
+          sender_email: senderEmail,
+          sender_name: senderName,
+          notification_type: "checkin",
+          title: `${senderName} checked in`,
+          message: `${emoji} ${senderName} just checked in feeling ${mood}. They're doing okay!`,
+          metadata: {
+            mood: mood,
+            emoji: emoji,
+            timestamp: new Date().toISOString(),
+          },
+          read: false,
+        },
+      ]);
+
+      if (error) throw error;
+      console.log(
+        "✅ Check-in notification saved to Supabase for:",
+        recipientEmail,
+      );
+      return true;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.warn("⚠️ Failed to send check-in notification:", errorMsg);
+      return false;
+    }
+  },
+
+  // Send media shared notification
+  sendMediaSharedNotification: async (
+    recipientEmail: string,
+    senderEmail: string,
+    senderName: string,
+    mediaType: "photo" | "video",
+  ): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        console.log(
+          "Supabase not configured, notification saved to localStorage only",
+        );
+        return false;
+      }
+
+      const { error } = await supabase.from("notifications").insert([
+        {
+          recipient_email: recipientEmail,
+          sender_email: senderEmail,
+          sender_name: senderName,
+          notification_type: "media_shared",
+          title: `${senderName} shared a ${mediaType}`,
+          message: `${senderName} shared a ${mediaType} with you 📸`,
+          metadata: {
+            media_type: mediaType,
+            timestamp: new Date().toISOString(),
+          },
+          read: false,
+        },
+      ]);
+
+      if (error) throw error;
+      console.log(
+        "✅ Media shared notification saved to Supabase for:",
+        recipientEmail,
+      );
+      return true;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.warn("⚠️ Failed to send media shared notification:", errorMsg);
+      return false;
+    }
+  },
+
+  // Fetch user's notifications
+  getNotifications: async (
+    userEmail: string,
+    limit: number = 50,
+  ): Promise<any[]> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        console.log("Supabase not configured");
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("recipient_email", userEmail)
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.warn("⚠️ Failed to fetch notifications:", errorMsg);
+      return [];
+    }
+  },
+
+  // Mark notification as read
+  markAsRead: async (notificationId: string): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        console.log("Supabase not configured");
+        return false;
+      }
+
+      const { error } = await supabase
+        .from("notifications")
+        .update({ read: true })
+        .eq("id", notificationId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.warn("⚠️ Failed to mark notification as read:", errorMsg);
+      return false;
+    }
+  },
+};
+
 // Export the Supabase client for direct use if needed
 export const getSupabase = () => getSupabaseClient();
