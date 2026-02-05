@@ -4,56 +4,65 @@ import path from "path";
 import { createServer } from "./server";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-    fs: {
-      allow: ["./client", "./shared"],
-      deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
-    },
-  },
-  build: {
-    outDir: "dist/spa",
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "index.html"),
-      },
-      external: [/^firebase\/.*/],
-      onwarn(warning) {
-        // Suppress Firebase-related warnings
-        if (
-          warning.code === "UNRESOLVED_IMPORT" &&
-          warning.source?.includes("firebase")
-        ) {
-          return;
-        }
+export default defineConfig(({ mode }) => {
+  const config: any = {
+    server: {
+      host: "::",
+      port: 8080,
+      fs: {
+        allow: ["./client", "./shared"],
+        deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
       },
     },
-  },
-  publicDir: "public",
-  plugins: [
-    {
-      name: "firebase-resolver",
-      apply: "build",
-      enforce: "pre",
-      resolveId(id) {
-        // Mark firebase modules as external to prevent bundling
-        if (id.startsWith("firebase/")) {
-          return { id, external: true };
-        }
+    build: {
+      outDir: "dist/spa",
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, "index.html"),
+        },
+        external: [/^firebase\/.*/],
+        onwarn(warning: any) {
+          // Suppress all Firebase-related warnings
+          if (
+            warning.message?.includes("firebase") ||
+            warning.source?.includes("firebase") ||
+            warning.code === "UNRESOLVED_IMPORT"
+          ) {
+            return;
+          }
+          // Also suppress external module warnings for firebase
+          if (warning.message?.includes("externalize")) {
+            return;
+          }
+        },
       },
     },
-    react(),
-    expressPlugin(),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./client"),
-      "@shared": path.resolve(__dirname, "./shared"),
+    publicDir: "public",
+    plugins: [
+      {
+        name: "firebase-resolver",
+        apply: "build",
+        enforce: "pre",
+        resolveId(id: string) {
+          // Mark firebase modules as external to prevent bundling
+          if (id.startsWith("firebase/")) {
+            return { id, external: true };
+          }
+        },
+      },
+      react(),
+      expressPlugin(),
+    ],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./client"),
+        "@shared": path.resolve(__dirname, "./shared"),
+      },
     },
-  },
-}));
+  };
+
+  return config;
+});
 
 function expressPlugin(): Plugin {
   return {
