@@ -240,6 +240,21 @@ export default function SharedMemories() {
         ...prev,
         [id]: !prev[id],
       }));
+
+      // Track like analytics
+      if (!isLiked) {
+        // Only track when liking, not unliking
+        const userEmail = localStorage.getItem("userEmail") || "user";
+        const today = new Date().toISOString().split("T")[0];
+        analyticsService.trackEvent({
+          type: "like",
+          targetId: id,
+          targetType: "memory",
+          userEmail,
+          timestamp: new Date().toISOString(),
+          date: today,
+        });
+      }
     }
   };
 
