@@ -48,6 +48,11 @@ export default function App() {
               <Route path="/shared-memories" element={<SharedMemories />} />
               <Route path="/featured-partners" element={<FeaturedPartners />} />
               <Route path="/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/advertiser-login" element={<AdvertiserLogin />} />
+              <Route
+                path="/advertiser-analytics"
+                element={<AdvertiserAnalytics />}
+              />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
