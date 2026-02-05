@@ -45,23 +45,15 @@ export const firebaseCheckInService = {
   }): Promise<boolean> => {
     try {
       // Check if Firebase is configured
-      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
-      if (!projectId || projectId === "uok-demo") {
+      if (!firebaseConfig.projectId || firebaseConfig.projectId === "uok-demo") {
         console.log("Firebase not configured yet, saving locally only");
         return false;
       }
 
-      // Initialize Firebase and get Firestore
-      const database = await initFirebase();
-      const {
-        collection: fbCollection,
-        addDoc: fbAddDoc,
-        Timestamp: fbTimestamp,
-      } = await import("firebase/firestore");
-
-      await fbAddDoc(fbCollection(database, "checkins"), {
+      const database = initFirebase();
+      await addDoc(collection(database, "checkins"), {
         ...checkInData,
-        createdAt: fbTimestamp.now(),
+        createdAt: Timestamp.now(),
       });
 
       console.log("✅ Check-in saved to Firebase");
@@ -80,8 +72,7 @@ export const firebaseCheckInService = {
   ): Promise<any[]> => {
     try {
       // Check if Firebase is configured
-      const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
-      if (!projectId || projectId === "uok-demo") {
+      if (!firebaseConfig.projectId || firebaseConfig.projectId === "uok-demo") {
         console.log("Firebase not configured yet, returning empty");
         return [];
       }
@@ -90,26 +81,19 @@ export const firebaseCheckInService = {
         return [];
       }
 
-      // Initialize Firebase and get Firestore
-      const database = await initFirebase();
-      const {
-        collection: fbCollection,
-        query: fbQuery,
-        where: fbWhere,
-        getDocs: fbGetDocs,
-      } = await import("firebase/firestore");
+      const database = initFirebase();
 
       // Query for today's check-ins from bonded contacts
-      const q = fbQuery(
-        fbCollection(database, "checkins"),
-        fbWhere("userEmail", "in", bondedEmails),
-        fbWhere("date", "==", today),
+      const q = query(
+        collection(database, "checkins"),
+        where("userEmail", "in", bondedEmails),
+        where("date", "==", today),
       );
 
-      const snapshot = await fbGetDocs(q);
+      const snapshot = await getDocs(q);
       const checkins: any[] = [];
 
-      snapshot.forEach((doc: any) => {
+      snapshot.forEach((doc) => {
         checkins.push({
           id: doc.id,
           ...doc.data(),
