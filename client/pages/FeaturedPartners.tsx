@@ -145,6 +145,18 @@ export default function FeaturedPartners() {
         paymentLink: `https://paypal.me/AFenteng/1000`,
       };
 
+      // Create advertiser credentials for the partner
+      const { password, success: credSuccess } =
+        advertiserAuthService.registerAdvertiser(
+          formData.email,
+          formData.partnerName,
+        );
+
+      if (!credSuccess) {
+        alert("Error: An advertiser account with this email already exists.");
+        return;
+      }
+
       const updatedPartners = [...partners, newPartner];
       setPartners(updatedPartners);
 
@@ -168,9 +180,9 @@ export default function FeaturedPartners() {
         adContent: "",
       });
 
-      alert(
-        `Partner registered! Awaiting payment. Payment link: https://paypal.me/AFenteng/1000\n\nNote: File has been uploaded. After payment, your ads will be active.`,
-      );
+      // Store password and show it to user
+      setNewAdvertiserPassword({ email: formData.email, password });
+
       setShowRegistrationForm(false);
     } catch (error) {
       console.error("Error registering partner:", error);
