@@ -286,30 +286,68 @@ export default function Dashboard() {
           .map((c) => c.email)
           .filter(Boolean); // Filter out undefined emails
 
+        const bondNames = bondedContacts.map((c) => c.name).filter(Boolean);
+
         console.log("📥 Bonded emails:", bondedEmails);
+        console.log("📥 Bonded names:", bondNames);
 
+        let allCheckIns: StoredCheckIn[] = [];
+
+        // First, try to get check-ins by email from Firebase
         if (bondedEmails.length > 0) {
-          // Try Firebase first
-          const firebaseCheckIns =
-            await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
+          try {
+            const firebaseCheckIns =
+              await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
 
-          if (firebaseCheckIns.length > 0) {
-            console.log(
-              "📥 Loaded bonded check-ins from Firebase:",
-              firebaseCheckIns.length,
-            );
-            setBondedCheckIns(firebaseCheckIns);
-          } else {
-            // Fall back to local storage
-            const localCheckIns =
-              checkInStorage.getTodayFromBondedContacts(bondedEmails);
-            console.log(
-              "📥 Loaded bonded check-ins from local storage:",
-              localCheckIns.length,
-            );
-            setBondedCheckIns(localCheckIns);
+            if (firebaseCheckIns.length > 0) {
+              console.log(
+                "📥 Loaded bonded check-ins from Firebase:",
+                firebaseCheckIns.length,
+              );
+              allCheckIns.push(...firebaseCheckIns);
+            }
+          } catch (error) {
+            console.log("Firebase fetch failed, continuing with local storage");
           }
         }
+
+        // Fall back to local storage - check by email AND by name
+        const localCheckIns = checkInStorage
+          .getAll()
+          .filter((c) => {
+            const today = new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+            if (c.date !== today) return false;
+
+            // Match by email if email exists
+            if (bondedEmails.includes(c.userEmail)) return true;
+
+            // Also match by userName for backwards compatibility
+            if (bondNames.includes(c.userName)) return true;
+
+            return false;
+          });
+
+        if (localCheckIns.length > 0) {
+          console.log(
+            "📥 Loaded bonded check-ins from local storage:",
+            localCheckIns.length,
+          );
+          allCheckIns.push(...localCheckIns);
+        }
+
+        // Remove duplicates (in case same check-in is in both Firebase and local)
+        const uniqueCheckIns = Array.from(
+          new Map(allCheckIns.map((c) => [c.id, c])).values(),
+        );
+
+        setBondedCheckIns(uniqueCheckIns);
+        console.log(
+          "📥 Total bonded check-ins to display:",
+          uniqueCheckIns.length,
+        );
       } else {
         setBondedCheckIns([]);
       }
