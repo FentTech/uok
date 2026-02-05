@@ -92,7 +92,12 @@ export const supabaseCheckInService = {
 
       return data || [];
     } catch (error) {
-      console.warn("⚠️ Failed to fetch bonded check-ins from Supabase:", error);
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      if (errorMsg.includes("Failed to fetch") || errorMsg.includes("NetworkError")) {
+        console.warn("⚠️ Network error: Cannot fetch bonded check-ins from Supabase");
+      } else {
+        console.warn("⚠️ Failed to fetch bonded check-ins from Supabase:", errorMsg);
+      }
       return [];
     }
   },
