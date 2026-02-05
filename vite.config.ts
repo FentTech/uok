@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
         input: {
           main: path.resolve(__dirname, "index.html"),
         },
-        onwarn(warning: any) {
+        onwarn(warning: any, warn: any) {
           // Suppress unresolved import warnings - Firebase is loaded dynamically
           if (warning.code === "UNRESOLVED_IMPORT") {
             return;
@@ -29,6 +29,15 @@ export default defineConfig(({ mode }) => {
           if (warning.message?.includes("externalize")) {
             return;
           }
+          // Suppress firebase-specific warnings
+          if (
+            warning.message?.includes("firebase") ||
+            warning.source?.includes("firebase")
+          ) {
+            return;
+          }
+          // Pass through other warnings
+          warn(warning);
         },
       },
     },
