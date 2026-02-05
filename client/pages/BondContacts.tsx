@@ -267,6 +267,19 @@ export default function BondContacts() {
                   />
                 </div>
 
+                <div>
+                  <label className="text-sm text-cyan-300 block mb-2">
+                    Their Email Address
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="e.g., mom@example.com"
+                    value={bondEmail}
+                    onChange={(e) => setBondEmail(e.target.value)}
+                    className="w-full bg-white/10 border border-cyan-400/30 rounded-lg px-4 py-2 text-cyan-100 placeholder-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+
                 {bondError && (
                   <div className="bg-red-500/20 border border-red-400/50 rounded-lg p-3">
                     <p className="text-red-300 text-sm">⚠ {bondError}</p>
