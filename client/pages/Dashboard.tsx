@@ -286,6 +286,12 @@ export default function Dashboard() {
   useEffect(() => {
     const loadBondedCheckIns = async () => {
       if (bondedContacts.length > 0) {
+        console.log(
+          "📥 Bonded contacts loaded:",
+          bondedContacts.length,
+          bondedContacts,
+        );
+
         const bondedEmails = bondedContacts
           .map((c) => c.email)
           .filter(Boolean); // Filter out undefined emails
