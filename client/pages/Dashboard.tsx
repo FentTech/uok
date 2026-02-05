@@ -436,12 +436,20 @@ export default function Dashboard() {
         if (bondedContactsStr) {
           try {
             bondedContacts = JSON.parse(bondedContactsStr);
-            console.log(
-              "✅ Loaded bonded contacts from localStorage:",
-              bondedContacts.length,
-            );
+            if (!Array.isArray(bondedContacts)) {
+              console.warn("⚠️ Bonded contacts is not an array, clearing...");
+              localStorage.removeItem("bondedContacts");
+              bondedContacts = [];
+            } else {
+              console.log(
+                "✅ Loaded bonded contacts from localStorage:",
+                bondedContacts.length,
+              );
+            }
           } catch (e) {
-            console.error("Error parsing bonded contacts:", e);
+            console.warn("⚠️ Error parsing bonded contacts, clearing corrupted data:", e);
+            localStorage.removeItem("bondedContacts");
+            bondedContacts = [];
           }
         }
 
