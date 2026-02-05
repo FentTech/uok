@@ -354,7 +354,7 @@ export default function Dashboard() {
       console.log("🔄 Loading user data for:", userEmail);
 
       try {
-        const { firebaseUserSyncService } = await import("../lib/firebase");
+        const { supabaseUserSyncService } = await import("../lib/supabase");
 
         // Load bonded contacts
         let bondedContactsStr = localStorage.getItem("bondedContacts");
@@ -374,13 +374,13 @@ export default function Dashboard() {
 
         // If not found locally, try Firebase
         if (bondedContacts.length === 0) {
-          console.log("📥 Fetching bonded contacts from Firebase...");
+          console.log("📥 Fetching bonded contacts from Supabase...");
           const firebaseBondedContacts =
-            await firebaseUserSyncService.fetchBondedContacts(userEmail);
+            await supabaseUserSyncService.fetchBondedContacts(userEmail);
 
           if (firebaseBondedContacts.length > 0) {
             console.log(
-              "✅ Loaded bonded contacts from Firebase:",
+              "✅ Loaded bonded contacts from Supabase:",
               firebaseBondedContacts.length,
             );
             localStorage.setItem(
@@ -409,20 +409,20 @@ export default function Dashboard() {
 
         // If not found locally, try Firebase
         if (checkInsData.length === 0) {
-          console.log("📥 Fetching check-ins from Firebase...");
-          const firebaseCheckIns =
-            await firebaseUserSyncService.fetchCheckIns(userEmail);
+          console.log("📥 Fetching check-ins from Supabase...");
+          const supabaseCheckIns =
+            await supabaseUserSyncService.fetchCheckIns(userEmail);
 
-          if (firebaseCheckIns.length > 0) {
+          if (supabaseCheckIns.length > 0) {
             console.log(
-              "✅ Loaded check-ins from Firebase:",
-              firebaseCheckIns.length,
+              "✅ Loaded check-ins from Supabase:",
+              supabaseCheckIns.length,
             );
             localStorage.setItem(
               "uok_checkins",
-              JSON.stringify(firebaseCheckIns),
+              JSON.stringify(supabaseCheckIns),
             );
-            checkInsData = firebaseCheckIns;
+            checkInsData = supabaseCheckIns;
           }
         }
 
@@ -441,14 +441,14 @@ export default function Dashboard() {
 
         // If not found locally, try Firebase
         if (mediaData.length === 0) {
-          console.log("📥 Fetching media from Firebase...");
-          const firebaseMedia =
-            await firebaseUserSyncService.fetchMedia(userEmail);
+          console.log("📥 Fetching media from Supabase...");
+          const supabaseMedia =
+            await supabaseUserSyncService.fetchMedia(userEmail);
 
-          if (firebaseMedia.length > 0) {
-            console.log("✅ Loaded media from Firebase:", firebaseMedia.length);
-            localStorage.setItem("uok_media", JSON.stringify(firebaseMedia));
-            mediaData = firebaseMedia;
+          if (supabaseMedia.length > 0) {
+            console.log("✅ Loaded media from Supabase:", supabaseMedia.length);
+            localStorage.setItem("uok_media", JSON.stringify(supabaseMedia));
+            mediaData = supabaseMedia;
           }
         }
 
@@ -470,20 +470,20 @@ export default function Dashboard() {
 
         // If not found locally, try Firebase
         if (sharedMomentsData.length === 0) {
-          console.log("📥 Fetching shared moments from Firebase...");
-          const firebaseSharedMoments =
-            await firebaseUserSyncService.fetchSharedMoments(userEmail);
+          console.log("📥 Fetching shared moments from Supabase...");
+          const supabaseSharedMoments =
+            await supabaseUserSyncService.fetchSharedMoments(userEmail);
 
-          if (firebaseSharedMoments.length > 0) {
+          if (supabaseSharedMoments.length > 0) {
             console.log(
-              "✅ Loaded shared moments from Firebase:",
-              firebaseSharedMoments.length,
+              "✅ Loaded shared moments from Supabase:",
+              supabaseSharedMoments.length,
             );
             localStorage.setItem(
               "uok_shared_moments",
-              JSON.stringify(firebaseSharedMoments),
+              JSON.stringify(supabaseSharedMoments),
             );
-            sharedMomentsData = firebaseSharedMoments;
+            sharedMomentsData = supabaseSharedMoments;
           }
         }
 
@@ -509,7 +509,7 @@ export default function Dashboard() {
           }
         }
       } catch (error) {
-        console.error("Error loading user data from Firebase:", error);
+        console.error("Error loading user data from Supabase:", error);
         // Fall back to using what's in localStorage
       }
     };
@@ -536,23 +536,23 @@ export default function Dashboard() {
 
         let allCheckIns: StoredCheckIn[] = [];
 
-        // First, try to get check-ins by email from Firebase
+        // First, try to get check-ins by email from Supabase
         if (bondedEmails.length > 0) {
           try {
-            const firebaseCheckIns =
+            const supabaseCheckIns =
               await checkInStorage.fetchBondedCheckInsFromFirebase(
                 bondedEmails,
               );
 
-            if (firebaseCheckIns.length > 0) {
+            if (supabaseCheckIns.length > 0) {
               console.log(
-                "📥 Loaded bonded check-ins from Firebase:",
-                firebaseCheckIns.length,
+                "📥 Loaded bonded check-ins from Supabase:",
+                supabaseCheckIns.length,
               );
-              allCheckIns.push(...firebaseCheckIns);
+              allCheckIns.push(...supabaseCheckIns);
             }
           } catch (error) {
-            console.log("Firebase fetch failed, continuing with local storage");
+            console.log("Supabase fetch failed, continuing with local storage");
           }
         }
 
@@ -599,7 +599,7 @@ export default function Dashboard() {
           allCheckIns.push(...localCheckIns);
         }
 
-        // Remove duplicates (in case same check-in is in both Firebase and local)
+        // Remove duplicates (in case same check-in is in both Supabase and local)
         const uniqueCheckIns = Array.from(
           new Map(allCheckIns.map((c) => [c.id, c])).values(),
         );
@@ -617,14 +617,14 @@ export default function Dashboard() {
     loadBondedCheckIns();
   }, [bondedContacts]);
 
-  // Sync bonded contacts to Firebase whenever they change
+  // Sync bonded contacts to Supabase whenever they change
   useEffect(() => {
     if (bondedContacts.length > 0) {
       const userEmail = localStorage.getItem("userEmail");
       if (userEmail && userEmail !== "user") {
-        import("../lib/firebase")
-          .then(({ firebaseUserSyncService }) => {
-            return firebaseUserSyncService.syncBondedContacts(
+        import("../lib/supabase")
+          .then(({ supabaseUserSyncService }) => {
+            return supabaseUserSyncService.syncBondedContacts(
               userEmail,
               bondedContacts,
             );
@@ -690,17 +690,17 @@ export default function Dashboard() {
 
       let allCheckIns: StoredCheckIn[] = [];
 
-      // Try Firebase first
+      // Try Supabase first
       if (bondedEmails.length > 0) {
         try {
-          const firebaseCheckIns =
+          const supabaseCheckIns =
             await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
 
-          if (firebaseCheckIns.length > 0) {
-            allCheckIns.push(...firebaseCheckIns);
+          if (supabaseCheckIns.length > 0) {
+            allCheckIns.push(...supabaseCheckIns);
           }
         } catch (error) {
-          console.log("Firebase auto-refresh failed");
+          console.log("Supabase auto-refresh failed");
         }
       }
 
@@ -844,12 +844,12 @@ export default function Dashboard() {
       timeSlot: selectedTimeSlot,
     });
 
-    // Sync check-ins to Firebase (fire and forget)
+    // Sync check-ins to Supabase (fire and forget)
     const allCheckIns = checkInStorage.getAll();
     if (userEmail && userEmail !== "user") {
-      import("../lib/firebase")
-        .then(({ firebaseUserSyncService }) => {
-          return firebaseUserSyncService.syncCheckIns(userEmail, allCheckIns);
+      import("../lib/supabase")
+        .then(({ supabaseUserSyncService }) => {
+          return supabaseUserSyncService.syncCheckIns(userEmail, allCheckIns);
         })
         .then(() => console.log("✅ Check-in synced to Firebase"))
         .catch((error) =>
@@ -1009,13 +1009,13 @@ export default function Dashboard() {
         // Update local state
         setMediaItems((prev) => [savedMedia as any, ...prev]);
 
-        // Sync to Firebase (fire and forget)
+        // Sync to Supabase (fire and forget)
         const userEmail = localStorage.getItem("userEmail");
         if (userEmail && userEmail !== "user") {
-          import("../lib/firebase")
-            .then(({ firebaseUserSyncService }) => {
+          import("../lib/supabase")
+            .then(({ supabaseUserSyncService }) => {
               const allMedia = mediaStorage.getActive();
-              return firebaseUserSyncService.syncMedia(userEmail, allMedia);
+              return supabaseUserSyncService.syncMedia(userEmail, allMedia);
             })
             .then(() => console.log("✅ Photo synced to Firebase"))
             .catch((error) =>
@@ -1056,13 +1056,13 @@ export default function Dashboard() {
         // Update local state
         setMediaItems((prev) => [savedMedia as any, ...prev]);
 
-        // Sync to Firebase (fire and forget)
+        // Sync to Supabase (fire and forget)
         const userEmail = localStorage.getItem("userEmail");
         if (userEmail && userEmail !== "user") {
-          import("../lib/firebase")
-            .then(({ firebaseUserSyncService }) => {
+          import("../lib/supabase")
+            .then(({ supabaseUserSyncService }) => {
               const allMedia = mediaStorage.getActive();
-              return firebaseUserSyncService.syncMedia(userEmail, allMedia);
+              return supabaseUserSyncService.syncMedia(userEmail, allMedia);
             })
             .then(() => console.log("✅ Video synced to Firebase"))
             .catch((error) =>
@@ -1093,21 +1093,21 @@ export default function Dashboard() {
 
     let allCheckIns: StoredCheckIn[] = [];
 
-    // First, try to get check-ins by email from Firebase
+    // First, try to get check-ins by email from Supabase
     if (bondedEmails.length > 0) {
       try {
-        const firebaseCheckIns =
+        const supabaseCheckIns =
           await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
 
-        if (firebaseCheckIns.length > 0) {
+        if (supabaseCheckIns.length > 0) {
           console.log(
-            "📥 Refreshed bonded check-ins from Firebase:",
-            firebaseCheckIns.length,
+            "📥 Refreshed bonded check-ins from Supabase:",
+            supabaseCheckIns.length,
           );
-          allCheckIns.push(...firebaseCheckIns);
+          allCheckIns.push(...supabaseCheckIns);
         }
       } catch (error) {
-        console.log("Firebase refresh failed, continuing with local storage");
+        console.log("Supabase refresh failed, continuing with local storage");
       }
     }
 
