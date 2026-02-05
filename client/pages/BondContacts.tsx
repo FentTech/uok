@@ -33,6 +33,7 @@ export default function BondContacts() {
   const [scanMode, setScanMode] = useState(false);
   const [manualBondCode, setManualBondCode] = useState("");
   const [bondName, setBondName] = useState("");
+  const [bondEmail, setBondEmail] = useState("");
   const [bondError, setBondError] = useState("");
   const [bondSuccess, setBondSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
