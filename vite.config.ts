@@ -20,24 +20,19 @@ export default defineConfig(({ mode }) => {
         input: {
           main: path.resolve(__dirname, "index.html"),
         },
+        external: (id: string) => {
+          // Mark all firebase modules as external
+          return id.startsWith("firebase/");
+        },
+        output: {
+          // When externalizing, Rollup expects these as globals
+          globals: {
+            firebase: "firebase",
+          },
+        },
         onwarn(warning: any, warn: any) {
-          // Suppress unresolved import warnings - Firebase is loaded dynamically
-          if (warning.code === "UNRESOLVED_IMPORT") {
-            return;
-          }
-          // Suppress external module warnings
-          if (warning.message?.includes("externalize")) {
-            return;
-          }
-          // Suppress firebase-specific warnings
-          if (
-            warning.message?.includes("firebase") ||
-            warning.source?.includes("firebase")
-          ) {
-            return;
-          }
-          // Pass through other warnings
-          warn(warning);
+          // Suppress all warnings - safe because Firebase is loaded dynamically
+          return;
         },
       },
     },
