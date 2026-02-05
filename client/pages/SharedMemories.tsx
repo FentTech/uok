@@ -375,6 +375,21 @@ export default function SharedMemories() {
 
       setMemories((prev) => [newMemory, ...prev]);
 
+      // Sync shared moments to Firebase
+      if (currentUserEmail && currentUserEmail !== "You") {
+        try {
+          const { firebaseUserSyncService } = await import("../lib/firebase");
+          const allMoments = sharedMomentsStorage.getActive();
+          await firebaseUserSyncService.syncSharedMoments(
+            currentUserEmail,
+            allMoments,
+          );
+          console.log("✅ Shared moment synced to Firebase");
+        } catch (error) {
+          console.log("⚠️ Could not sync shared moment to Firebase:", error);
+        }
+      }
+
       // Send notifications to bonded contacts if shared with them
       if (shareVisibility === "bonded-contacts") {
         bondedContactsForShare.forEach((contact: any) => {
