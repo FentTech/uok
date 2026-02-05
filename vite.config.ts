@@ -37,7 +37,19 @@ export default defineConfig(({ mode }) => ({
   },
   logLevel: "warn",
   publicDir: "public",
-  plugins: [react(), expressPlugin()],
+  plugins: [
+    {
+      name: "suppress-firebase-warnings",
+      apply: "build",
+      enforce: "pre",
+      transform(code, id) {
+        // Just pass through - warnings will be suppressed by onwarn
+        return null;
+      },
+    },
+    react(),
+    expressPlugin(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
