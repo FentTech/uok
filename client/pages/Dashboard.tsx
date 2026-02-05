@@ -977,7 +977,7 @@ export default function Dashboard() {
     playNotificationSound(); // Play sound when mood is selected
 
     // Send check-in notification to bonded contacts
-    sendCheckInNotification(mood);
+    sendCheckInNotification(mood, emoji);
 
     // Show confirmation
     setTimeout(() => {
