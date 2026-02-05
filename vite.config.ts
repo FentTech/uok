@@ -19,6 +19,12 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
+      external: [/^firebase\/.*/],
+      output: {
+        globals: {
+          firebase: "firebase",
+        },
+      },
     },
   },
   publicDir: "public",
