@@ -12,6 +12,8 @@ import {
   X,
 } from "lucide-react";
 import RotatingAds from "../components/RotatingAds";
+import MediaPreRollAd from "../components/MediaPreRollAd";
+import { analyticsService } from "../lib/analytics";
 import {
   sharedMomentsStorage,
   notificationStorage,
