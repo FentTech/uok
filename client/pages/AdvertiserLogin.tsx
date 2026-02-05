@@ -20,21 +20,29 @@ export default function AdvertiserLogin() {
     setError("");
     setIsLoading(true);
 
+    // Trim whitespace from inputs
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
     // Verify against stored credentials
     const isValidAdvertiser = advertiserAuthService.verifyLogin(
-      email,
-      password,
+      trimmedEmail,
+      trimmedPassword,
     );
 
     if (isValidAdvertiser) {
       // Store advertiser session
-      localStorage.setItem("advertiserEmail", email);
+      localStorage.setItem("advertiserEmail", trimmedEmail);
       localStorage.setItem("advertiserLoggedIn", "true");
       localStorage.setItem("advertiserLoginTime", new Date().toISOString());
+
+      // Log successful login for debugging
+      console.log(`✅ Advertiser logged in: ${trimmedEmail}`);
 
       navigate("/advertiser-analytics");
     } else {
       setError("Invalid email or password. Please try again.");
+      console.log(`❌ Login failed for: ${trimmedEmail}`);
     }
 
     setIsLoading(false);
