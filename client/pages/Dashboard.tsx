@@ -89,6 +89,108 @@ const MOOD_EMOJIS = [
   { emoji: "💻", mood: "At Work" },
 ];
 
+// Function to initialize demo data for testing bonded check-ins
+const initializeDemoData = () => {
+  // Check if bonded contacts already exist
+  const existingBondedContacts = localStorage.getItem("bondedContacts");
+  if (existingBondedContacts) {
+    console.log("✅ Bonded contacts already exist, skipping demo data initialization");
+    return;
+  }
+
+  console.log("🎯 Initializing demo bonded contacts and check-ins...");
+
+  // Create demo bonded contacts
+  const demoBondedContacts = [
+    {
+      id: "demo-1",
+      name: "Mom",
+      email: "mom@example.com",
+      bondCode: "UOKDEMO123",
+      status: "bonded" as const,
+      bondedAt: new Date().toLocaleString(),
+      emoji: "👩",
+    },
+    {
+      id: "demo-2",
+      name: "Brother",
+      email: "brother@example.com",
+      bondCode: "UOKDEMO456",
+      status: "bonded" as const,
+      bondedAt: new Date().toLocaleString(),
+      emoji: "👨",
+    },
+    {
+      id: "demo-3",
+      name: "Sister",
+      email: "sister@example.com",
+      bondCode: "UOKDEMO789",
+      status: "bonded" as const,
+      bondedAt: new Date().toLocaleString(),
+      emoji: "👨‍🤝‍👨",
+    },
+  ];
+
+  localStorage.setItem("bondedContacts", JSON.stringify(demoBondedContacts));
+  console.log("✅ Demo bonded contacts created:", demoBondedContacts);
+
+  // Create demo check-ins for each bonded contact
+  const today = new Date().toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  const moodEmojisArray = [
+    { emoji: "😊", mood: "Great" },
+    { emoji: "🙂", mood: "Good" },
+    { emoji: "😑", mood: "Okay" },
+  ];
+
+  const demoCheckIns: StoredCheckIn[] = [];
+
+  demoBondedContacts.forEach((contact, index) => {
+    const moodChoice = moodEmojisArray[index % moodEmojisArray.length];
+    const now = new Date();
+    const timeOffset = (index + 1) * 30 * 60000; // Stagger by 30 mins each
+    const checkInTime = new Date(now.getTime() - timeOffset);
+
+    const checkIn: StoredCheckIn = {
+      id: `demo-checkin-${index}`,
+      userEmail: contact.email,
+      userName: contact.name,
+      emoji: moodChoice.emoji,
+      mood: moodChoice.mood,
+      timestamp: checkInTime.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      date: today,
+      timeSlot: index % 2 === 0 ? "morning" : "afternoon",
+      createdAt: new Date().toISOString(),
+    };
+
+    demoCheckIns.push(checkIn);
+  });
+
+  // Get existing check-ins and add demo ones
+  const existingCheckIns = localStorage.getItem("uok_checkins");
+  const allCheckIns = existingCheckIns ? JSON.parse(existingCheckIns) : [];
+
+  // Add demo check-ins if not already present
+  const demoCheckInIds = new Set(demoCheckIns.map((c) => c.id));
+  const filteredExisting = allCheckIns.filter(
+    (c: StoredCheckIn) => !demoCheckInIds.has(c.id),
+  );
+
+  const finalCheckIns = [...filteredExisting, ...demoCheckIns];
+  localStorage.setItem("uok_checkins", JSON.stringify(finalCheckIns));
+
+  console.log("✅ Demo check-ins created:", demoCheckIns);
+  console.log(
+    "✅ Total check-ins in storage:",
+    finalCheckIns.length,
+  );
+};
+
 export default function Dashboard() {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
