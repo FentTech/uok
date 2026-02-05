@@ -5,6 +5,7 @@
 Your wellness app has been successfully migrated from Firebase to Supabase! Here's what was done:
 
 ### Code Changes
+
 1. ✅ Installed Supabase client library (`@supabase/supabase-js`)
 2. ✅ Created new `client/lib/supabase.ts` service (replaces Firebase)
 3. ✅ Updated all imports in components:
@@ -19,7 +20,9 @@ Your wellness app has been successfully migrated from Firebase to Supabase! Here
 9. ✅ Removed Firebase dependency from `package.json`
 
 ### What Still Works (Offline)
+
 Even without Supabase credentials, your app fully works using localStorage:
+
 - ✅ Daily check-ins
 - ✅ Bonded contact management
 - ✅ Photo/video uploads
@@ -29,7 +32,9 @@ Even without Supabase credentials, your app fully works using localStorage:
 - ✅ Rotating ads & pre-roll ads
 
 ### What Activates with Supabase Credentials
+
 Once you provide Supabase credentials:
+
 - ✅ Cross-device data sync
 - ✅ Analytics data persistence in database
 - ✅ Advertiser credentials backup
@@ -40,6 +45,7 @@ Once you provide Supabase credentials:
 ## Complete Testing Checklist
 
 ### 1. Dashboard & Check-ins
+
 - [ ] Login or access dashboard
 - [ ] Click "How are you feeling?" and select a mood/emoji
 - [ ] Enter a note (e.g., "Feeling great today!")
@@ -47,6 +53,7 @@ Once you provide Supabase credentials:
 - [ ] Refresh page - check-in should still be there (localStorage)
 
 ### 2. Bonded Contacts
+
 - [ ] Navigate to "Bond Contacts"
 - [ ] Click "Add Bonded Contact"
 - [ ] Enter a name and email (can use fake: test@example.com)
@@ -55,6 +62,7 @@ Once you provide Supabase credentials:
 - [ ] Try removing a contact - should work immediately
 
 ### 3. Media & Sharing
+
 - [ ] Go to Dashboard
 - [ ] Click "Add Photo" or "Add Video"
 - [ ] Select a file from your device
@@ -64,12 +72,14 @@ Once you provide Supabase credentials:
 - [ ] Share with "Community" or "Bonded Contacts"
 
 ### 4. Community Insights (Public Analytics)
+
 - [ ] Click "Community Insights" button on Dashboard
 - [ ] Should see "Top Performing Memories"
 - [ ] Should see "Most Engaging Ads"
 - [ ] Click "Access Advertiser Analytics" link
 
 ### 5. Demo Advertiser Login
+
 - [ ] Click "Advertiser Portal" on Dashboard
 - [ ] Login with:
   - **Email:** advertiser@wellness.com
@@ -87,6 +97,7 @@ Once you provide Supabase credentials:
 - [ ] Click "Logout"
 
 ### 6. Ad Rotation
+
 - [ ] On Dashboard, scroll to bottom
 - [ ] Should see rotating demo ads
 - [ ] Ads should change every 2 seconds smoothly
@@ -94,6 +105,7 @@ Once you provide Supabase credentials:
 - [ ] Click on an ad - should track click event
 
 ### 7. Analytics Tracking
+
 - [ ] Perform actions:
   - View shared memories
   - Like a memory
@@ -106,6 +118,7 @@ Once you provide Supabase credentials:
 - [ ] Should see stats for top memories and ads
 
 ### 8. New Advertiser Registration
+
 - [ ] Go to "Featured Partners" (Dashboard sidebar)
 - [ ] Fill in:
   - Partner/Company Name: "Test Company"
@@ -128,6 +141,7 @@ Once you provide Supabase credentials:
 ## Setup Supabase (When Ready)
 
 ### Prerequisites
+
 - A browser and email account
 - ~5 minutes to set up
 
@@ -168,6 +182,7 @@ Once you provide Supabase credentials:
 ## Expected Behavior After Supabase Setup
 
 ### Data Flow
+
 ```
 User Action (e.g., create check-in)
      ↓
@@ -178,6 +193,7 @@ Cross-device sync: Device B can fetch same data
 ```
 
 ### What Syncs Automatically
+
 - ✅ Check-ins
 - ✅ Bonded contacts
 - ✅ Media files
@@ -186,6 +202,7 @@ Cross-device sync: Device B can fetch same data
 - ✅ Advertiser credentials
 
 ### Performance
+
 - No latency impact (localStorage is fast)
 - Supabase sync happens in background
 - App works offline (uses localStorage as fallback)
@@ -195,17 +212,20 @@ Cross-device sync: Device B can fetch same data
 ## Troubleshooting
 
 ### "Supabase not configured" messages
+
 - Normal if `.env.local` not set yet
 - App will use localStorage as fallback
 - Once you add credentials, messages will stop
 
 ### Data not appearing in Supabase
+
 - Check your `.env.local` file has correct credentials
 - Check Supabase project is live
 - Check browser console for error messages
 - Restart dev server after updating `.env.local`
 
 ### Cross-device sync not working
+
 - Both devices must use same email address
 - Wait a moment for sync to complete (usually instant)
 - Check Supabase table has the data
@@ -214,11 +234,11 @@ Cross-device sync: Device B can fetch same data
 
 ## Cost Savings
 
-| Platform | Free Tier | Cost After |
-|----------|-----------|------------|
-| **Firebase** | Very limited | $5-50/month |
-| **Supabase** | 500MB DB + 1GB storage | $25/month (generous) |
-| **Annual Savings** | — | **$200-600/year** |
+| Platform           | Free Tier              | Cost After           |
+| ------------------ | ---------------------- | -------------------- |
+| **Firebase**       | Very limited           | $5-50/month          |
+| **Supabase**       | 500MB DB + 1GB storage | $25/month (generous) |
+| **Annual Savings** | —                      | **$200-600/year**    |
 
 ---
 
@@ -234,6 +254,7 @@ Cross-device sync: Device B can fetch same data
 ## Files Modified
 
 ### Core Services
+
 - `client/lib/supabase.ts` - NEW (Supabase integration)
 - `client/lib/firebase.ts` - DEPRECATED (can delete)
 - `client/lib/analytics.ts` - Updated (Supabase sync)
@@ -241,11 +262,13 @@ Cross-device sync: Device B can fetch same data
 - `client/lib/dataStorage.ts` - Updated (Supabase fallback)
 
 ### Components Updated
+
 - `client/pages/Dashboard.tsx` - Updated imports
 - `client/pages/BondContacts.tsx` - Updated imports
 - `client/pages/SharedMemories.tsx` - Updated imports
 
 ### New Files
+
 - `supabase_setup.sql` - Database schema
 - `.env.example` - Environment template
 - `SUPABASE_SETUP_GUIDE.md` - Detailed setup guide
