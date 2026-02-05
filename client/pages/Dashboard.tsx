@@ -97,10 +97,18 @@ const initializeDemoData = () => {
   // Check if bonded contacts already exist
   const existingBondedContacts = localStorage.getItem("bondedContacts");
   if (existingBondedContacts) {
-    console.log(
-      "✅ Bonded contacts already exist, skipping demo data initialization",
-    );
-    return;
+    try {
+      const parsed = JSON.parse(existingBondedContacts);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        console.log(
+          "✅ Bonded contacts already exist, skipping demo data initialization",
+        );
+        return;
+      }
+    } catch (e) {
+      console.warn("⚠️ Clearing corrupted bonded contacts data");
+      localStorage.removeItem("bondedContacts");
+    }
   }
 
   console.log("🎯 Initializing demo bonded contacts and check-ins...");
