@@ -35,13 +35,14 @@ export default function App() {
   // Global error handler for network errors
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
-      if (
-        event.message &&
-        event.message.includes("NetworkError") &&
-        event.message.includes("fetch")
-      ) {
+      if (event.message && event.message.includes("NetworkError")) {
         console.warn(
-          "⚠️ Network error detected - API may be unavailable, features will degrade gracefully",
+          "⚠️ NetworkError caught:",
+          event.message,
+          "Source:",
+          event.filename,
+          "Line:",
+          event.lineno,
         );
       }
     };
@@ -54,7 +55,10 @@ export default function App() {
           message.includes("NetworkError")
         ) {
           console.warn(
-            "⚠️ Network error detected - API call failed, app will continue with fallback data",
+            "⚠️ Network error in promise:",
+            message,
+            "Stack:",
+            event.reason.stack,
           );
         }
       }
@@ -63,12 +67,30 @@ export default function App() {
     window.addEventListener("error", handleError);
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
+    // Also monitor fetch requests
+    const originalFetch = window.fetch;
+    window.fetch = function (...args: any[]) {
+      console.log("📡 Fetch request:", args[0]);
+      return originalFetch
+        .apply(window, args)
+        .catch((error: any) => {
+          console.error(
+            "❌ Fetch failed for:",
+            args[0],
+            "Error:",
+            error.message,
+          );
+          throw error;
+        });
+    };
+
     return () => {
       window.removeEventListener("error", handleError);
       window.removeEventListener(
         "unhandledrejection",
         handleUnhandledRejection,
       );
+      window.fetch = originalFetch;
     };
   }, []);
 
