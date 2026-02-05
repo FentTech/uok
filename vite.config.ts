@@ -19,6 +19,13 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
+      onwarn(warning, warn) {
+        // Suppress unresolved external module warnings for firebase
+        if (warning.code === "UNRESOLVED_IMPORT" && warning.source?.includes("firebase")) {
+          return;
+        }
+        warn(warning);
+      },
     },
   },
   optimizeDeps: {
