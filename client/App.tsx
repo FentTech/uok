@@ -17,6 +17,7 @@ import SharedMemories from "./pages/SharedMemories";
 import FeaturedPartners from "./pages/FeaturedPartners";
 import BondNotifications from "./pages/BondNotifications";
 import UserProfile from "./pages/UserProfile";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
