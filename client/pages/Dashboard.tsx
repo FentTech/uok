@@ -1929,17 +1929,31 @@ export default function Dashboard() {
               </p>
             </Link>
 
-            {/* Analytics Dashboard Link */}
+            {/* Public Analytics Link */}
             <Link
               to="/analytics"
-              className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 text-green-50 rounded-2xl border border-green-400/40 p-6 hover:border-green-400/60 hover:shadow-lg hover:shadow-green-500/20 transition block backdrop-blur-xl"
+              className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 text-blue-50 rounded-2xl border border-blue-400/40 p-6 hover:border-blue-400/60 hover:shadow-lg hover:shadow-blue-500/20 transition block backdrop-blur-xl"
             >
               <div className="flex items-center gap-3 mb-2">
-                <BarChart3 className="w-5 h-5 text-green-400" />
-                <h3 className="text-lg font-bold">Analytics</h3>
+                <BarChart3 className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-bold">Community Insights</h3>
               </div>
-              <p className="text-sm text-green-300/80">
-                View your weekly analytics & ad performance
+              <p className="text-sm text-blue-300/80">
+                View top memories and trending ads
+              </p>
+            </Link>
+
+            {/* Advertiser Portal Link */}
+            <Link
+              to="/advertiser-login"
+              className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-50 rounded-2xl border border-amber-400/40 p-6 hover:border-amber-400/60 hover:shadow-lg hover:shadow-amber-500/20 transition block backdrop-blur-xl"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Lock className="w-5 h-5 text-amber-400" />
+                <h3 className="text-lg font-bold">Advertiser Portal</h3>
+              </div>
+              <p className="text-sm text-amber-300/80">
+                Private analytics for registered advertisers
               </p>
             </Link>
 
