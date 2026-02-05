@@ -292,9 +292,7 @@ export default function Dashboard() {
           bondedContacts,
         );
 
-        const bondedEmails = bondedContacts
-          .map((c) => c.email)
-          .filter(Boolean); // Filter out undefined emails
+        const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean); // Filter out undefined emails
 
         const bondNames = bondedContacts.map((c) => c.name).filter(Boolean);
 
@@ -307,7 +305,9 @@ export default function Dashboard() {
         if (bondedEmails.length > 0) {
           try {
             const firebaseCheckIns =
-              await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
+              await checkInStorage.fetchBondedCheckInsFromFirebase(
+                bondedEmails,
+              );
 
             if (firebaseCheckIns.length > 0) {
               console.log(
@@ -384,7 +384,6 @@ export default function Dashboard() {
 
   // Initialize static content once
   useEffect(() => {
-
     // Only initialize static content once
     if (!hasInitializedRef.current) {
       hasInitializedRef.current = true;
@@ -448,23 +447,21 @@ export default function Dashboard() {
       }
 
       // Fall back to local storage - check by email AND by name
-      const localCheckIns = checkInStorage
-        .getAll()
-        .filter((c) => {
-          const today = new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
-          if (c.date !== today) return false;
-
-          // Match by email if email exists
-          if (bondedEmails.includes(c.userEmail)) return true;
-
-          // Also match by userName for backwards compatibility
-          if (bondNames.includes(c.userName)) return true;
-
-          return false;
+      const localCheckIns = checkInStorage.getAll().filter((c) => {
+        const today = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
         });
+        if (c.date !== today) return false;
+
+        // Match by email if email exists
+        if (bondedEmails.includes(c.userEmail)) return true;
+
+        // Also match by userName for backwards compatibility
+        if (bondNames.includes(c.userName)) return true;
+
+        return false;
+      });
 
       if (localCheckIns.length > 0) {
         allCheckIns.push(...localCheckIns);
@@ -816,23 +813,21 @@ export default function Dashboard() {
     }
 
     // Fall back to local storage - check by email AND by name
-    const localCheckIns = checkInStorage
-      .getAll()
-      .filter((c) => {
-        const today = new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        });
-        if (c.date !== today) return false;
-
-        // Match by email if email exists
-        if (bondedEmails.includes(c.userEmail)) return true;
-
-        // Also match by userName for backwards compatibility
-        if (bondNames.includes(c.userName)) return true;
-
-        return false;
+    const localCheckIns = checkInStorage.getAll().filter((c) => {
+      const today = new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
       });
+      if (c.date !== today) return false;
+
+      // Match by email if email exists
+      if (bondedEmails.includes(c.userEmail)) return true;
+
+      // Also match by userName for backwards compatibility
+      if (bondNames.includes(c.userName)) return true;
+
+      return false;
+    });
 
     if (localCheckIns.length > 0) {
       console.log(
@@ -848,7 +843,10 @@ export default function Dashboard() {
     );
 
     setBondedCheckIns(uniqueCheckIns);
-    console.log("📥 Total bonded check-ins after refresh:", uniqueCheckIns.length);
+    console.log(
+      "📥 Total bonded check-ins after refresh:",
+      uniqueCheckIns.length,
+    );
   };
 
   const addDemoBondedCheckIns = () => {
