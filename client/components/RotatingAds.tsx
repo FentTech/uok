@@ -96,6 +96,7 @@ export default function RotatingAds({
   return (
     <div
       className={`${height} bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg p-4 flex items-center justify-between shadow-lg relative group overflow-hidden`}
+      style={{ minHeight: height.includes("h-") ? undefined : "128px" }}
     >
       {/* Close button */}
       <button
@@ -106,25 +107,25 @@ export default function RotatingAds({
         <X size={16} className="text-white" />
       </button>
 
-      {/* Ad Content */}
-      <div className="flex items-center gap-4 flex-1 pr-8">
-        {/* Ad Image/Icon */}
-        <div className="text-4xl flex-shrink-0 select-none">
+      {/* Ad Content - Stable container */}
+      <div className="flex items-center gap-4 flex-1 pr-8 min-h-0">
+        {/* Ad Image/Icon - Fixed size to prevent shift */}
+        <div className="text-4xl flex-shrink-0 select-none w-12 h-12 flex items-center justify-center">
           {currentAd.image}
         </div>
 
-        {/* Ad Text */}
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-white text-sm lg:text-base truncate">
+        {/* Ad Text - No wrapping to prevent height shifts */}
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <h3 className="font-bold text-white text-sm lg:text-base truncate whitespace-nowrap">
             {currentAd.title}
           </h3>
-          <p className="text-white/80 text-xs lg:text-sm line-clamp-1">
+          <p className="text-white/80 text-xs lg:text-sm line-clamp-1 whitespace-nowrap overflow-hidden text-ellipsis">
             {currentAd.description}
           </p>
         </div>
       </div>
 
-      {/* CTA Button */}
+      {/* CTA Button - Fixed width */}
       <button
         onClick={handleAdClick}
         className="flex-shrink-0 bg-white/30 hover:bg-white/50 text-white font-semibold py-2 px-3 rounded flex items-center gap-1 text-xs lg:text-sm transition-colors whitespace-nowrap"
@@ -133,13 +134,13 @@ export default function RotatingAds({
         <ChevronRight size={16} />
       </button>
 
-      {/* Ad Indicator Dots */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5">
+      {/* Ad Indicator Dots - Fixed position */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5 pointer-events-auto">
         {ads.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentAdIndex(index)}
-            className={`transition-all rounded-full ${
+            className={`transition-all rounded-full flex-shrink-0 ${
               index === currentAdIndex
                 ? "bg-white w-2 h-2"
                 : "bg-white/40 hover:bg-white/60 w-1.5 h-1.5"
@@ -149,21 +150,25 @@ export default function RotatingAds({
         ))}
       </div>
 
-      {/* Animation indicator */}
-      <div className="absolute bottom-0 left-0 h-0.5 bg-white/40">
+      {/* Animation indicator - Smooth progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/40 overflow-hidden">
         <div
-          className="h-full bg-white transition-all"
+          className="h-full bg-white"
           style={{
             width: "100%",
-            animation: `progress ${autoRotateInterval}ms linear`,
+            animation: `progress ${autoRotateInterval}ms linear forwards`,
           }}
         />
       </div>
 
       <style>{`
         @keyframes progress {
-          from { width: 100%; }
-          to { width: 0%; }
+          from {
+            width: 100%;
+          }
+          to {
+            width: 0%;
+          }
         }
       `}</style>
     </div>
