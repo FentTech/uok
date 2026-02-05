@@ -420,12 +420,12 @@ export const checkInStorage = {
     allCheckIns.push(newCheckIn);
     localStorage.setItem("uok_checkins", JSON.stringify(allCheckIns));
 
-    // Also save to Firebase for syncing with bonded contacts
+    // Also save to Supabase for syncing with bonded contacts
     try {
-      const { firebaseCheckInService } = await import("./firebase");
-      await firebaseCheckInService.saveCheckIn(checkIn);
+      const { supabaseCheckInService } = await import("./supabase");
+      await supabaseCheckInService.saveCheckIn(checkIn);
     } catch (error) {
-      console.log("Firebase not available, check-in saved locally only");
+      console.log("Supabase not available, check-in saved locally only");
     }
 
     return newCheckIn;
