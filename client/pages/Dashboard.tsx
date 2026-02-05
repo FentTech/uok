@@ -1020,35 +1020,37 @@ export default function Dashboard() {
         visibility: "bonded-contacts",
       });
 
-      // Send notifications to selected contacts
+      // Send real-time notifications to selected contacts via Supabase (completely free)
       const userEmail = localStorage.getItem("userEmail") || "User";
+      const userName = userEmail === "user" ? "User" : userEmail.split("@")[0];
+
       selectedContactsToShare.forEach((contactId) => {
         const contact = bondedContacts.find((c) => c.id === contactId);
-        if (contact) {
-          // Add in-app notification
-          notificationStorage.add({
-            type: "media-shared",
-            message: `Shared a ${item.type} with you 📸`,
-            timestamp: new Date().toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            date: new Date().toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            }),
-            fromContact: contact.email,
-          });
-
-          // Email notifications: Contact info is saved but email delivery requires backend setup
-          // To enable email notifications, set up Supabase Edge Functions or Zapier automation
-          if (contact.email) {
-            console.log(
-              "📧 Media share notification would be sent to:",
-              contact.email,
-              "- Backend email service required for delivery",
-            );
-          }
+        if (contact && contact.email) {
+          // Save notification to Supabase database - completely free, real-time
+          import("../lib/supabase")
+            .then(({ supabaseNotificationService }) => {
+              return supabaseNotificationService.sendMediaSharedNotification(
+                contact.email,
+                userEmail,
+                userName,
+                item.type as "photo" | "video",
+              );
+            })
+            .then((success) => {
+              if (success) {
+                console.log(
+                  "✅ Real-time media notification saved for:",
+                  contact.name,
+                );
+              }
+            })
+            .catch((error) => {
+              console.warn(
+                "⚠️ Could not save media notification to Supabase:",
+                error,
+              );
+            });
         }
       });
 
