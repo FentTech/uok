@@ -193,6 +193,22 @@ const initializeDemoData = () => {
   console.log("✅ Total check-ins in storage:", finalCheckIns.length);
 };
 
+// Helper function to load demo bonded contacts from localStorage
+const loadDemoBondedContacts = () => {
+  const demoBondedContactsStr = localStorage.getItem("bondedContacts");
+  if (demoBondedContactsStr) {
+    try {
+      const parsed = JSON.parse(demoBondedContactsStr);
+      console.log("✅ Demo bonded contacts loaded:", parsed.length);
+      return parsed;
+    } catch (e) {
+      console.error("Error loading demo bonded contacts:", e);
+      return [];
+    }
+  }
+  return [];
+};
+
 export default function Dashboard() {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
