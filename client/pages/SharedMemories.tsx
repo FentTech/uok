@@ -304,6 +304,18 @@ export default function SharedMemories() {
 
       setCommentText("");
       setOpenCommentId(null);
+
+      // Track comment analytics
+      const userEmail = localStorage.getItem("userEmail") || "user";
+      const today = new Date().toISOString().split("T")[0];
+      analyticsService.trackEvent({
+        type: "comment",
+        targetId: memoryId,
+        targetType: "memory",
+        userEmail,
+        timestamp: new Date().toISOString(),
+        date: today,
+      });
     } catch (error) {
       console.error("Error adding comment:", error);
       alert("Failed to add comment. Please try again.");
