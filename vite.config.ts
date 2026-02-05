@@ -19,16 +19,20 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
+      external: (id) => id.startsWith("firebase/"),
       onwarn(warning) {
-        // Suppress Firebase unresolved import warnings
-        // These are safe because Firebase is loaded dynamically at runtime
+        // Suppress Firebase-related warnings
         if (
-          warning.code === "UNRESOLVED_IMPORT" &&
-          warning.message?.includes("firebase")
+          warning.code === "UNRESOLVED_IMPORT" ||
+          warning.code === "EXTERNAL_NO_EXTERNAL"
         ) {
-          return;
+          if (
+            warning.message?.includes("firebase") ||
+            warning.source?.includes("firebase")
+          ) {
+            return;
+          }
         }
-        // Also suppress the external module warnings
         if (warning.message?.includes("externalize")) {
           return;
         }
@@ -36,20 +40,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   publicDir: "public",
-  plugins: [
-    {
-      name: "suppress-firebase-warnings",
-      apply: "build",
-      enforce: "pre",
-      resolveId(id) {
-        if (id.startsWith("firebase/")) {
-          return id;
-        }
-      },
-    },
-    react(),
-    expressPlugin(),
-  ],
+  plugins: [react(), expressPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
