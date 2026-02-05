@@ -348,7 +348,12 @@ export default function BondContacts() {
                         <p className="font-semibold text-cyan-100">
                           {contact.name}
                         </p>
-                        <div className="flex items-center gap-2">
+                        {contact.email && (
+                          <p className="text-xs text-cyan-400/80">
+                            {contact.email}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-green-400">
                             ✓ Bonded
                           </span>
