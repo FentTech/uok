@@ -194,12 +194,13 @@ const initializeDemoData = () => {
 };
 
 // Helper function to load demo bonded contacts from localStorage
-const loadDemoBondedContacts = () => {
+const loadDemoBondedContacts = (setBondedContacts: any) => {
   const demoBondedContactsStr = localStorage.getItem("bondedContacts");
   if (demoBondedContactsStr) {
     try {
       const parsed = JSON.parse(demoBondedContactsStr);
-      console.log("✅ Demo bonded contacts loaded:", parsed.length);
+      setBondedContacts(parsed);
+      console.log("✅ Demo bonded contacts loaded and set to state:", parsed.length);
       return parsed;
     } catch (e) {
       console.error("Error loading demo bonded contacts:", e);
