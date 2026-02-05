@@ -654,10 +654,18 @@ export default function SharedMemories() {
                         src={memory.imageUrl}
                         className="w-full h-96 object-cover cursor-pointer"
                         controls
-                        onClick={() => setFullscreenVideo(memory.imageUrl)}
+                        onClick={() => {
+                          setShowPreRollAd(true);
+                          setSelectedMemoryForView(memory);
+                          setFullscreenVideo(memory.imageUrl);
+                        }}
                       />
                       <button
-                        onClick={() => setFullscreenVideo(memory.imageUrl)}
+                        onClick={() => {
+                          setShowPreRollAd(true);
+                          setSelectedMemoryForView(memory);
+                          setFullscreenVideo(memory.imageUrl);
+                        }}
                         className="absolute inset-0 w-full h-full bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center"
                       >
                         <div className="hidden group-hover:flex items-center justify-center w-16 h-16 bg-white/20 rounded-full backdrop-blur-sm">
@@ -669,7 +677,23 @@ export default function SharedMemories() {
                     <img
                       src={memory.imageUrl}
                       alt="Shared memory"
-                      className="w-full h-96 object-cover"
+                      className="w-full h-96 object-cover cursor-pointer"
+                      onClick={() => {
+                        setSelectedMemoryForView(memory);
+                        setFullscreenVideo(memory.imageUrl);
+                        // Track photo view
+                        const userEmail =
+                          localStorage.getItem("userEmail") || "user";
+                        const today = new Date().toISOString().split("T")[0];
+                        analyticsService.trackEvent({
+                          type: "view",
+                          targetId: memory.id,
+                          targetType: "memory",
+                          userEmail,
+                          timestamp: new Date().toISOString(),
+                          date: today,
+                        });
+                      }}
                     />
                   )}
                   <div className="absolute top-2 right-2 bg-black/50 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
