@@ -32,6 +32,40 @@ export default function App() {
     advertiserAuthService.initializeDemoAdvertiser();
   }, []);
 
+  // Global error handler for network errors
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      if (
+        event.message &&
+        event.message.includes("NetworkError") &&
+        event.message.includes("fetch")
+      ) {
+        console.warn(
+          "⚠️ Network error detected - API may be unavailable, features will degrade gracefully",
+        );
+      }
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      if (event.reason instanceof TypeError) {
+        const message = event.reason.message || "";
+        if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+          console.warn(
+            "⚠️ Network error detected - API call failed, app will continue with fallback data",
+          );
+        }
+      }
+    };
+
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener("error", handleError);
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
