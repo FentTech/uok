@@ -11,6 +11,7 @@ import {
   Zap,
   X,
   LogOut,
+  Lock,
 } from "lucide-react";
 import { analyticsService, DEMO_ADS, type WeeklyReport } from "../lib/analytics";
 
