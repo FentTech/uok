@@ -469,20 +469,10 @@ export const checkInStorage = {
         bondedEmails,
       );
 
-      // Convert Supabase documents to StoredCheckIn format
-      return supabaseCheckIns.map((doc) => ({
-        id: doc.id,
-        userEmail: doc.userEmail,
-        userName: doc.userName,
-        emoji: doc.emoji,
-        mood: doc.mood,
-        timestamp: doc.timestamp,
-        date: doc.date,
-        timeSlot: doc.timeSlot,
-        createdAt: doc.createdAt?.toDate?.()?.toISOString?.() || new Date().toISOString(),
-      }));
+      // Supabase check-ins are already in StoredCheckIn format
+      return supabaseCheckIns as StoredCheckIn[];
     } catch (error) {
-      console.log("Firebase not available, returning local check-ins only");
+      console.log("Supabase not available, returning local check-ins only");
       return [];
     }
   },
