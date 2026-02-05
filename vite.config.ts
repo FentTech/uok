@@ -20,17 +20,12 @@ export default defineConfig(({ mode }) => {
         input: {
           main: path.resolve(__dirname, "index.html"),
         },
-        external: [/^firebase\/.*/],
         onwarn(warning: any) {
-          // Suppress all Firebase-related warnings
-          if (
-            warning.message?.includes("firebase") ||
-            warning.source?.includes("firebase") ||
-            warning.code === "UNRESOLVED_IMPORT"
-          ) {
+          // Suppress unresolved import warnings - Firebase is loaded dynamically
+          if (warning.code === "UNRESOLVED_IMPORT") {
             return;
           }
-          // Also suppress external module warnings for firebase
+          // Suppress external module warnings
           if (warning.message?.includes("externalize")) {
             return;
           }
