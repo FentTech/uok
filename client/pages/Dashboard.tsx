@@ -237,16 +237,15 @@ export default function Dashboard() {
   useEffect(() => {
     const loadBondedContacts = async () => {
       // Load bonded contacts from localStorage (do this every time)
-      const bondedContactsStr = localStorage.getItem("bondedContacts");
+      let bondedContactsStr = localStorage.getItem("bondedContacts");
       const bondedContactsList: any[] = [];
-      let foundLocally = false;
+      let foundLocally = !!bondedContactsStr;
 
       if (bondedContactsStr) {
         try {
           const parsed = JSON.parse(bondedContactsStr);
           setBondedContacts(parsed);
           bondedContactsList.push(...parsed);
-          foundLocally = true;
         } catch (e) {
           console.error("Error loading bonded contacts:", e);
         }
@@ -282,10 +281,34 @@ export default function Dashboard() {
         const bondedEmails = bondedContactsList
           .map((c) => c.email)
           .filter(Boolean); // Filter out undefined emails
+
+        console.log(
+          "📥 Bonded emails found:",
+          bondedEmails.length,
+          bondedEmails,
+        );
+
         if (bondedEmails.length > 0) {
-          const bondedCheckins =
-            checkInStorage.getTodayFromBondedContacts(bondedEmails);
-          setBondedCheckIns(bondedCheckins);
+          // Try Firebase first
+          const firebaseCheckIns =
+            await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
+
+          if (firebaseCheckIns.length > 0) {
+            console.log(
+              "📥 Loaded bonded check-ins from Firebase:",
+              firebaseCheckIns.length,
+            );
+            setBondedCheckIns(firebaseCheckIns);
+          } else {
+            // Fall back to local storage
+            const localCheckIns =
+              checkInStorage.getTodayFromBondedContacts(bondedEmails);
+            console.log(
+              "📥 Loaded bonded check-ins from local storage:",
+              localCheckIns.length,
+            );
+            setBondedCheckIns(localCheckIns);
+          }
         }
       }
     };
