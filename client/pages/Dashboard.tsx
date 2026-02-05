@@ -233,60 +233,60 @@ export default function Dashboard() {
     }
   };
 
-  // Initialize with sample check-ins and load bonded contacts
+  // Load bonded contacts on mount
   useEffect(() => {
     const loadBondedContacts = async () => {
       // Load bonded contacts from localStorage (do this every time)
       let bondedContactsStr = localStorage.getItem("bondedContacts");
-      const bondedContactsList: any[] = [];
       let foundLocally = !!bondedContactsStr;
 
       if (bondedContactsStr) {
         try {
           const parsed = JSON.parse(bondedContactsStr);
+          console.log("✅ Loaded bonded contacts from localStorage:", parsed);
           setBondedContacts(parsed);
-          bondedContactsList.push(...parsed);
+          return; // Exit early, the loadBondedCheckIns effect will handle the rest
         } catch (e) {
           console.error("Error loading bonded contacts:", e);
         }
       }
 
       // If not found locally, try to fetch from Firebase (for cross-device sync)
-      if (!foundLocally) {
-        const userEmail = localStorage.getItem("userEmail");
-        if (userEmail) {
-          try {
-            const { firebaseUserSyncService } = await import("../lib/firebase");
-            const firebaseBondedContacts =
-              await firebaseUserSyncService.fetchBondedContacts(userEmail);
-            if (firebaseBondedContacts.length > 0) {
-              console.log(
-                "📥 Loaded bonded contacts from Firebase (cross-device sync)",
-              );
-              localStorage.setItem(
-                "bondedContacts",
-                JSON.stringify(firebaseBondedContacts),
-              );
-              setBondedContacts(firebaseBondedContacts);
-              bondedContactsList.push(...firebaseBondedContacts);
-            }
-          } catch (error) {
-            console.log("Firebase bonded contacts sync not available");
+      const userEmail = localStorage.getItem("userEmail");
+      if (userEmail) {
+        try {
+          const { firebaseUserSyncService } = await import("../lib/firebase");
+          const firebaseBondedContacts =
+            await firebaseUserSyncService.fetchBondedContacts(userEmail);
+          if (firebaseBondedContacts.length > 0) {
+            console.log(
+              "📥 Loaded bonded contacts from Firebase (cross-device sync):",
+              firebaseBondedContacts,
+            );
+            localStorage.setItem(
+              "bondedContacts",
+              JSON.stringify(firebaseBondedContacts),
+            );
+            setBondedContacts(firebaseBondedContacts);
           }
+        } catch (error) {
+          console.log("Firebase bonded contacts sync not available");
         }
       }
+    };
 
-      // Load bonded contacts' check-ins
-      if (bondedContactsList.length > 0) {
-        const bondedEmails = bondedContactsList
+    loadBondedContacts();
+  }, []);
+
+  // Load bonded contacts' check-ins whenever bonded contacts change
+  useEffect(() => {
+    const loadBondedCheckIns = async () => {
+      if (bondedContacts.length > 0) {
+        const bondedEmails = bondedContacts
           .map((c) => c.email)
           .filter(Boolean); // Filter out undefined emails
 
-        console.log(
-          "📥 Bonded emails found:",
-          bondedEmails.length,
-          bondedEmails,
-        );
+        console.log("📥 Bonded emails:", bondedEmails);
 
         if (bondedEmails.length > 0) {
           // Try Firebase first
@@ -310,10 +310,16 @@ export default function Dashboard() {
             setBondedCheckIns(localCheckIns);
           }
         }
+      } else {
+        setBondedCheckIns([]);
       }
     };
 
-    loadBondedContacts();
+    loadBondedCheckIns();
+  }, [bondedContacts]);
+
+  // Initialize static content once
+  useEffect(() => {
 
     // Only initialize static content once
     if (!hasInitializedRef.current) {
