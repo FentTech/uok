@@ -340,8 +340,8 @@ export default function Dashboard() {
     }
   };
 
-  // Send check-in notifications to bonded contacts
-  const sendCheckInNotification = (mood: string) => {
+  // Send check-in notifications to bonded contacts via Supabase (completely free, real-time)
+  const sendCheckInNotification = (mood: string, emoji: string) => {
     // Get bonded contacts from localStorage
     const bondedContactsStr = localStorage.getItem("bondedContacts");
     const bondedContacts = bondedContactsStr
@@ -368,40 +368,33 @@ export default function Dashboard() {
 
     // Get user's name/email
     const userEmail = localStorage.getItem("userEmail") || "User";
+    const userName = userEmail === "user" ? "User" : userEmail.split("@")[0];
 
-    // Send notifications to bonded contacts
+    // Send real-time notifications to bonded contacts via Supabase (fire-and-forget)
     bondedContacts.forEach((contact: any) => {
-      // Store notification for bonded contact
-      notificationStorage.add({
-        type: "checkin",
-        message: `Your bonded family member just checked in on UOK feeling ${mood}. They're doing okay! 💚`,
-        timestamp: new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        date: new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        }),
-        fromContact: contact.email,
-      });
-
-      console.log("📱 Check-in notification sent to bonded contact:", {
-        recipient: contact.name,
-        email: contact.email,
-        bondCode: contact.bondCode,
-        mood: mood,
-        timestamp: new Date().toISOString(),
-      });
-
-      // Email notifications: Contact info is saved but email delivery requires backend setup
-      // To enable email notifications, set up Supabase Edge Functions or Zapier automation
       if (contact.email) {
-        console.log(
-          "📧 Check-in notification would be sent to:",
-          contact.email,
-          "- Backend email service required for delivery",
-        );
+        // Save notification to Supabase database - completely free, no email service needed
+        import("../lib/supabase")
+          .then(({ supabaseNotificationService }) => {
+            return supabaseNotificationService.sendCheckInNotification(
+              contact.email,
+              userEmail,
+              userName,
+              mood,
+              emoji,
+            );
+          })
+          .then((success) => {
+            if (success) {
+              console.log("✅ Real-time notification saved for:", contact.name);
+            }
+          })
+          .catch((error) => {
+            console.warn(
+              "⚠️ Could not save notification to Supabase:",
+              error,
+            );
+          });
       }
     });
 
