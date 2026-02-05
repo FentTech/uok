@@ -19,37 +19,10 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
-      onwarn(warning, warn) {
-        // Suppress unresolved import and external module warnings
-        // These are safe to ignore for Firebase modules
-        if (
-          (warning.code === "UNRESOLVED_IMPORT" ||
-            warning.code === "EXTERNAL_NO_EXTERNAL" ||
-            warning.message?.includes("externalize")) &&
-          (warning.source?.includes("firebase") ||
-            warning.message?.includes("firebase"))
-        ) {
-          return;
-        }
-        warn(warning);
-      },
     },
   },
-  logLevel: "warn",
   publicDir: "public",
-  plugins: [
-    {
-      name: "suppress-firebase-warnings",
-      apply: "build",
-      enforce: "pre",
-      transform(code, id) {
-        // Just pass through - warnings will be suppressed by onwarn
-        return null;
-      },
-    },
-    react(),
-    expressPlugin(),
-  ],
+  plugins: [react(), expressPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
