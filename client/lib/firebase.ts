@@ -1,13 +1,28 @@
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-} from "firebase/firestore";
+// Dynamic imports to avoid build-time resolution issues
+let initializeApp: any;
+let getFirestore: any;
+let collection: any;
+let addDoc: any;
+let query: any;
+let where: any;
+let getDocs: any;
+let Timestamp: any;
+
+// Lazy load Firebase modules
+const loadFirebaseModules = async () => {
+  if (!initializeApp) {
+    const app = await import("firebase/app");
+    const firestore = await import("firebase/firestore");
+    initializeApp = app.initializeApp;
+    getFirestore = firestore.getFirestore;
+    collection = firestore.collection;
+    addDoc = firestore.addDoc;
+    query = firestore.query;
+    where = firestore.where;
+    getDocs = firestore.getDocs;
+    Timestamp = firestore.Timestamp;
+  }
+};
 
 // Firebase configuration
 // Get these values from your Firebase Console (Project Settings)
