@@ -195,19 +195,43 @@ const initializeDemoData = () => {
 
 // Helper function to load demo bonded contacts from localStorage
 const loadDemoBondedContacts = (setBondedContacts: any) => {
-  const demoBondedContactsStr = localStorage.getItem("bondedContacts");
-  if (demoBondedContactsStr) {
-    try {
-      const parsed = JSON.parse(demoBondedContactsStr);
-      setBondedContacts(parsed);
-      console.log("✅ Demo bonded contacts loaded and set to state:", parsed.length);
-      return parsed;
-    } catch (e) {
-      console.error("Error loading demo bonded contacts:", e);
+  try {
+    const demoBondedContactsStr = localStorage.getItem("bondedContacts");
+    if (!demoBondedContactsStr) {
+      console.log("ℹ️ No bonded contacts in localStorage");
       return [];
     }
+
+    // Validate that it's a valid JSON string
+    if (typeof demoBondedContactsStr !== "string") {
+      console.warn("⚠️ bonded contacts data is not a string, clearing...");
+      localStorage.removeItem("bondedContacts");
+      return [];
+    }
+
+    const parsed = JSON.parse(demoBondedContactsStr);
+
+    // Validate it's an array
+    if (!Array.isArray(parsed)) {
+      console.warn("⚠️ bonded contacts data is not an array, clearing...");
+      localStorage.removeItem("bondedContacts");
+      return [];
+    }
+
+    if (parsed.length > 0) {
+      setBondedContacts(parsed);
+      console.log("✅ Demo bonded contacts loaded and set to state:", parsed.length);
+    }
+    return parsed;
+  } catch (error) {
+    console.warn("⚠️ Failed to load bonded contacts from localStorage, clearing corrupted data:", error);
+    try {
+      localStorage.removeItem("bondedContacts");
+    } catch (clearError) {
+      console.error("Could not clear localStorage:", clearError);
+    }
+    return [];
   }
-  return [];
 };
 
 export default function Dashboard() {
