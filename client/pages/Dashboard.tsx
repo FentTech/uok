@@ -513,9 +513,11 @@ export default function Dashboard() {
       });
 
       // Send notifications to selected contacts
+      const userEmail = localStorage.getItem("userEmail") || "User";
       selectedContactsToShare.forEach((contactId) => {
         const contact = bondedContacts.find((c) => c.id === contactId);
         if (contact) {
+          // Add in-app notification
           notificationStorage.add({
             type: "media-shared",
             message: `Shared a ${item.type} with you 📸`,
@@ -529,6 +531,22 @@ export default function Dashboard() {
             }),
             fromContact: contact.email,
           });
+
+          // Send email notification via API
+          if (contact.email) {
+            fetch("/api/notifications/send-media-shared", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                recipientEmail: contact.email,
+                senderName: userEmail.split("@")[0] || "Your contact",
+                mediaType: item.type,
+                timestamp: new Date().toISOString(),
+              }),
+            }).catch((error) =>
+              console.error("Failed to send media share notification:", error),
+            );
+          }
         }
       });
 
