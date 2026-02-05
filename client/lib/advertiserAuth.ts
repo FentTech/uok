@@ -34,7 +34,10 @@ export const advertiserAuthService = {
         };
 
         credentials.push(demoAdvertiser);
-        localStorage.setItem(ADVERTISER_STORAGE_KEY, JSON.stringify(credentials));
+        localStorage.setItem(
+          ADVERTISER_STORAGE_KEY,
+          JSON.stringify(credentials),
+        );
         console.log("✅ Demo advertiser initialized");
       }
     } catch (error) {
@@ -103,9 +106,7 @@ export const advertiserAuthService = {
   },
 
   // Get advertiser by email
-  getAdvertiserByEmail: (
-    email: string,
-  ): AdvertiserCredentials | null => {
+  getAdvertiserByEmail: (email: string): AdvertiserCredentials | null => {
     try {
       const stored = localStorage.getItem(ADVERTISER_STORAGE_KEY);
       if (!stored) return null;
@@ -134,10 +135,7 @@ export const advertiserAuthService = {
   },
 
   // Update advertiser password
-  updatePassword: (
-    email: string,
-    newPassword: string,
-  ): boolean => {
+  updatePassword: (email: string, newPassword: string): boolean => {
     try {
       const stored = localStorage.getItem(ADVERTISER_STORAGE_KEY);
       if (!stored) return false;
