@@ -556,12 +556,20 @@ export default function Dashboard() {
         if (sharedMomentsStr) {
           try {
             sharedMomentsData = JSON.parse(sharedMomentsStr);
-            console.log(
-              "✅ Loaded shared moments from localStorage:",
-              sharedMomentsData.length,
-            );
+            if (!Array.isArray(sharedMomentsData)) {
+              console.warn("⚠️ Shared moments is not an array, clearing...");
+              localStorage.removeItem("uok_shared_moments");
+              sharedMomentsData = [];
+            } else {
+              console.log(
+                "✅ Loaded shared moments from localStorage:",
+                sharedMomentsData.length,
+              );
+            }
           } catch (e) {
-            console.error("Error parsing shared moments:", e);
+            console.warn("⚠️ Error parsing shared moments, clearing corrupted data:", e);
+            localStorage.removeItem("uok_shared_moments");
+            sharedMomentsData = [];
           }
         }
 
