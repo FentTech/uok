@@ -18,6 +18,8 @@ import FeaturedPartners from "./pages/FeaturedPartners";
 import BondNotifications from "./pages/BondNotifications";
 import UserProfile from "./pages/UserProfile";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import AdvertiserLogin from "./pages/AdvertiserLogin";
+import AdvertiserAnalytics from "./pages/AdvertiserAnalytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
