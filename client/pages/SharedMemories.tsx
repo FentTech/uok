@@ -409,17 +409,17 @@ export default function SharedMemories() {
 
       // Sync shared moments to Firebase (fire and forget)
       if (currentUserEmail && currentUserEmail !== "You") {
-        import("../lib/firebase")
-          .then(({ firebaseUserSyncService }) => {
+        import("../lib/supabase")
+          .then(({ supabaseUserSyncService }) => {
             const allMoments = sharedMomentsStorage.getActive();
-            return firebaseUserSyncService.syncSharedMoments(
+            return supabaseUserSyncService.syncSharedMoments(
               currentUserEmail,
               allMoments,
             );
           })
-          .then(() => console.log("✅ Shared moment synced to Firebase"))
+          .then(() => console.log("✅ Shared moment synced to Supabase"))
           .catch((error) =>
-            console.log("⚠️ Could not sync shared moment to Firebase:", error),
+            console.log("⚠️ Could not sync shared moment to Supabase:", error),
           );
       }
 
