@@ -844,6 +844,56 @@ export default function SharedMemories() {
             </button>
           </div>
         )}
+
+        {/* Pre-Roll Ad for Video Viewing */}
+        {showPreRollAd && (
+          <MediaPreRollAd
+            onAdComplete={() => {
+              setShowPreRollAd(false);
+              // Track view after ad completes
+              if (selectedMemoryForView) {
+                const userEmail =
+                  localStorage.getItem("userEmail") || "user";
+                const today = new Date().toISOString().split("T")[0];
+                analyticsService.trackEvent({
+                  type: "view",
+                  targetId: selectedMemoryForView.id,
+                  targetType: "memory",
+                  userEmail,
+                  timestamp: new Date().toISOString(),
+                  date: today,
+                  metadata: {
+                    engagementLevel: "high", // Watched ad = high engagement
+                  },
+                });
+              }
+            }}
+          />
+        )}
+
+        {/* Fullscreen Video Modal */}
+        {fullscreenVideo && (
+          <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-40 backdrop-blur-sm">
+            <div className="relative w-full h-full max-w-6xl flex items-center justify-center">
+              <button
+                onClick={() => {
+                  setFullscreenVideo(null);
+                  setShowPreRollAd(false);
+                }}
+                className="absolute top-4 right-4 z-50 text-white bg-black/50 hover:bg-black/80 p-2 rounded-lg transition"
+                title="Close"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <video
+                src={fullscreenVideo}
+                controls
+                autoPlay
+                className="max-w-full max-h-full"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
