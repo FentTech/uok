@@ -220,29 +220,34 @@ export default function Dashboard() {
 
   // Initialize with sample check-ins and load bonded contacts
   useEffect(() => {
-    if (!hasInitializedRef.current) {
-      hasInitializedRef.current = true;
-
-      // Load bonded contacts from localStorage
-      const bondedContactsStr = localStorage.getItem("bondedContacts");
-      const bondedContactsList: any[] = [];
-      if (bondedContactsStr) {
-        try {
-          const parsed = JSON.parse(bondedContactsStr);
-          setBondedContacts(parsed);
-          bondedContactsList.push(...parsed);
-        } catch (e) {
-          console.error("Error loading bonded contacts:", e);
-        }
+    // Load bonded contacts from localStorage (do this every time)
+    const bondedContactsStr = localStorage.getItem("bondedContacts");
+    const bondedContactsList: any[] = [];
+    if (bondedContactsStr) {
+      try {
+        const parsed = JSON.parse(bondedContactsStr);
+        setBondedContacts(parsed);
+        bondedContactsList.push(...parsed);
+      } catch (e) {
+        console.error("Error loading bonded contacts:", e);
       }
+    }
 
-      // Load bonded contacts' check-ins
-      if (bondedContactsList.length > 0) {
-        const bondedEmails = bondedContactsList.map((c) => c.email);
+    // Load bonded contacts' check-ins
+    if (bondedContactsList.length > 0) {
+      const bondedEmails = bondedContactsList
+        .map((c) => c.email)
+        .filter(Boolean); // Filter out undefined emails
+      if (bondedEmails.length > 0) {
         const bondedCheckins =
           checkInStorage.getTodayFromBondedContacts(bondedEmails);
         setBondedCheckIns(bondedCheckins);
       }
+    }
+
+    // Only initialize static content once
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
 
       // Load media from persistent storage
       const savedMedia = mediaStorage.getActive();
