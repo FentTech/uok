@@ -27,6 +27,11 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 export default function App() {
+  // Initialize demo advertiser on app load
+  useEffect(() => {
+    advertiserAuthService.initializeDemoAdvertiser();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
