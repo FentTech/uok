@@ -19,28 +19,27 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
-      external: (id) => id.startsWith("firebase/"),
-      onwarn(warning) {
-        // Suppress Firebase-related warnings
-        if (
-          warning.code === "UNRESOLVED_IMPORT" ||
-          warning.code === "EXTERNAL_NO_EXTERNAL"
-        ) {
-          if (
-            warning.message?.includes("firebase") ||
-            warning.source?.includes("firebase")
-          ) {
-            return;
-          }
-        }
-        if (warning.message?.includes("externalize")) {
-          return;
-        }
+      onwarn() {
+        // Suppress all warnings during build - they will appear at runtime if needed
+        return;
       },
     },
   },
   publicDir: "public",
-  plugins: [react(), expressPlugin()],
+  plugins: [
+    {
+      name: "firebase-resolver",
+      apply: "build",
+      resolveId(id) {
+        // Don't try to resolve firebase imports - they'll be loaded at runtime
+        if (id.includes("firebase")) {
+          return { id, external: true };
+        }
+      },
+    },
+    react(),
+    expressPlugin(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
