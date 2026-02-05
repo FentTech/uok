@@ -56,6 +56,10 @@ export default function FeaturedPartners() {
   const [activeTab, setActiveTab] = useState<"register" | "manage" | "payment">(
     "register",
   );
+  const [newAdvertiserPassword, setNewAdvertiserPassword] = useState<{
+    email: string;
+    password: string;
+  } | null>(null);
 
   // Load partners from localStorage
   useEffect(() => {
