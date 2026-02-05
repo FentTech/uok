@@ -813,6 +813,18 @@ export default function Dashboard() {
       timeSlot: selectedTimeSlot,
     });
 
+    // Sync check-ins to Firebase
+    const allCheckIns = checkInStorage.getAll();
+    if (userEmail && userEmail !== "user") {
+      try {
+        const { firebaseUserSyncService } = await import("../lib/firebase");
+        await firebaseUserSyncService.syncCheckIns(userEmail, allCheckIns);
+        console.log("✅ Check-in synced to Firebase");
+      } catch (error) {
+        console.log("⚠️ Could not sync check-in to Firebase:", error);
+      }
+    }
+
     setCheckIns([newCheckIn, ...checkIns]);
     setTodayCheckInCount((prev) => Math.min(prev + 1, 3));
     setSelectedMood(emoji);
