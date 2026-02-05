@@ -838,16 +838,17 @@ export default function Dashboard() {
       timeSlot: selectedTimeSlot,
     });
 
-    // Sync check-ins to Firebase
+    // Sync check-ins to Firebase (fire and forget)
     const allCheckIns = checkInStorage.getAll();
     if (userEmail && userEmail !== "user") {
-      try {
-        const { firebaseUserSyncService } = await import("../lib/firebase");
-        await firebaseUserSyncService.syncCheckIns(userEmail, allCheckIns);
-        console.log("✅ Check-in synced to Firebase");
-      } catch (error) {
-        console.log("⚠️ Could not sync check-in to Firebase:", error);
-      }
+      import("../lib/firebase")
+        .then(({ firebaseUserSyncService }) => {
+          return firebaseUserSyncService.syncCheckIns(userEmail, allCheckIns);
+        })
+        .then(() => console.log("✅ Check-in synced to Firebase"))
+        .catch((error) =>
+          console.log("⚠️ Could not sync check-in to Firebase:", error),
+        );
     }
 
     setCheckIns([newCheckIn, ...checkIns]);
