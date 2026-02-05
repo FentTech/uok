@@ -479,12 +479,20 @@ export default function Dashboard() {
         if (checkInsStr) {
           try {
             checkInsData = JSON.parse(checkInsStr);
-            console.log(
-              "✅ Loaded check-ins from localStorage:",
-              checkInsData.length,
-            );
+            if (!Array.isArray(checkInsData)) {
+              console.warn("⚠️ Check-ins is not an array, clearing...");
+              localStorage.removeItem("uok_checkins");
+              checkInsData = [];
+            } else {
+              console.log(
+                "✅ Loaded check-ins from localStorage:",
+                checkInsData.length,
+              );
+            }
           } catch (e) {
-            console.error("Error parsing check-ins:", e);
+            console.warn("⚠️ Error parsing check-ins, clearing corrupted data:", e);
+            localStorage.removeItem("uok_checkins");
+            checkInsData = [];
           }
         }
 
