@@ -458,26 +458,19 @@ export const checkInStorage = {
     return checkInStorage.getTodayForUser(userEmail).length;
   },
 
-  // Fetch bonded contacts' check-ins from Firebase (real-time sync)
-  fetchBondedCheckInsFromFirebase: async (
+  // Fetch bonded contacts' check-ins from Supabase (real-time sync)
+  fetchBondedCheckInsFromSupabase: async (
     bondedEmails: string[],
   ): Promise<StoredCheckIn[]> => {
     try {
-      const { firebaseCheckInService } = await import("./firebase");
+      const { supabaseCheckInService } = await import("./supabase");
 
-      const today = new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-
-      const firebaseCheckIns = await firebaseCheckInService.getBondedCheckIns(
-        "",
+      const supabaseCheckIns = await supabaseCheckInService.getBondedCheckIns(
         bondedEmails,
-        today,
       );
 
-      // Convert Firebase documents to StoredCheckIn format
-      return firebaseCheckIns.map((doc) => ({
+      // Convert Supabase documents to StoredCheckIn format
+      return supabaseCheckIns.map((doc) => ({
         id: doc.id,
         userEmail: doc.userEmail,
         userName: doc.userName,
