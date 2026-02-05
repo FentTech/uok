@@ -1863,11 +1863,20 @@ export default function Dashboard() {
                     />
                   ) : (
                     <video
-                      src={fullscreenMedia.url}
                       controls
                       autoPlay
-                      className="max-w-full max-h-full"
-                    />
+                      controlsList="nodownload"
+                      preload="metadata"
+                      className="max-w-full max-h-full object-contain"
+                      onError={(e) =>
+                        console.error("Fullscreen video playback error:", e)
+                      }
+                    >
+                      <source src={fullscreenMedia.url} type="video/mp4" />
+                      <source src={fullscreenMedia.url} type="video/webm" />
+                      <source src={fullscreenMedia.url} type="video/ogg" />
+                      Your browser does not support the video tag.
+                    </video>
                   )}
                 </div>
               </div>
