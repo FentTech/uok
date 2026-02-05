@@ -16,30 +16,47 @@ export const advertiserAuthService = {
   initializeDemoAdvertiser: (): void => {
     try {
       const existing = localStorage.getItem(ADVERTISER_STORAGE_KEY);
-      const credentials = existing ? JSON.parse(existing) : [];
+      let credentials: AdvertiserCredentials[] = [];
+
+      // Parse existing credentials safely
+      if (existing) {
+        try {
+          credentials = JSON.parse(existing);
+          // Ensure it's an array
+          if (!Array.isArray(credentials)) {
+            credentials = [];
+          }
+        } catch (e) {
+          console.warn("Invalid JSON in advertiser storage, resetting...");
+          credentials = [];
+        }
+      }
 
       // Check if demo advertiser already exists
-      const demoExists = credentials.some(
+      const demoIndex = credentials.findIndex(
         (cred: AdvertiserCredentials) =>
           cred.email === "advertiser@wellness.com",
       );
 
-      if (!demoExists) {
-        const demoAdvertiser: AdvertiserCredentials = {
-          email: "advertiser@wellness.com",
-          password: "admin123",
-          companyName: "Demo Wellness Company",
-          registeredAt: new Date().toISOString(),
-          verified: true,
-        };
+      const demoAdvertiser: AdvertiserCredentials = {
+        email: "advertiser@wellness.com",
+        password: "admin123",
+        companyName: "Demo Wellness Company",
+        registeredAt: new Date().toISOString(),
+        verified: true,
+      };
 
+      if (demoIndex === -1) {
+        // Demo advertiser doesn't exist, add it
         credentials.push(demoAdvertiser);
-        localStorage.setItem(
-          ADVERTISER_STORAGE_KEY,
-          JSON.stringify(credentials),
-        );
-        console.log("✅ Demo advertiser initialized");
+        console.log("✅ Demo advertiser created");
+      } else {
+        // Demo advertiser exists, ensure password is correct
+        credentials[demoIndex] = demoAdvertiser;
+        console.log("✅ Demo advertiser verified/updated");
       }
+
+      localStorage.setItem(ADVERTISER_STORAGE_KEY, JSON.stringify(credentials));
     } catch (error) {
       console.error("Error initializing demo advertiser:", error);
     }
