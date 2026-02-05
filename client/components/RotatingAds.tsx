@@ -109,7 +109,9 @@ export default function RotatingAds({
       {/* Ad Content */}
       <div className="flex items-center gap-4 flex-1 pr-8">
         {/* Ad Image/Icon */}
-        <div className="text-4xl flex-shrink-0 select-none">{currentAd.image}</div>
+        <div className="text-4xl flex-shrink-0 select-none">
+          {currentAd.image}
+        </div>
 
         {/* Ad Text */}
         <div className="flex-1 min-w-0">

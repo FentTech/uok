@@ -21,9 +21,7 @@ analyticsRouter.post("/send-weekly-report", async (req, res) => {
     }
 
     // Log the report (in production, send via email service)
-    console.log(
-      `\n📊 ===== WEEKLY ANALYTICS REPORT FOR ${userEmail} =====`,
-    );
+    console.log(`\n📊 ===== WEEKLY ANALYTICS REPORT FOR ${userEmail} =====`);
     console.log(`📅 Week: ${report.week}`);
     console.log(`\n📈 METRICS SUMMARY:`);
     console.log(`   Total Views: ${report.metrics.totalViews}`);
@@ -34,7 +32,9 @@ analyticsRouter.post("/send-weekly-report", async (req, res) => {
       `   Engagement Rate: ${report.metrics.engagementRate.toFixed(2)}%`,
     );
     console.log(`\n🎯 AD PERFORMANCE:`);
-    console.log(`   Total Ad Impressions: ${report.metrics.totalAdImpressions}`);
+    console.log(
+      `   Total Ad Impressions: ${report.metrics.totalAdImpressions}`,
+    );
     console.log(`   Total Ad Clicks: ${report.metrics.totalAdClicks}`);
     console.log(
       `   Click-Through Rate: ${report.metrics.adClickThroughRate.toFixed(2)}%`,
@@ -58,7 +58,9 @@ analyticsRouter.post("/send-weekly-report", async (req, res) => {
       });
     }
 
-    console.log(`\n✅ Report generation completed at ${new Date().toISOString()}`);
+    console.log(
+      `\n✅ Report generation completed at ${new Date().toISOString()}`,
+    );
     console.log(`=====================================================\n`);
 
     // In production, you would integrate with email service like:

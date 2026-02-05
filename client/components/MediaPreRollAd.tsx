@@ -120,7 +120,9 @@ export default function MediaPreRollAd({
               <span className="text-sm font-medium text-gray-700">
                 Ad ends in {timeRemaining}s
               </span>
-              <span className="text-xs text-gray-500">{Math.round(percentage)}%</span>
+              <span className="text-xs text-gray-500">
+                {Math.round(percentage)}%
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
               <div
@@ -170,9 +172,7 @@ export default function MediaPreRollAd({
 
         {/* Close hint */}
         <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 text-center">
-          <p className="text-xs text-gray-500">
-            This is a demo advertisement
-          </p>
+          <p className="text-xs text-gray-500">This is a demo advertisement</p>
         </div>
       </div>
     </div>

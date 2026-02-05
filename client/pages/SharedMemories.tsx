@@ -53,7 +53,8 @@ export default function SharedMemories() {
   const [searchQuery, setSearchQuery] = useState("");
   const [fullscreenVideo, setFullscreenVideo] = useState<string | null>(null);
   const [showPreRollAd, setShowPreRollAd] = useState(false);
-  const [selectedMemoryForView, setSelectedMemoryForView] = useState<SharedMemory | null>(null);
+  const [selectedMemoryForView, setSelectedMemoryForView] =
+    useState<SharedMemory | null>(null);
   const [adTimer, setAdTimer] = useState(10); // 10 second timer for video ads
   const [featuredAds, setFeaturedAds] = useState<any[]>([]);
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
@@ -879,8 +880,7 @@ export default function SharedMemories() {
               setShowPreRollAd(false);
               // Track view after ad completes
               if (selectedMemoryForView) {
-                const userEmail =
-                  localStorage.getItem("userEmail") || "user";
+                const userEmail = localStorage.getItem("userEmail") || "user";
                 const today = new Date().toISOString().split("T")[0];
                 analyticsService.trackEvent({
                   type: "view",

@@ -214,7 +214,9 @@ export default function Dashboard() {
     null,
   );
   const [showPreRollAd, setShowPreRollAd] = useState(false);
-  const [fullscreenMedia, setFullscreenMedia] = useState<MediaItem | null>(null);
+  const [fullscreenMedia, setFullscreenMedia] = useState<MediaItem | null>(
+    null,
+  );
   const [shareVisibility, setShareVisibility] = useState<
     "personal" | "bonded-contacts" | "community"
   >("community");
@@ -1687,7 +1689,8 @@ export default function Dashboard() {
                   setShowPreRollAd(false);
                   // Track view after ad completes
                   if (fullscreenMedia) {
-                    const userEmail = localStorage.getItem("userEmail") || "user";
+                    const userEmail =
+                      localStorage.getItem("userEmail") || "user";
                     const today = new Date().toISOString().split("T")[0];
                     analyticsService.trackEvent({
                       type: "view",

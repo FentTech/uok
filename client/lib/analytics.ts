@@ -98,7 +98,11 @@ export const analyticsService = {
       };
       events.push(newEvent);
       localStorage.setItem(ANALYTICS_STORAGE_KEY, JSON.stringify(events));
-      console.log("✅ Analytics event tracked:", newEvent.type, newEvent.targetId);
+      console.log(
+        "✅ Analytics event tracked:",
+        newEvent.type,
+        newEvent.targetId,
+      );
     } catch (error) {
       console.error("❌ Failed to track analytics event:", error);
     }
@@ -116,7 +120,10 @@ export const analyticsService = {
   },
 
   // Get events for a specific date range
-  getEventsByDateRange: (startDate: string, endDate: string): AnalyticsEvent[] => {
+  getEventsByDateRange: (
+    startDate: string,
+    endDate: string,
+  ): AnalyticsEvent[] => {
     const allEvents = analyticsService.getAllEvents();
     return allEvents.filter((event) => {
       return event.date >= startDate && event.date <= endDate;
@@ -144,11 +151,15 @@ export const analyticsService = {
     const totalLikes = events.filter((e) => e.type === "like").length;
     const totalComments = events.filter((e) => e.type === "comment").length;
     const totalShares = events.filter((e) => e.type === "share").length;
-    const totalAdImpressions = events.filter((e) => e.type === "ad-impression").length;
+    const totalAdImpressions = events.filter(
+      (e) => e.type === "ad-impression",
+    ).length;
     const totalAdClicks = events.filter((e) => e.type === "ad-click").length;
 
-    const engagementRate = totalViews > 0 ? ((totalLikes + totalComments) / totalViews) * 100 : 0;
-    const adClickThroughRate = totalAdImpressions > 0 ? (totalAdClicks / totalAdImpressions) * 100 : 0;
+    const engagementRate =
+      totalViews > 0 ? ((totalLikes + totalComments) / totalViews) * 100 : 0;
+    const adClickThroughRate =
+      totalAdImpressions > 0 ? (totalAdClicks / totalAdImpressions) * 100 : 0;
 
     return {
       totalViews,
@@ -166,7 +177,13 @@ export const analyticsService = {
   getTopMemories: (
     events: AnalyticsEvent[],
     limit: number = 5,
-  ): Array<{ id: string; caption: string; views: number; likes: number; comments: number }> => {
+  ): Array<{
+    id: string;
+    caption: string;
+    views: number;
+    likes: number;
+    comments: number;
+  }> => {
     const memoryMetrics: Record<
       string,
       { views: number; likes: number; comments: number; caption?: string }
@@ -182,7 +199,8 @@ export const analyticsService = {
       }
       if (event.type === "view") memoryMetrics[event.targetId].views++;
       else if (event.type === "like") memoryMetrics[event.targetId].likes++;
-      else if (event.type === "comment") memoryMetrics[event.targetId].comments++;
+      else if (event.type === "comment")
+        memoryMetrics[event.targetId].comments++;
     });
 
     return Object.entries(memoryMetrics)
@@ -193,7 +211,10 @@ export const analyticsService = {
         likes: metrics.likes,
         comments: metrics.comments,
       }))
-      .sort((a, b) => b.views + b.likes + b.comments - (a.views + a.likes + a.comments))
+      .sort(
+        (a, b) =>
+          b.views + b.likes + b.comments - (a.views + a.likes + a.comments),
+      )
       .slice(0, limit);
   },
 
@@ -201,7 +222,13 @@ export const analyticsService = {
   getTopAds: (
     events: AnalyticsEvent[],
     limit: number = 5,
-  ): Array<{ id: string; title: string; impressions: number; clicks: number; ctr: number }> => {
+  ): Array<{
+    id: string;
+    title: string;
+    impressions: number;
+    clicks: number;
+    ctr: number;
+  }> => {
     const adMetrics: Record<
       string,
       { impressions: number; clicks: number; title?: string }
@@ -216,7 +243,8 @@ export const analyticsService = {
             title: event.metadata?.adTitle,
           };
         }
-        if (event.type === "ad-impression") adMetrics[event.targetId].impressions++;
+        if (event.type === "ad-impression")
+          adMetrics[event.targetId].impressions++;
         else if (event.type === "ad-click") adMetrics[event.targetId].clicks++;
       }
     });
@@ -227,7 +255,10 @@ export const analyticsService = {
         title: metrics.title || "Unnamed Ad",
         impressions: metrics.impressions,
         clicks: metrics.clicks,
-        ctr: metrics.impressions > 0 ? (metrics.clicks / metrics.impressions) * 100 : 0,
+        ctr:
+          metrics.impressions > 0
+            ? (metrics.clicks / metrics.impressions) * 100
+            : 0,
       }))
       .sort((a, b) => b.ctr - a.ctr)
       .slice(0, limit);

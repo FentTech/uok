@@ -11,12 +11,23 @@ import {
   Zap,
   X,
 } from "lucide-react";
-import { analyticsService, DEMO_ADS, type WeeklyReport } from "../lib/analytics";
+import {
+  analyticsService,
+  DEMO_ADS,
+  type WeeklyReport,
+} from "../lib/analytics";
 
 export default function AnalyticsDashboard() {
   const [weeklyReport, setWeeklyReport] = useState<WeeklyReport | null>(null);
-  const [adStats, setAdStats] = useState({ totalImpressions: 0, totalClicks: 0, ctr: 0 });
-  const [memoryStats, setMemoryStats] = useState({ totalViews: 0, totalEngagement: 0 });
+  const [adStats, setAdStats] = useState({
+    totalImpressions: 0,
+    totalClicks: 0,
+    ctr: 0,
+  });
+  const [memoryStats, setMemoryStats] = useState({
+    totalViews: 0,
+    totalEngagement: 0,
+  });
   const [reportSent, setReportSent] = useState(false);
   const [testMode, setTestMode] = useState(false);
 
@@ -158,7 +169,9 @@ export default function AnalyticsDashboard() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <BarChart3 className="w-6 h-6 text-purple-400" />
-            <h1 className="text-2xl font-bold text-white">Analytics Dashboard</h1>
+            <h1 className="text-2xl font-bold text-white">
+              Analytics Dashboard
+            </h1>
           </div>
           <Link
             to="/dashboard"
@@ -237,7 +250,9 @@ export default function AnalyticsDashboard() {
           {/* Views */}
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-purple-300/80 text-sm font-medium">Total Views</h3>
+              <h3 className="text-purple-300/80 text-sm font-medium">
+                Total Views
+              </h3>
               <Eye className="w-5 h-5 text-purple-400" />
             </div>
             <p className="text-3xl font-bold text-white">
@@ -251,35 +266,37 @@ export default function AnalyticsDashboard() {
           {/* Likes */}
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-purple-300/80 text-sm font-medium">Total Likes</h3>
+              <h3 className="text-purple-300/80 text-sm font-medium">
+                Total Likes
+              </h3>
               <Heart className="w-5 h-5 text-red-400" />
             </div>
             <p className="text-3xl font-bold text-white">
               {weeklyReport.metrics.totalLikes}
             </p>
-            <p className="text-xs text-purple-300/60 mt-2">
-              Likes received
-            </p>
+            <p className="text-xs text-purple-300/60 mt-2">Likes received</p>
           </div>
 
           {/* Comments */}
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-purple-300/80 text-sm font-medium">Total Comments</h3>
+              <h3 className="text-purple-300/80 text-sm font-medium">
+                Total Comments
+              </h3>
               <MessageCircle className="w-5 h-5 text-blue-400" />
             </div>
             <p className="text-3xl font-bold text-white">
               {weeklyReport.metrics.totalComments}
             </p>
-            <p className="text-xs text-purple-300/60 mt-2">
-              Comments received
-            </p>
+            <p className="text-xs text-purple-300/60 mt-2">Comments received</p>
           </div>
 
           {/* Engagement Rate */}
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-purple-300/80 text-sm font-medium">Engagement Rate</h3>
+              <h3 className="text-purple-300/80 text-sm font-medium">
+                Engagement Rate
+              </h3>
               <TrendingUp className="w-5 h-5 text-green-400" />
             </div>
             <p className="text-3xl font-bold text-white">
@@ -361,13 +378,17 @@ export default function AnalyticsDashboard() {
 
           {/* Top Ads */}
           <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-white mb-6">Top Performing Ads</h3>
+            <h3 className="text-xl font-bold text-white mb-6">
+              Top Performing Ads
+            </h3>
             <div className="space-y-3">
               {weeklyReport.topAds.length > 0 ? (
                 weeklyReport.topAds.map((ad) => (
                   <div key={ad.id} className="p-3 bg-purple-500/10 rounded-lg">
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold text-white text-sm">{ad.title}</h4>
+                      <h4 className="font-semibold text-white text-sm">
+                        {ad.title}
+                      </h4>
                       <span className="text-green-400 font-bold text-sm">
                         {ad.ctr.toFixed(1)}% CTR
                       </span>
@@ -387,14 +408,21 @@ export default function AnalyticsDashboard() {
 
         {/* Top Memories */}
         <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-lg p-6 mb-8">
-          <h3 className="text-xl font-bold text-white mb-6">Top Performing Memories</h3>
+          <h3 className="text-xl font-bold text-white mb-6">
+            Top Performing Memories
+          </h3>
           <div className="space-y-3">
             {weeklyReport.topMemories.length > 0 ? (
               weeklyReport.topMemories.map((memory, idx) => (
-                <div key={memory.id} className="p-3 bg-purple-500/10 rounded-lg">
+                <div
+                  key={memory.id}
+                  className="p-3 bg-purple-500/10 rounded-lg"
+                >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-3">
-                      <span className="font-bold text-purple-400">#{idx + 1}</span>
+                      <span className="font-bold text-purple-400">
+                        #{idx + 1}
+                      </span>
                       <span className="font-semibold text-white line-clamp-1">
                         {memory.caption}
                       </span>
@@ -408,7 +436,8 @@ export default function AnalyticsDashboard() {
                       <Heart className="w-4 h-4" /> {memory.likes} likes
                     </span>
                     <span className="flex items-center gap-1">
-                      <MessageCircle className="w-4 h-4" /> {memory.comments} comments
+                      <MessageCircle className="w-4 h-4" /> {memory.comments}{" "}
+                      comments
                     </span>
                   </div>
                 </div>
@@ -421,7 +450,9 @@ export default function AnalyticsDashboard() {
 
         {/* Send Report */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-white mb-2">Weekly Email Report</h3>
+          <h3 className="text-xl font-bold text-white mb-2">
+            Weekly Email Report
+          </h3>
           <p className="text-white/80 mb-4">
             Send this week's analytics to your email address
           </p>
