@@ -1,209 +1,169 @@
 import { useState, useEffect } from "react";
-import { AlertCircle, ExternalLink } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
+import { analyticsService, DEMO_ADS } from "../lib/analytics";
 
 interface Ad {
   id: string;
-  partnerId: string;
-  partnerName: string;
-  adType: "image" | "video" | "text";
-  content: string;
   title: string;
-  expiresAt: string;
-  createdAt: string;
-  views: number;
-  active: boolean;
+  description: string;
+  image: string;
+  cta: string;
+  type: "promotion" | "feature";
 }
 
-export default function RotatingAds() {
-  const [ads, setAds] = useState<Ad[]>([]);
+interface RotatingAdsProps {
+  ads?: Ad[];
+  autoRotateInterval?: number; // milliseconds, default 2000 (2 seconds)
+  height?: string;
+  onAdClick?: (ad: Ad) => void;
+}
+
+export default function RotatingAds({
+  ads = DEMO_ADS,
+  autoRotateInterval = 2000,
+  height = "h-32",
+  onAdClick,
+}: RotatingAdsProps) {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const currentAd = ads.length > 0 ? ads[currentAdIndex] : null;
+  const [isVisible, setIsVisible] = useState(true);
 
-  // Load active ads from localStorage (only images on dashboard, only paid partners)
+  const currentAd = ads[currentAdIndex];
+
+  // Auto-rotate ads
   useEffect(() => {
-    const loadAds = () => {
-      const featured = localStorage.getItem("featuredPartners");
-      if (featured) {
-        try {
-          const partners = JSON.parse(featured);
-          // Get all active IMAGE ads from PAID partners ONLY
-          const activeAds: Ad[] = [];
-          partners.forEach((partner: any) => {
-            // CRITICAL: Only load ads from partners with confirmed payment
-            if (
-              partner.paymentStatus === "paid" &&
-              partner.paymentId &&
-              partner.ads
-            ) {
-              partner.ads.forEach((ad: Ad) => {
-                // Only include IMAGE type ads that are active
-                // Exclude: videos, text, unpaid ads
-                if (ad.active && ad.adType === "image") {
-                  activeAds.push(ad);
-                }
-              });
-            }
-          });
-          setAds(activeAds);
-          console.log(
-            `✅ Loaded ${activeAds.length} verified ads from ${partners.filter((p: any) => p.paymentStatus === "paid" && p.paymentId).length} paid partners`,
-          );
-        } catch (e) {
-          console.error("Error loading ads:", e);
-        }
-      }
-    };
+    if (!isVisible) return;
 
-    loadAds();
-  }, []);
-
-  // Rotate ads every 2 seconds
-  useEffect(() => {
-    if (ads.length === 0) return;
-
-    const interval = setInterval(() => {
+    const timer = setInterval(() => {
       setCurrentAdIndex((prev) => (prev + 1) % ads.length);
-    }, 2000);
+    }, autoRotateInterval);
 
-    return () => clearInterval(interval);
-  }, [ads.length]);
+    return () => clearInterval(timer);
+  }, [ads.length, autoRotateInterval, isVisible]);
 
-  // Track view
+  // Track ad impression when it changes
   useEffect(() => {
-    if (currentAd && ads.length > 0) {
-      // Update view count in localStorage
-      const featured = localStorage.getItem("featuredPartners");
-      if (featured) {
-        try {
-          const partners = JSON.parse(featured);
-          const updated = partners.map((partner: any) => {
-            if (partner.id === currentAd.partnerId) {
-              return {
-                ...partner,
-                totalViews: (partner.totalViews || 0) + 1,
-                ads: partner.ads.map((ad: Ad) => {
-                  if (ad.id === currentAd.id) {
-                    return { ...ad, views: (ad.views || 0) + 1 };
-                  }
-                  return ad;
-                }),
-              };
-            }
-            return partner;
-          });
-          localStorage.setItem("featuredPartners", JSON.stringify(updated));
-        } catch (e) {
-          console.error("Error tracking view:", e);
-        }
-      }
+    if (currentAd && isVisible) {
+      const userEmail = localStorage.getItem("userEmail") || "user";
+      const today = new Date().toISOString().split("T")[0];
+
+      analyticsService.trackEvent({
+        type: "ad-impression",
+        targetId: currentAd.id,
+        targetType: "ad",
+        userEmail,
+        timestamp: new Date().toISOString(),
+        date: today,
+        metadata: {
+          adTitle: currentAd.title,
+          adType: currentAd.type,
+        },
+      });
     }
-  }, [currentAdIndex]);
+  }, [currentAdIndex, currentAd, isVisible]);
 
-  if (!currentAd || ads.length === 0) {
-    return null;
-  }
+  const handleAdClick = () => {
+    const userEmail = localStorage.getItem("userEmail") || "user";
+    const today = new Date().toISOString().split("T")[0];
 
-  // Try to get ad content from sessionStorage
-  const getAdContent = () => {
-    if (currentAd.content) return currentAd.content;
-    // Try sessionStorage as fallback
-    try {
-      return sessionStorage.getItem(`ad_content_${currentAd.id}`) || "";
-    } catch (e) {
-      return "";
+    // Track ad click
+    analyticsService.trackEvent({
+      type: "ad-click",
+      targetId: currentAd.id,
+      targetType: "ad",
+      userEmail,
+      timestamp: new Date().toISOString(),
+      date: today,
+      metadata: {
+        adTitle: currentAd.title,
+        adType: currentAd.type,
+      },
+    });
+
+    // Call external handler if provided
+    if (onAdClick) {
+      onAdClick(currentAd);
     }
   };
 
-  const adContent = getAdContent();
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  if (!isVisible || ads.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 backdrop-blur-xl border border-amber-400/30 rounded-2xl p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          {currentAd.adType === "text" ? (
-            <div>
-              <h3 className="text-lg font-bold text-amber-50 mb-2">
-                {currentAd.title}
-              </h3>
-              <p className="text-amber-200/80 text-sm mb-3">
-                {adContent || "Ad content"}
-              </p>
-              <p className="text-amber-400/60 text-xs">
-                by {currentAd.partnerName}
-              </p>
-            </div>
-          ) : currentAd.adType === "image" && adContent ? (
-            <div>
-              <img
-                src={adContent}
-                alt={currentAd.title}
-                className="w-full h-40 object-cover rounded-lg mb-3"
-              />
-              <h3 className="text-lg font-bold text-amber-50 mb-1">
-                {currentAd.title}
-              </h3>
-              <p className="text-amber-400/60 text-xs">
-                by {currentAd.partnerName}
-              </p>
-            </div>
-          ) : !adContent ? (
-            <div className="bg-gradient-to-br from-amber-600 to-orange-600 rounded-lg p-8 text-center">
-              <h3 className="text-lg font-bold text-white mb-2">
-                {currentAd.title}
-              </h3>
-              <p className="text-amber-100 text-sm">
-                Ad by {currentAd.partnerName}
-              </p>
-            </div>
-          ) : (
-            <div>
-              <video
-                src={adContent}
-                controls
-                className="w-full h-40 object-cover rounded-lg mb-3"
-              />
-              <h3 className="text-lg font-bold text-amber-50 mb-1">
-                {currentAd.title}
-              </h3>
-              <p className="text-amber-400/60 text-xs">
-                by {currentAd.partnerName}
-              </p>
-            </div>
-          )}
-        </div>
+    <div
+      className={`${height} bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg p-4 flex items-center justify-between shadow-lg relative group overflow-hidden`}
+    >
+      {/* Close button */}
+      <button
+        onClick={handleClose}
+        className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 hover:bg-white/40 rounded p-1"
+        title="Close ad"
+      >
+        <X size={16} className="text-white" />
+      </button>
 
-        {/* Ad Info */}
-        <div className="flex flex-col gap-2">
-          <a
-            href="https://paypal.me/AFenteng/1000"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium text-sm transition flex items-center gap-2"
-          >
-            Become a Partner
-            <ExternalLink className="w-3 h-3" />
-          </a>
+      {/* Ad Content */}
+      <div className="flex items-center gap-4 flex-1 pr-8">
+        {/* Ad Image/Icon */}
+        <div className="text-4xl flex-shrink-0 select-none">{currentAd.image}</div>
 
-          {/* Ad Rotation Indicator */}
-          <div className="text-right">
-            <p className="text-amber-400/60 text-xs">
-              Ad {currentAdIndex + 1} of {ads.length}
-            </p>
-            <div className="flex gap-1 mt-1">
-              {ads.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`h-1 rounded-full transition ${
-                    idx === currentAdIndex
-                      ? "bg-amber-400 w-4"
-                      : "bg-amber-400/30 w-2"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+        {/* Ad Text */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-white text-sm lg:text-base truncate">
+            {currentAd.title}
+          </h3>
+          <p className="text-white/80 text-xs lg:text-sm line-clamp-1">
+            {currentAd.description}
+          </p>
         </div>
       </div>
+
+      {/* CTA Button */}
+      <button
+        onClick={handleAdClick}
+        className="flex-shrink-0 bg-white/30 hover:bg-white/50 text-white font-semibold py-2 px-3 rounded flex items-center gap-1 text-xs lg:text-sm transition-colors whitespace-nowrap"
+      >
+        {currentAd.cta}
+        <ChevronRight size={16} />
+      </button>
+
+      {/* Ad Indicator Dots */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5">
+        {ads.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentAdIndex(index)}
+            className={`transition-all rounded-full ${
+              index === currentAdIndex
+                ? "bg-white w-2 h-2"
+                : "bg-white/40 hover:bg-white/60 w-1.5 h-1.5"
+            }`}
+            title={`Go to ad ${index + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Animation indicator */}
+      <div className="absolute bottom-0 left-0 h-0.5 bg-white/40">
+        <div
+          className="h-full bg-white transition-all"
+          style={{
+            width: "100%",
+            animation: `progress ${autoRotateInterval}ms linear`,
+          }}
+        />
+      </div>
+
+      <style>{`
+        @keyframes progress {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+      `}</style>
     </div>
   );
 }
