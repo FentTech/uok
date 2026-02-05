@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
 import RotatingAds from "../components/RotatingAds";
+import MediaPreRollAd from "../components/MediaPreRollAd";
 import { analyticsService } from "../lib/analytics";
 import {
   mediaStorage,
