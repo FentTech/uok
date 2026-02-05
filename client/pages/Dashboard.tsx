@@ -526,12 +526,12 @@ export default function Dashboard() {
             "ℹ️ No bonded contacts found. Initializing demo data for testing...",
           );
           initializeDemoData();
-          loadDemoBondedContacts();
+          loadDemoBondedContacts(setBondedContacts);
         }
       } catch (error) {
         console.error("Error loading user data from Supabase:", error);
         // Fall back to using what's in localStorage
-        loadDemoBondedContacts();
+        loadDemoBondedContacts(setBondedContacts);
       }
     };
 
