@@ -144,8 +144,13 @@ const initializeDemoData = () => {
     },
   ];
 
-  localStorage.setItem("bondedContacts", JSON.stringify(demoBondedContacts));
-  console.log("✅ Demo bonded contacts created:", demoBondedContacts);
+  try {
+    localStorage.setItem("bondedContacts", JSON.stringify(demoBondedContacts));
+    console.log("✅ Demo bonded contacts created:", demoBondedContacts);
+  } catch (error) {
+    console.error("Failed to save demo bonded contacts to localStorage:", error);
+    return;
+  }
 
   // Create demo check-ins for each bonded contact
   const today = new Date().toLocaleDateString("en-US", {
