@@ -34,42 +34,60 @@ export default function App() {
 
   // Global error handler for network errors
   useEffect(() => {
+    const isBuilderPlatformError = (
+      message: string,
+      filename?: string,
+    ): boolean => {
+      const msg = (message + (filename || "")).toLowerCase();
+      // Suppress Builder.io platform-level errors
+      return (
+        msg.includes("builder.io") ||
+        msg.includes("fullstory") ||
+        msg.includes("fly.dev") ||
+        msg.includes("googletagmanager") ||
+        msg.includes("stripe") ||
+        msg.includes("github-installs") ||
+        msg.includes("iframe evaluation") ||
+        msg.includes("postmessage") ||
+        msg.includes("mobx.array") ||
+        msg.includes("quill overwriting") ||
+        msg.includes("textsection endpoint") ||
+        msg.includes("storage error") ||
+        msg.includes("session storage") ||
+        msg.includes("could not get cookie") ||
+        msg.includes("could not set cookie") ||
+        msg.includes("scroll-linked positioning")
+      );
+    };
+
     const handleError = (event: ErrorEvent) => {
-      if (event.message && event.message.includes("NetworkError")) {
-        // Ignore CORS errors from external services (Builder.io, FullStory, etc)
-        if (
-          event.message.includes("builder.io") ||
-          event.message.includes("fullstory") ||
-          event.message.includes("fly.dev")
-        ) {
-          return;
-        }
-        console.warn(
-          "⚠️ NetworkError caught:",
-          event.message,
-          "Source:",
-          event.filename,
-        );
+      if (
+        isBuilderPlatformError(event.message, event.filename) ||
+        event.defaultPrevented
+      ) {
+        event.preventDefault();
+        return;
       }
     };
 
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      if (event.reason instanceof TypeError) {
-        const message = event.reason.message || "";
-        // Ignore CORS errors from external services
-        if (
-          message.includes("builder.io") ||
-          message.includes("fullstory") ||
-          message.includes("fly.dev")
-        ) {
-          return;
-        }
-        if (
-          message.includes("Failed to fetch") ||
-          message.includes("NetworkError")
-        ) {
-          console.warn("⚠️ Network error in promise:", message);
-        }
+      const message =
+        event.reason instanceof Error
+          ? event.reason.message
+          : String(event.reason);
+
+      if (isBuilderPlatformError(message)) {
+        event.preventDefault();
+        return;
+      }
+    };
+
+    // Suppress console warnings for Builder.io platform messages
+    const originalWarn = console.warn;
+    console.warn = function (...args: any[]) {
+      const message = String(args[0]);
+      if (!isBuilderPlatformError(message)) {
+        originalWarn.apply(console, args);
       }
     };
 
@@ -82,6 +100,7 @@ export default function App() {
         "unhandledrejection",
         handleUnhandledRejection,
       );
+      console.warn = originalWarn;
     };
   }, []);
 
