@@ -416,5 +416,3 @@ export default function AdvertiserAnalytics() {
     </div>
   );
 }
-
-import { Lock } from "lucide-react";
