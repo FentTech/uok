@@ -390,10 +390,7 @@ export default function Dashboard() {
             }
           })
           .catch((error) => {
-            console.warn(
-              "⚠️ Could not save notification to Supabase:",
-              error,
-            );
+            console.warn("⚠️ Could not save notification to Supabase:", error);
           });
       }
     });
@@ -638,9 +635,7 @@ export default function Dashboard() {
       if (!userEmail) return;
 
       try {
-        const { supabaseNotificationService } = await import(
-          "../lib/supabase"
-        );
+        const { supabaseNotificationService } = await import("../lib/supabase");
         const supabaseNotifications =
           await supabaseNotificationService.getNotifications(userEmail, 50);
 
@@ -672,10 +667,7 @@ export default function Dashboard() {
           });
         }
       } catch (error) {
-        console.warn(
-          "⚠️ Failed to load notifications from Supabase:",
-          error,
-        );
+        console.warn("⚠️ Failed to load notifications from Supabase:", error);
       }
     };
 
