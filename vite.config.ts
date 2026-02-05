@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
+      external: ["firebase/app", "firebase/firestore"],
     },
   },
   publicDir: "public",
