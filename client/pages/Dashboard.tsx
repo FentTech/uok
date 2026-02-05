@@ -1212,25 +1212,34 @@ export default function Dashboard() {
 
               <div className="space-y-3">
                 {bondedCheckIns && bondedCheckIns.length > 0 ? (
-                  bondedCheckIns.map((checkIn) => (
-                    <div
-                      key={checkIn.id}
-                      className="flex items-center gap-3 p-3 bg-purple-500/10 rounded-lg border border-purple-400/20 hover:border-purple-400/40 transition"
-                    >
-                      <span className="text-2xl">{checkIn.emoji}</span>
-                      <div className="flex-1">
-                        <p className="font-semibold text-purple-100 text-sm">
-                          {checkIn.userName}
-                        </p>
-                        <p className="text-xs text-purple-300">
-                          {checkIn.mood}
-                        </p>
-                        <p className="text-xs text-purple-400/60">
-                          {checkIn.timestamp}
-                        </p>
+                  bondedCheckIns.map((checkIn) => {
+                    // Get the current name from bonded contacts, fallback to stored name
+                    const currentContact = bondedContacts.find(
+                      (c) => c.email === checkIn.userEmail,
+                    );
+                    const displayName = currentContact?.name || checkIn.userName;
+                    const displayEmoji = currentContact?.emoji || checkIn.emoji;
+
+                    return (
+                      <div
+                        key={checkIn.id}
+                        className="flex items-center gap-3 p-3 bg-purple-500/10 rounded-lg border border-purple-400/20 hover:border-purple-400/40 transition"
+                      >
+                        <span className="text-2xl">{displayEmoji}</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-purple-100 text-sm">
+                            {displayName}
+                          </p>
+                          <p className="text-xs text-purple-300">
+                            {checkIn.mood}
+                          </p>
+                          <p className="text-xs text-purple-400/60">
+                            {checkIn.timestamp}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className="space-y-3">
                     <p className="text-purple-300/80 text-sm">
