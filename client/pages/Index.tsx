@@ -101,18 +101,18 @@ export default function Index() {
       </div>
 
       {/* Features Section */}
-      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 border-y border-cyan-100">
+      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-200">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16">
+          <h2 className="text-4xl font-bold text-center mb-16 text-black">
             Why Choose{" "}
-            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-blue-600">
               UOK?
             </span>
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl border border-cyan-200 hover:shadow-lg transition">
-              <Clock className="w-10 h-10 text-cyan-600 mb-4" />
+            <div className="p-8 bg-blue-50 rounded-2xl border border-blue-200 hover:shadow-lg transition">
+              <Clock className="w-10 h-10 text-blue-600 mb-4" />
               <h3 className="text-xl font-bold mb-3 text-slate-900">
                 Daily Check-ins
               </h3>
