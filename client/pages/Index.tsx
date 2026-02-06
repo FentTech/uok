@@ -177,9 +177,9 @@ export default function Index() {
       {/* How It Works */}
       <div className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16">
+          <h2 className="text-4xl font-bold text-center mb-16 text-black">
             How It{" "}
-            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-blue-600">
               Works
             </span>
           </h2>
