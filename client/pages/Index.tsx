@@ -39,23 +39,23 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-blue-600">
                   Check In,
                 </span>
                 <br />
-                <span className="text-slate-900">Stay Connected</span>
+                <span className="text-black">Stay Connected</span>
               </h1>
-              <p className="text-xl text-slate-600 mb-8 leading-relaxed">
+              <p className="text-xl text-slate-700 mb-8 leading-relaxed">
                 UOK is your daily wellness companion. Check in 2-3 times a day to let your loved ones know you're okay. Express how you're feeling with emojis and stay connected with those who matter most.
               </p>
               <div className="flex gap-4">
                 <Link
                   to="/signup"
-                  className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:shadow-xl hover:shadow-cyan-200 transition font-semibold"
+                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
                 >
                   Get Started
                 </Link>
-                <button className="px-8 py-3 border-2 border-slate-300 text-slate-700 rounded-lg hover:border-cyan-400 hover:text-cyan-600 transition font-semibold">
+                <button className="px-8 py-3 border-2 border-slate-300 text-black rounded-lg hover:border-blue-600 hover:text-blue-600 transition font-semibold">
                   Learn More
                 </button>
               </div>
@@ -63,20 +63,20 @@ export default function Index() {
 
             {/* Hero Visual */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-2xl blur-3xl opacity-20"></div>
-              <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-cyan-100">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl blur-3xl opacity-10"></div>
+              <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-blue-100">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-cyan-50 rounded-lg">
-                    <div className="w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center text-xl">
+                  <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
+                    <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-xl">
                       😊
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">Morning Check-in</p>
-                      <p className="text-sm text-slate-600">Feeling great today!</p>
+                      <p className="font-semibold text-black">Morning Check-in</p>
+                      <p className="text-sm text-slate-700">Feeling great today!</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg">
-                    <div className="w-12 h-12 bg-purple-400 rounded-full flex items-center justify-center text-xl">
+                  <div className="flex items-center gap-3 p-4 bg-slate-100 rounded-lg">
+                    <div className="w-12 h-12 bg-slate-400 rounded-full flex items-center justify-center text-xl">
                       🎉
                     </div>
                     <div>
