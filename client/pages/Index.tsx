@@ -278,10 +278,10 @@ export default function Index() {
             ))}
           </div>
 
-          <div className="bg-gradient-to-r from-purple-50 to-cyan-50 rounded-2xl border border-purple-200 p-8 text-center">
+          <div className="bg-blue-50 rounded-2xl border border-blue-200 p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Music className="w-6 h-6 text-purple-600" />
-              <h3 className="text-xl font-bold text-slate-900">Personalized Playlists</h3>
+              <Music className="w-6 h-6 text-blue-600" />
+              <h3 className="text-xl font-bold text-black">Personalized Playlists</h3>
             </div>
             <p className="text-slate-700 max-w-2xl mx-auto">
               Every mood is valid, and music can help. When you check in with your mood, we'll suggest inspiring songs tailored to how you're feeling. Use music as a tool for wellness and self-expression.
