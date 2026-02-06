@@ -264,13 +264,13 @@ export default function Index() {
                 key={moodCategory.mood}
                 className={`bg-gradient-to-br ${moodCategory.gradient} rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition`}
               >
-                <h3 className="text-xl font-bold text-slate-900 mb-4">{moodCategory.mood} Vibes</h3>
+                <h3 className="text-xl font-bold text-black mb-4">{moodCategory.mood} Vibes</h3>
                 <div className="space-y-3">
                   {moodSongs[moodCategory.mood]?.slice(0, 2).map((song, idx) => (
                     <div key={idx} className="bg-white rounded-lg p-3">
-                      <p className="font-medium text-slate-900 text-sm">{song.title}</p>
-                      <p className="text-xs text-slate-600">{song.artist}</p>
-                      <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
+                      <p className="font-medium text-black text-sm">{song.title}</p>
+                      <p className="text-xs text-slate-700">{song.artist}</p>
+                      <p className="text-xs text-blue-600 mt-1">{song.vibe}</p>
                     </div>
                   ))}
                 </div>
