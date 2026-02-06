@@ -186,11 +186,11 @@ export default function Index() {
 
           <div className="space-y-8">
             <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              <div className="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
                 1
               </div>
               <div>
-                <h3 className="text-xl font-bold mb-2 text-slate-900">
+                <h3 className="text-xl font-bold mb-2 text-black">
                   Sign Up
                 </h3>
                 <p className="text-slate-700">
