@@ -28,9 +28,10 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 export default function App() {
-  // Initialize demo advertiser on app load
+  // Initialize demo advertiser and visitor tracking on app load
   useEffect(() => {
     advertiserAuthService.initializeDemoAdvertiser();
+    visitorTracking.initialize();
   }, []);
 
   // Global error handler for network errors
