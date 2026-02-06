@@ -1411,33 +1411,33 @@ export default function Dashboard() {
                   <div className="p-3 sm:p-4 border-b border-blue-400/20 flex-shrink-0">
                     <h3 className="text-blue-100 font-bold text-sm sm:text-base">Notifications</h3>
                   </div>
-                  <div className="max-h-96 overflow-y-auto">
+                  <div className="overflow-y-auto flex-1">
                     {notifications.length > 0 ? (
                       notifications.slice(0, 10).map((notif) => (
                         <div
                           key={notif.id}
-                          className="px-4 py-3 border-b border-cyan-400/10 hover:bg-white/5 transition"
+                          className="px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-400/10 hover:bg-white/5 transition"
                         >
-                          <p className="text-cyan-300 text-sm font-medium">
+                          <p className="text-blue-300 text-xs sm:text-sm font-medium line-clamp-2">
                             {notif.message}
                           </p>
-                          <p className="text-cyan-500/60 text-xs mt-1">
+                          <p className="text-blue-500/60 text-xs mt-1">
                             {notif.timestamp}
                           </p>
                         </div>
                       ))
                     ) : (
-                      <div className="px-4 py-6 text-center text-cyan-400/60">
+                      <div className="px-3 sm:px-4 py-6 text-center text-blue-400/60 text-sm">
                         No notifications yet
                       </div>
                     )}
                   </div>
-                  <div className="p-3 border-t border-cyan-400/20">
+                  <div className="p-2 sm:p-3 border-t border-blue-400/20 flex-shrink-0">
                     <Link
                       to="/bond-notifications"
-                      className="block text-center text-cyan-400 hover:text-cyan-300 text-sm font-medium hover:bg-white/5 py-2 rounded-lg transition"
+                      className="block text-center text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium hover:bg-white/5 py-2 rounded-lg transition"
                     >
-                      View all notifications
+                      View all
                     </Link>
                   </div>
                 </div>
