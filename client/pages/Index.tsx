@@ -291,17 +291,17 @@ export default function Index() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-cyan-500 via-cyan-400 to-purple-500">
+      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-black">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Start Your Wellness Journey Today
           </h2>
-          <p className="text-xl text-cyan-50 mb-8">
+          <p className="text-xl text-slate-300 mb-8">
             Join thousands of people staying connected and keeping their loved ones assured.
           </p>
           <Link
             to="/signup"
-            className="inline-block px-10 py-4 bg-white text-cyan-600 font-bold rounded-lg hover:shadow-2xl hover:scale-105 transition"
+            className="inline-block px-10 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
           >
             Create Your Free Account
           </Link>
