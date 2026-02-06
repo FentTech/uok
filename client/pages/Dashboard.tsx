@@ -1395,7 +1395,7 @@ export default function Dashboard() {
                 onClick={() =>
                   setNotificationDropdownOpen(!notificationDropdownOpen)
                 }
-                className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400 relative"
+                className="p-2 hover:bg-white/10 rounded-lg transition text-blue-400 relative"
               >
                 <Bell className="w-6 h-6" />
                 {notifications.length > 0 && (
