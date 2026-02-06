@@ -342,12 +342,12 @@ export default function Index() {
               <h4 className="font-semibold text-white mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
+                  <a href="#" className="hover:text-blue-400 transition">
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
+                  <a href="#" className="hover:text-blue-400 transition">
                     Contact
                   </a>
                 </li>
@@ -357,12 +357,12 @@ export default function Index() {
               <h4 className="font-semibold text-white mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
+                  <a href="#" className="hover:text-blue-400 transition">
                     Privacy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
+                  <a href="#" className="hover:text-blue-400 transition">
                     Terms
                   </a>
                 </li>
