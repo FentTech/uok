@@ -161,9 +161,9 @@ export default function Index() {
               </p>
             </div>
 
-            <div className="p-8 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl border border-purple-200 hover:shadow-lg transition">
-              <TrendingUp className="w-10 h-10 text-purple-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
+            <div className="p-8 bg-slate-100 rounded-2xl border border-slate-300 hover:shadow-lg transition">
+              <TrendingUp className="w-10 h-10 text-blue-600 mb-4" />
+              <h3 className="text-xl font-bold mb-3 text-black">
                 Wellness Insights
               </h3>
               <p className="text-slate-700">
