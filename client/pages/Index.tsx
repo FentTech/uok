@@ -247,8 +247,8 @@ export default function Index() {
       {/* Inspiration Songs Section */}
       <div className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16">
-            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold text-center mb-16 text-black">
+            <span className="text-blue-600">
               Music for Every Mood
             </span>
           </h2>
