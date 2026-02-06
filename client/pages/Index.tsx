@@ -131,9 +131,9 @@ export default function Index() {
               </p>
             </div>
 
-            <div className="p-8 bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl border border-cyan-200 hover:shadow-lg transition">
-              <Heart className="w-10 h-10 text-cyan-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
+            <div className="p-8 bg-blue-50 rounded-2xl border border-blue-200 hover:shadow-lg transition">
+              <Heart className="w-10 h-10 text-blue-600 mb-4" />
+              <h3 className="text-xl font-bold mb-3 text-black">
                 Express Yourself
               </h3>
               <p className="text-slate-700">
