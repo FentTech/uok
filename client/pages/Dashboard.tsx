@@ -1377,13 +1377,13 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-900 to-slate-950">
       {/* Top Navigation - Futuristic Glassmorphism */}
-      <nav className="bg-white/10 backdrop-blur-xl border-b border-cyan-400/20 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/50 group-hover:shadow-blue-600/100 transition">
-              <Heart className="w-6 h-6 text-white" />
+      <nav className="bg-white/10 backdrop-blur-xl border-b border-blue-400/20 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-2 sm:py-4 flex justify-between items-center gap-2">
+          <Link to="/" className="flex items-center gap-1 sm:gap-2 group">
+            <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/50 group-hover:shadow-blue-600/100 transition flex-shrink-0">
+              <Heart className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-blue-600">
+            <span className="text-xl sm:text-2xl font-bold text-blue-600">
               UOK
             </span>
           </Link>
