@@ -1454,24 +1454,24 @@ export default function Dashboard() {
 
             {/* Settings Modal */}
             {settingsOpen && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-                <div className="bg-slate-900 border border-cyan-400/30 rounded-2xl p-6 max-w-md w-full mx-4 backdrop-blur-xl">
-                  <h2 className="text-2xl font-bold text-cyan-100 mb-6">
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm p-3 sm:p-4">
+                <div className="bg-slate-900 border border-blue-400/30 rounded-2xl p-4 sm:p-6 max-w-md w-full backdrop-blur-xl max-h-[90vh] overflow-y-auto">
+                  <h2 className="text-xl sm:text-2xl font-bold text-blue-100 mb-4 sm:mb-6">
                     Settings
                   </h2>
 
-                  <div className="space-y-4">
-                    <div className="border-b border-cyan-400/20 pb-4">
-                      <h3 className="text-cyan-200 font-semibold mb-2">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="border-b border-blue-400/20 pb-3 sm:pb-4">
+                      <h3 className="text-blue-200 font-semibold mb-2 text-sm sm:text-base">
                         Notification Settings
                       </h3>
-                      <label className="flex items-center gap-3 text-cyan-300">
+                      <label className="flex items-center gap-3 text-blue-300 text-sm">
                         <input
                           type="checkbox"
                           defaultChecked
                           className="w-4 h-4"
                         />
-                        <span className="text-sm">
+                        <span className="text-xs sm:text-sm">
                           SMS/WhatsApp alerts for check-ins
                         </span>
                       </label>
