@@ -1447,7 +1447,7 @@ export default function Dashboard() {
             {/* Settings Button */}
             <button
               onClick={() => setSettingsOpen(!settingsOpen)}
-              className="p-2 hover:bg-white/10 rounded-lg transition text-cyan-400"
+              className="p-2 hover:bg-white/10 rounded-lg transition text-blue-400"
             >
               <Settings className="w-6 h-6" />
             </button>
