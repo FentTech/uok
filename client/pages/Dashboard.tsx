@@ -1407,9 +1407,9 @@ export default function Dashboard() {
 
               {/* Notification Dropdown Menu */}
               {notificationDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-cyan-400/30 rounded-xl shadow-xl z-50 backdrop-blur-xl">
-                  <div className="p-4 border-b border-cyan-400/20">
-                    <h3 className="text-cyan-100 font-bold">Notifications</h3>
+                <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-slate-900 border border-blue-400/30 rounded-xl shadow-xl z-50 backdrop-blur-xl max-h-96 overflow-hidden flex flex-col">
+                  <div className="p-3 sm:p-4 border-b border-blue-400/20 flex-shrink-0">
+                    <h3 className="text-blue-100 font-bold text-sm sm:text-base">Notifications</h3>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
                     {notifications.length > 0 ? (
