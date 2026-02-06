@@ -114,6 +114,7 @@ export default function App() {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <VisitorCounter />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/signup" element={<SignUp />} />
