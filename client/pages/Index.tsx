@@ -84,13 +84,13 @@ export default function Index() {
                       <p className="text-sm text-slate-600">All is well!</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-4 bg-cyan-50 rounded-lg">
-                    <div className="w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center text-xl">
+                  <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
+                    <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-xl">
                       😴
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">Evening Check-in</p>
-                      <p className="text-sm text-slate-600">Ready for bed</p>
+                      <p className="font-semibold text-black">Evening Check-in</p>
+                      <p className="text-sm text-slate-700">Ready for bed</p>
                     </div>
                   </div>
                 </div>
