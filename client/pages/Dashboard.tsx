@@ -1980,16 +1980,16 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Bonded Family Check-ins - Futuristic */}
-            <div className="bg-white/10 backdrop-blur-xl border border-purple-400/30 rounded-2xl p-6 hover:border-purple-400/60 transition">
+            {/* Bonded Family Check-ins */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-purple-100 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-400" />
+                <h3 className="text-lg font-bold text-blue-900 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600" />
                   Bonded Family Check-ins
                 </h3>
                 <button
                   onClick={refreshBondedCheckIns}
-                  className="text-purple-400 hover:text-purple-300 transition text-xs font-semibold px-2 py-1 rounded hover:bg-purple-500/20"
+                  className="text-blue-600 hover:text-blue-700 transition text-xs font-semibold px-2 py-1 rounded hover:bg-blue-100"
                   title="Refresh check-ins"
                 >
                   🔄 Refresh
@@ -2010,17 +2010,17 @@ export default function Dashboard() {
                     return (
                       <div
                         key={checkIn.id}
-                        className="flex items-center gap-3 p-3 bg-purple-500/10 rounded-lg border border-purple-400/20 hover:border-purple-400/40 transition"
+                        className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition"
                       >
                         <span className="text-2xl">{displayEmoji}</span>
                         <div className="flex-1">
-                          <p className="font-semibold text-purple-100 text-sm">
+                          <p className="font-semibold text-blue-900 text-sm">
                             {displayName}
                           </p>
-                          <p className="text-xs text-purple-300">
+                          <p className="text-xs text-gray-600">
                             {checkIn.mood}
                           </p>
-                          <p className="text-xs text-purple-400/60">
+                          <p className="text-xs text-gray-500">
                             {checkIn.timestamp}
                           </p>
                         </div>
@@ -2029,13 +2029,13 @@ export default function Dashboard() {
                   })
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-purple-300/80 text-sm">
+                    <p className="text-gray-600 text-sm">
                       No check-ins from bonded members yet today
                     </p>
                     {bondedContacts.length > 0 && (
                       <button
                         onClick={addDemoBondedCheckIns}
-                        className="w-full px-4 py-2 text-sm bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 hover:text-purple-200 font-semibold rounded-lg transition border border-purple-400/30"
+                        className="w-full px-4 py-2 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 hover:text-blue-800 font-semibold rounded-lg transition border border-blue-300"
                       >
                         📋 Add Demo Check-ins (Test)
                       </button>
