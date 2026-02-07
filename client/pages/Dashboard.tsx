@@ -1631,17 +1631,17 @@ export default function Dashboard() {
             </div>
 
             {/* Check-in Section - Futuristic */}
-            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-8 hover:border-cyan-400/60 transition">
-              <h2 className="text-2xl font-bold text-cyan-100 mb-6">
+            <div className="bg-white/10 backdrop-blur-xl border border-blue-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 hover:border-blue-400/60 transition">
+              <h2 className="text-xl sm:text-2xl font-bold text-blue-100 mb-4 sm:mb-6">
                 How are you feeling?
               </h2>
 
               {/* Time Slot Selection */}
-              <div className="mb-6">
-                <p className="text-cyan-200 font-semibold mb-3 text-sm">
+              <div className="mb-4 sm:mb-6">
+                <p className="text-blue-200 font-semibold mb-2 sm:mb-3 text-xs sm:text-sm">
                   Select check-in time:
                 </p>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {CHECK_IN_TIMES.map((timeSlot) => (
                     <button
                       key={timeSlot.slot}
@@ -1651,38 +1651,37 @@ export default function Dashboard() {
                         )
                       }
                       disabled={todayCheckInCount >= 3}
-                      className={`py-2 px-3 rounded-lg font-semibold text-sm transition ${
+                      className={`py-2 px-2 sm:px-3 rounded-lg font-semibold text-xs sm:text-sm transition ${
                         selectedTimeSlot === timeSlot.slot
-                          ? "bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-lg shadow-cyan-500/50"
-                          : "bg-white/10 text-cyan-200 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-cyan-400/30"
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/50"
+                          : "bg-white/10 text-blue-200 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-blue-400/30"
                       }`}
                     >
                       {timeSlot.icon}{" "}
-                      {timeSlot.slot.charAt(0).toUpperCase() +
-                        timeSlot.slot.slice(1)}
+                      <span className="hidden sm:inline">{timeSlot.slot.charAt(0).toUpperCase() + timeSlot.slot.slice(1)}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-5 gap-3 mb-6">
+              <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 {MOOD_EMOJIS.map((item) => (
                   <button
                     key={item.emoji}
                     onClick={() => handleCheckIn(item.emoji, item.mood)}
                     disabled={todayCheckInCount >= 3}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition transform ${
+                    className={`aspect-square flex flex-col items-center justify-center rounded-lg sm:rounded-xl transition transform ${
                       selectedMood === item.emoji
-                        ? "bg-gradient-to-br from-cyan-400 to-blue-500 shadow-lg shadow-cyan-500/50 scale-110"
-                        : "bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-cyan-400/30 hover:border-cyan-400/60"
+                        ? "bg-blue-600 shadow-lg shadow-blue-500/50 scale-105 sm:scale-110"
+                        : "bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-blue-400/30 hover:border-blue-400/60"
                     }`}
                   >
-                    <span className="text-3xl">{item.emoji}</span>
+                    <span className="text-2xl sm:text-3xl">{item.emoji}</span>
                     <span
-                      className={`text-xs font-medium mt-1 ${
+                      className={`text-xs font-medium mt-0.5 sm:mt-1 ${
                         selectedMood === item.emoji
                           ? "text-white"
-                          : "text-cyan-200"
+                          : "text-blue-200"
                       }`}
                     >
                       {item.mood}
