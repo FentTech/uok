@@ -922,18 +922,31 @@ export default function SharedMemories() {
                 onClick={() => {
                   setFullscreenVideo(null);
                   setShowPreRollAd(false);
+                  setVideoLoadingId(null);
                 }}
                 className="absolute top-4 right-4 z-40 text-white bg-black/60 hover:bg-black/90 p-2 rounded-lg transition"
                 title="Close"
               >
                 <X className="w-6 h-6" />
               </button>
+
+              {/* Loading Indicator */}
+              {videoLoadingId && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-20">
+                  <div className="animate-spin">
+                    <div className="w-20 h-20 border-4 border-white/20 border-t-white rounded-full"></div>
+                  </div>
+                </div>
+              )}
+
               <video
                 key={fullscreenVideo}
                 src={fullscreenVideo}
                 controls
                 autoPlay
-                preload="metadata"
+                preload="auto"
+                onLoadStart={() => setVideoLoadingId(fullscreenVideo)}
+                onCanPlay={() => setVideoLoadingId(null)}
                 className="max-w-full max-h-full object-contain"
               />
             </div>
