@@ -183,6 +183,7 @@ export function createServer() {
     notificationsRouter,
   ); // 30 req/min
   app.use("/api/analytics", simpleRateLimit(30, 60 * 1000), analyticsRouter); // 30 req/min
+  app.use("/api/contact", simpleRateLimit(10, 60 * 1000), contactRouter); // 10 req/min to prevent spam
 
   // 404 handler
   app.use((_req, res) => {
