@@ -34,35 +34,34 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      // Send email using FormSubmit (completely free, requires zero setup)
-      const response = await fetch("https://formsubmit.co/afenteng@gmail.com", {
+      // Submit form to our backend API
+      const response = await fetch("/api/contact/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify({
           name: formData.name.trim(),
           email: formData.email.trim(),
           message: formData.message.trim(),
-          subject: `UOK Support: Message from ${formData.name}`,
         }),
       });
 
-      if (response.ok) {
-        alert(
-          "✓ Thank you for reaching out! Your message has been sent to support@youok.fit. We'll get back to you within 24-48 hours.",
-        );
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert(result.message);
         setFormData({ name: "", email: "", message: "" });
       } else {
         alert(
-          "There was an issue sending your message. Please try again or email support@youok.fit directly.",
+          result.error ||
+            "There was an issue sending your message. Please try again.",
         );
       }
     } catch (error) {
       console.error("Error sending contact form:", error);
       alert(
-        "Failed to send message. Please try emailing support@youok.fit directly.",
+        "Failed to send message. Please check your connection and try again.",
       );
     } finally {
       setIsSubmitting(false);
