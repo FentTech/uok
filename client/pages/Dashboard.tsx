@@ -1800,30 +1800,30 @@ export default function Dashboard() {
                 Share Your Day
               </h2>
 
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="grid md:grid-cols-2 gap-3 sm:gap-4 mb-6">
                 <button
                   onClick={() => photoInputRef.current?.click()}
-                  className="p-8 border-2 border-dashed border-blue-300 rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-3 cursor-pointer group"
+                  className="p-4 sm:p-6 border-2 border-dashed border-blue-300 rounded-xl sm:rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer group"
                 >
-                  <Image className="w-8 h-8 text-blue-600 group-hover:text-blue-700" />
-                  <div>
-                    <p className="font-semibold text-blue-900 group-hover:text-blue-950">
+                  <Image className="w-6 sm:w-8 h-6 sm:h-8 text-blue-600 group-hover:text-blue-700" />
+                  <div className="text-center">
+                    <p className="font-semibold text-blue-900 group-hover:text-blue-950 text-sm sm:text-base">
                       Add Photo
                     </p>
-                    <p className="text-sm text-gray-600">Capture a moment</p>
+                    <p className="text-xs sm:text-sm text-gray-600">Capture a moment</p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => videoInputRef.current?.click()}
-                  className="p-8 border-2 border-dashed border-blue-300 rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-3 cursor-pointer group"
+                  className="p-4 sm:p-6 border-2 border-dashed border-blue-300 rounded-xl sm:rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer group"
                 >
-                  <Video className="w-8 h-8 text-blue-600 group-hover:text-blue-700" />
-                  <div>
-                    <p className="font-semibold text-blue-900 group-hover:text-blue-950">
+                  <Video className="w-6 sm:w-8 h-6 sm:h-8 text-blue-600 group-hover:text-blue-700" />
+                  <div className="text-center">
+                    <p className="font-semibold text-blue-900 group-hover:text-blue-950 text-sm sm:text-base">
                       Add Video
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs sm:text-sm text-gray-600">
                       Share a video update
                     </p>
                   </div>
