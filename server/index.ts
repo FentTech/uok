@@ -6,6 +6,7 @@ import { notificationsRouter } from "./routes/notifications";
 import { analyticsRouter } from "./routes/analytics";
 
 // Simple in-memory rate limiting (no external package needed)
+// Only apply in production to avoid blocking dev requests
 interface RateLimitStore {
   [ip: string]: { count: number; resetTime: number };
 }
@@ -14,6 +15,12 @@ const rateLimitStore: RateLimitStore = {};
 
 const simpleRateLimit = (maxRequests: number, windowMs: number) => {
   return (req: Request, res: Response, next: NextFunction) => {
+    // Skip rate limiting in development
+    if (process.env.NODE_ENV === "development") {
+      next();
+      return;
+    }
+
     const ip = req.ip || "unknown";
     const now = Date.now();
 
