@@ -1,24 +1,75 @@
 import express from "express";
+import { z } from "zod";
 import type { WeeklyReport } from "../../client/lib/analytics";
 
 export const analyticsRouter = express.Router();
 
-interface WeeklyReportRequest {
-  userEmail: string;
-  report: WeeklyReport;
-}
+// Validation schemas
+const emailSchema = z.string().email("Invalid email format").max(255);
+const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format");
 
-// POST /api/analytics/send-weekly-report
-analyticsRouter.post("/send-weekly-report", async (req, res) => {
+const metricsSchema = z.object({
+  totalViews: z.number().int().nonnegative(),
+  totalLikes: z.number().int().nonnegative(),
+  totalComments: z.number().int().nonnegative(),
+  totalShares: z.number().int().nonnegative(),
+  totalAdImpressions: z.number().int().nonnegative(),
+  totalAdClicks: z.number().int().nonnegative(),
+  engagementRate: z.number().nonnegative().max(100),
+  adClickThroughRate: z.number().nonnegative().max(100),
+});
+
+const memorySchema = z.object({
+  id: z.string().max(100),
+  caption: z.string().max(1000),
+  views: z.number().int().nonnegative(),
+  likes: z.number().int().nonnegative(),
+  comments: z.number().int().nonnegative(),
+});
+
+const adSchema = z.object({
+  id: z.string().max(100),
+  title: z.string().max(255),
+  impressions: z.number().int().nonnegative(),
+  clicks: z.number().int().nonnegative(),
+  ctr: z.number().nonnegative().max(100),
+});
+
+const weeklyReportSchema = z.object({
+  week: z.string().max(100),
+  startDate: dateStringSchema,
+  endDate: dateStringSchema,
+  metrics: metricsSchema,
+  topMemories: z.array(memorySchema),
+  topAds: z.array(adSchema),
+});
+
+const sendWeeklyReportSchema = z.object({
+  userEmail: emailSchema,
+  report: weeklyReportSchema,
+});
+
+// Validation middleware
+const validateWeeklyReport = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const { userEmail, report } = req.body as WeeklyReportRequest;
-
-    // Validate inputs
-    if (!userEmail || !report) {
+    const validated = sendWeeklyReportSchema.parse(req.body);
+    req.body = validated;
+    next();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       return res.status(400).json({
-        error: "Missing required fields: userEmail, report",
+        error: "Validation failed",
+        details: error.errors.map((e) => ({ field: e.path.join("."), message: e.message })),
       });
     }
+    res.status(400).json({ error: "Invalid request" });
+  }
+};
+
+// POST /api/analytics/send-weekly-report
+analyticsRouter.post("/send-weekly-report", validateWeeklyReport, async (req, res) => {
+  try {
+    const { userEmail, report } = req.body as z.infer<typeof sendWeeklyReportSchema>;
 
     // Log the report (in production, send via email service)
     console.log(`\n📊 ===== WEEKLY ANALYTICS REPORT FOR ${userEmail} =====`);
