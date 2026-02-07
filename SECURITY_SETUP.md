@@ -176,9 +176,15 @@ You receive it in Gmail ✓
 
 The contact form is already implemented in `client/pages/Contact.tsx` and uses:
 
-- **Service**: Web3Forms (completely free)
+- **Service**: FormSubmit.co (completely free, zero setup required)
 - **Destination**: Your Gmail (afenteng@gmail.com)
 - **Status**: ✅ Ready to use
+
+**How FormSubmit Works:**
+- No API keys needed
+- No account signup required
+- Submissions go directly to afenteng@gmail.com
+- Works immediately - no configuration needed
 
 ### Testing the Contact Form
 
@@ -188,7 +194,9 @@ The contact form is already implemented in `client/pages/Contact.tsx` and uses:
    - **Email**: Your email
    - **Message**: Test message
 3. Click **"Send Message"**
-4. Check your Gmail inbox - email should arrive in seconds!
+4. Check your Gmail inbox (afenteng@gmail.com) - email should arrive in seconds!
+
+**That's it!** The form is live and ready to use.
 
 ### If You STILL Want Email Forwarding
 
