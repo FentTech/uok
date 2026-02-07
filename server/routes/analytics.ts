@@ -163,7 +163,20 @@ analyticsRouter.post("/send-weekly-report", validateWeeklyReport, async (req, re
 // For testing - returns the current week's report structure
 analyticsRouter.get("/report-preview", async (req, res) => {
   try {
-    const userEmail = (req.query.email as string) || "demo@example.com";
+    // Validate email parameter
+    const emailParam = req.query.email as string;
+    if (emailParam) {
+      try {
+        emailSchema.parse(emailParam);
+      } catch {
+        return res.status(400).json({
+          error: "Validation failed",
+          details: [{ field: "email", message: "Invalid email format" }],
+        });
+      }
+    }
+
+    const userEmail = emailParam || "demo@example.com";
 
     // In production, fetch actual analytics from database
     const mockReport: WeeklyReport = {
