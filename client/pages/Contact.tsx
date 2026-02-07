@@ -9,7 +9,9 @@ export default function Contact() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Validate form
@@ -29,10 +31,46 @@ export default function Contact() {
       return;
     }
 
-    // In production, this would submit to your backend/email service
-    // For now, show success message
-    alert("Thank you for reaching out! We'll get back to you soon.");
-    setFormData({ name: "", email: "", message: "" });
+    setIsSubmitting(true);
+
+    try {
+      // Send email using Web3Forms (completely free, no signup required)
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "95bf1f2c-1b47-4fd6-b887-1c64c27f3e0c", // Web3Forms public key
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+          subject: `New Contact Form Submission from ${formData.name}`,
+          from_name: "UOK Support",
+          redirect: false,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(
+          "✓ Thank you for reaching out! Your message has been sent to support@youok.fit. We'll get back to you within 24-48 hours."
+        );
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        alert(
+          "There was an issue sending your message. Please try again or email support@youok.fit directly."
+        );
+      }
+    } catch (error) {
+      console.error("Error sending contact form:", error);
+      alert(
+        "Failed to send message. Please try emailing support@youok.fit directly."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
