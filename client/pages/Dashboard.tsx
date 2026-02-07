@@ -1947,10 +1947,10 @@ export default function Dashboard() {
 
           {/* Sidebar */}
           <div className="space-y-8">
-            {/* Today's Check-ins - Futuristic */}
-            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
-              <h3 className="text-lg font-bold text-cyan-100 mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-cyan-400" />
+            {/* Today's Check-ins */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
+              <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-blue-600" />
                 Today's Check-ins
               </h3>
 
@@ -1959,21 +1959,21 @@ export default function Dashboard() {
                   checkIns.map((checkIn) => (
                     <div
                       key={checkIn.id}
-                      className="flex items-center gap-3 p-3 bg-white/10 rounded-lg border border-cyan-400/20 hover:border-cyan-400/40 transition"
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-blue-50 transition"
                     >
                       <span className="text-2xl">{checkIn.emoji}</span>
                       <div className="flex-1">
-                        <p className="font-semibold text-cyan-100 text-sm">
+                        <p className="font-semibold text-blue-900 text-sm">
                           {checkIn.mood}
                         </p>
-                        <p className="text-xs text-cyan-400/60">
+                        <p className="text-xs text-gray-500">
                           {checkIn.time}
                         </p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-cyan-300/80 text-sm">
+                  <p className="text-gray-600 text-sm">
                     No check-ins yet today
                   </p>
                 )}
