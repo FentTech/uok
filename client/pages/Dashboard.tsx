@@ -1038,7 +1038,7 @@ export default function Dashboard() {
     setTimeout(() => {
       setSelectedMood(null);
       setSelectedTimeSlot(null);
-    }, 1500); // Quick hide of confirmation, but suggestions stay
+    }, 5000); // 5 second confirmation display, but suggestions stay
   };
 
   // Open share modal for media
