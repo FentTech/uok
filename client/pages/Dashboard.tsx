@@ -2090,30 +2090,30 @@ export default function Dashboard() {
               </Link>
             </div>
 
-            {/* Wellness Insights - Futuristic */}
+            {/* Wellness Insights */}
             <Link
               to="/wellness-insights"
-              className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 text-cyan-100 rounded-2xl border border-cyan-400/40 p-6 hover:border-cyan-400/60 hover:shadow-lg hover:shadow-cyan-500/20 transition block backdrop-blur-xl"
+              className="bg-blue-100 text-blue-900 rounded-2xl border border-blue-300 p-6 hover:shadow-md transition block"
             >
               <div className="flex items-center gap-3 mb-2">
-                <BarChart3 className="w-5 h-5 text-cyan-400" />
+                <BarChart3 className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-bold">Wellness Insights</h3>
               </div>
-              <p className="text-sm text-cyan-300/80">
+              <p className="text-sm text-gray-700">
                 View your statistics and progress
               </p>
             </Link>
 
-            {/* Shared Memories - Futuristic */}
+            {/* Shared Memories */}
             <Link
               to="/shared-memories"
-              className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-cyan-100 rounded-2xl border border-purple-400/40 p-6 hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition block backdrop-blur-xl"
+              className="bg-blue-50 text-blue-900 rounded-2xl border border-blue-200 p-6 hover:shadow-md transition block"
             >
               <div className="flex items-center gap-3 mb-2">
-                <Share2 className="w-5 h-5 text-purple-400" />
+                <Share2 className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-bold">Share Memories</h3>
               </div>
-              <p className="text-sm text-purple-300/80">
+              <p className="text-sm text-gray-700">
                 Share your day with community
               </p>
             </Link>
@@ -2121,13 +2121,13 @@ export default function Dashboard() {
             {/* Featured Partners Link */}
             <Link
               to="/featured-partners"
-              className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-50 rounded-2xl border border-amber-400/40 p-6 hover:border-amber-400/60 hover:shadow-lg hover:shadow-amber-500/20 transition block backdrop-blur-xl"
+              className="bg-amber-100 text-amber-900 rounded-2xl border border-amber-300 p-6 hover:shadow-md transition block"
             >
               <div className="flex items-center gap-3 mb-2">
-                <Zap className="w-5 h-5 text-amber-400" />
+                <Zap className="w-5 h-5 text-amber-600" />
                 <h3 className="text-lg font-bold">Featured Partners</h3>
               </div>
-              <p className="text-sm text-amber-300/80">
+              <p className="text-sm text-amber-800">
                 Advertise your business to our users
               </p>
             </Link>
@@ -2135,13 +2135,13 @@ export default function Dashboard() {
             {/* Public Analytics Link */}
             <Link
               to="/analytics"
-              className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 text-blue-50 rounded-2xl border border-blue-400/40 p-6 hover:border-blue-400/60 hover:shadow-lg hover:shadow-blue-500/20 transition block backdrop-blur-xl"
+              className="bg-blue-50 text-blue-900 rounded-2xl border border-blue-200 p-6 hover:shadow-md transition block"
             >
               <div className="flex items-center gap-3 mb-2">
-                <BarChart3 className="w-5 h-5 text-blue-400" />
+                <BarChart3 className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-bold">Community Insights</h3>
               </div>
-              <p className="text-sm text-blue-300/80">
+              <p className="text-sm text-gray-700">
                 View top memories and trending ads
               </p>
             </Link>
@@ -2149,23 +2149,23 @@ export default function Dashboard() {
             {/* Advertiser Portal Link */}
             <Link
               to="/advertiser-login"
-              className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-50 rounded-2xl border border-amber-400/40 p-6 hover:border-amber-400/60 hover:shadow-lg hover:shadow-amber-500/20 transition block backdrop-blur-xl"
+              className="bg-amber-100 text-amber-900 rounded-2xl border border-amber-300 p-6 hover:shadow-md transition block"
             >
               <div className="flex items-center gap-3 mb-2">
-                <Lock className="w-5 h-5 text-amber-400" />
+                <Lock className="w-5 h-5 text-amber-600" />
                 <h3 className="text-lg font-bold">Advertiser Portal</h3>
               </div>
-              <p className="text-sm text-amber-300/80">
+              <p className="text-sm text-amber-800">
                 Private analytics for registered advertisers
               </p>
             </Link>
 
-            {/* Tip Section - Futuristic */}
-            <div className="bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl border border-cyan-400/30 p-6 backdrop-blur-xl">
-              <h3 className="text-lg font-bold text-cyan-100 mb-3">
+            {/* Tip Section */}
+            <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6">
+              <h3 className="text-lg font-bold text-blue-900 mb-3">
                 💡 Daily Tip
               </h3>
-              <p className="text-sm text-cyan-300/80">
+              <p className="text-sm text-gray-700">
                 Consistent check-ins keep your loved ones assured. Set reminders
                 for your daily check-in times!
               </p>
