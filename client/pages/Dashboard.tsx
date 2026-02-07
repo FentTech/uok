@@ -2176,9 +2176,9 @@ export default function Dashboard() {
         {/* Media Share Modal */}
         {mediaShareModalOpen && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-            <div className="bg-slate-900 border border-cyan-400/30 rounded-2xl p-8 max-w-md w-full mx-4 backdrop-blur-xl">
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 max-w-md w-full mx-4">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-cyan-100">
+                <h2 className="text-2xl font-bold text-blue-900">
                   Share Media
                 </h2>
                 <button
@@ -2186,7 +2186,7 @@ export default function Dashboard() {
                     setMediaShareModalOpen(null);
                     setSelectedContactsToShare([]);
                   }}
-                  className="text-cyan-400 hover:text-cyan-300 transition"
+                  className="text-gray-500 hover:text-gray-700 transition"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -2195,7 +2195,7 @@ export default function Dashboard() {
               <div className="space-y-6">
                 {/* Visibility Options */}
                 <div>
-                  <label className="text-sm font-semibold text-cyan-200 block mb-3">
+                  <label className="text-sm font-semibold text-blue-900 block mb-3">
                     Share with:
                   </label>
                   <div className="space-y-2">
@@ -2206,8 +2206,8 @@ export default function Dashboard() {
                       }}
                       className={`w-full px-4 py-3 rounded-lg font-medium text-sm transition border ${
                         shareVisibility === "community"
-                          ? "bg-cyan-600/20 border-cyan-400 text-cyan-100"
-                          : "bg-white/5 border-cyan-400/30 text-cyan-300 hover:bg-white/10"
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
                       }`}
                     >
                       🌍 Everyone (Community)
@@ -2217,8 +2217,8 @@ export default function Dashboard() {
                       disabled={bondedContacts.length === 0}
                       className={`w-full px-4 py-3 rounded-lg font-medium text-sm transition border ${
                         shareVisibility === "bonded-contacts"
-                          ? "bg-cyan-600/20 border-cyan-400 text-cyan-100"
-                          : "bg-white/5 border-cyan-400/30 text-cyan-300 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       }`}
                     >
                       💚 Bonded Contacts ({bondedContacts.length})
@@ -2230,14 +2230,14 @@ export default function Dashboard() {
                 {shareVisibility === "bonded-contacts" &&
                   bondedContacts.length > 0 && (
                     <div>
-                      <label className="text-sm font-semibold text-cyan-200 block mb-3">
+                      <label className="text-sm font-semibold text-blue-900 block mb-3">
                         Select contacts:
                       </label>
                       <div className="space-y-2 max-h-48 overflow-y-auto">
                         {bondedContacts.map((contact) => (
                           <label
                             key={contact.id}
-                            className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-cyan-400/20 hover:bg-white/10 cursor-pointer transition"
+                            className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-blue-50 cursor-pointer transition"
                           >
                             <input
                               type="checkbox"
@@ -2261,10 +2261,10 @@ export default function Dashboard() {
                               className="w-4 h-4 rounded"
                             />
                             <div className="flex-1">
-                              <p className="text-cyan-100 font-medium text-sm">
+                              <p className="text-blue-900 font-medium text-sm">
                                 {contact.name}
                               </p>
-                              <p className="text-cyan-400/60 text-xs">
+                              <p className="text-gray-500 text-xs">
                                 {contact.email}
                               </p>
                             </div>
@@ -2275,13 +2275,13 @@ export default function Dashboard() {
                   )}
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-cyan-400/20">
+                <div className="flex gap-3 pt-4 border-t border-gray-200">
                   <button
                     onClick={() => {
                       setMediaShareModalOpen(null);
                       setSelectedContactsToShare([]);
                     }}
-                    className="flex-1 py-2 bg-white/10 hover:bg-white/20 text-cyan-300 font-medium rounded-lg transition"
+                    className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition"
                   >
                     Cancel
                   </button>
@@ -2294,7 +2294,7 @@ export default function Dashboard() {
                         handleShareMedia(mediaItem);
                       }
                     }}
-                    className="flex-1 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:shadow-lg hover:shadow-cyan-500/50 text-white font-medium rounded-lg transition"
+                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition"
                   >
                     Share
                   </button>
