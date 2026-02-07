@@ -1589,9 +1589,10 @@ export default function Dashboard() {
         {/* Data Retention Notice */}
         <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-blue-500 border border-blue-700 rounded-lg sm:rounded-xl shadow-md">
           <p className="text-white text-xs sm:text-sm font-medium">
-            <span className="font-bold text-lg">📊</span> <span className="font-semibold">Data Retention:</span> All
-            check-in records are automatically deleted after 72 hours to save
-            storage space. Go to{" "}
+            <span className="font-bold text-lg">📊</span>{" "}
+            <span className="font-semibold">Data Retention:</span> All check-in
+            records are automatically deleted after 72 hours to save storage
+            space. Go to{" "}
             <Link
               to="/user-profile"
               className="underline text-blue-100 hover:text-white transition font-semibold"
@@ -1966,9 +1967,7 @@ export default function Dashboard() {
                         <p className="font-semibold text-blue-900 text-sm">
                           {checkIn.mood}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {checkIn.time}
-                        </p>
+                        <p className="text-xs text-gray-500">{checkIn.time}</p>
                       </div>
                     </div>
                   ))

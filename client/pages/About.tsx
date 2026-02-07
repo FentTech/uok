@@ -27,34 +27,45 @@ export default function About() {
 
           <div className="space-y-8">
             <section>
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">Our Mission</h2>
+              <h2 className="text-2xl font-bold text-blue-900 mb-4">
+                Our Mission
+              </h2>
               <p className="text-gray-700 leading-relaxed">
-                UOK is dedicated to keeping families and loved ones connected through
-                simple, meaningful wellness check-ins. We believe everyone deserves to
-                know that the people they care about are safe and doing okay.
+                UOK is dedicated to keeping families and loved ones connected
+                through simple, meaningful wellness check-ins. We believe
+                everyone deserves to know that the people they care about are
+                safe and doing okay.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">How It Works</h2>
+              <h2 className="text-2xl font-bold text-blue-900 mb-4">
+                How It Works
+              </h2>
               <p className="text-gray-700 leading-relaxed">
-                Check in 2-3 times daily by selecting an emoji that represents how you're
-                feeling. Your bonded emergency contacts receive instant notifications,
-                letting them know you're okay. It's that simple.
+                Check in 2-3 times daily by selecting an emoji that represents
+                how you're feeling. Your bonded emergency contacts receive
+                instant notifications, letting them know you're okay. It's that
+                simple.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">Privacy & Security</h2>
+              <h2 className="text-2xl font-bold text-blue-900 mb-4">
+                Privacy & Security
+              </h2>
               <p className="text-gray-700 leading-relaxed">
-                Your privacy is our top priority. All check-in records are automatically
-                deleted after 72 hours. We use encrypted connections and never sell your
-                data. You're in complete control of who can see your information.
+                Your privacy is our top priority. All check-in records are
+                automatically deleted after 72 hours. We use encrypted
+                connections and never sell your data. You're in complete control
+                of who can see your information.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">Our Values</h2>
+              <h2 className="text-2xl font-bold text-blue-900 mb-4">
+                Our Values
+              </h2>
               <ul className="space-y-3 text-gray-700">
                 <li className="flex items-start gap-3">
                   <span className="text-blue-600 font-bold">•</span>

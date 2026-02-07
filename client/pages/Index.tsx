@@ -1,5 +1,13 @@
 import { Link } from "react-router-dom";
-import { Heart, Users, Clock, Camera, Shield, TrendingUp, Music } from "lucide-react";
+import {
+  Heart,
+  Users,
+  Clock,
+  Camera,
+  Shield,
+  TrendingUp,
+  Music,
+} from "lucide-react";
 import { moodSongs } from "../data/songs";
 
 export default function Index() {
@@ -12,9 +20,7 @@ export default function Index() {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-blue-600">
-              UOK
-            </span>
+            <span className="text-xl font-bold text-blue-600">UOK</span>
           </div>
           <div className="flex gap-3">
             <Link
@@ -39,14 +45,15 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-blue-600">
-                  Check In,
-                </span>
+                <span className="text-blue-600">Check In,</span>
                 <br />
                 <span className="text-black">Stay Connected</span>
               </h1>
               <p className="text-xl text-slate-700 mb-8 leading-relaxed">
-                UOK is your daily wellness companion. Check in 2-3 times a day to let your loved ones know you're okay. Express how you're feeling with emojis and stay connected with those who matter most.
+                UOK is your daily wellness companion. Check in 2-3 times a day
+                to let your loved ones know you're okay. Express how you're
+                feeling with emojis and stay connected with those who matter
+                most.
               </p>
               <div className="flex gap-4">
                 <Link
@@ -71,8 +78,12 @@ export default function Index() {
                       😊
                     </div>
                     <div>
-                      <p className="font-semibold text-black">Morning Check-in</p>
-                      <p className="text-sm text-slate-700">Feeling great today!</p>
+                      <p className="font-semibold text-black">
+                        Morning Check-in
+                      </p>
+                      <p className="text-sm text-slate-700">
+                        Feeling great today!
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-4 bg-slate-100 rounded-lg">
@@ -80,7 +91,9 @@ export default function Index() {
                       🎉
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">Afternoon Check-in</p>
+                      <p className="font-semibold text-slate-900">
+                        Afternoon Check-in
+                      </p>
                       <p className="text-sm text-slate-600">All is well!</p>
                     </div>
                   </div>
@@ -89,7 +102,9 @@ export default function Index() {
                       😴
                     </div>
                     <div>
-                      <p className="font-semibold text-black">Evening Check-in</p>
+                      <p className="font-semibold text-black">
+                        Evening Check-in
+                      </p>
                       <p className="text-sm text-slate-700">Ready for bed</p>
                     </div>
                   </div>
@@ -104,10 +119,7 @@ export default function Index() {
       <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-200">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16 text-black">
-            Why Choose{" "}
-            <span className="text-blue-600">
-              UOK?
-            </span>
+            Why Choose <span className="text-blue-600">UOK?</span>
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -117,7 +129,8 @@ export default function Index() {
                 Daily Check-ins
               </h3>
               <p className="text-slate-700">
-                Check in 2-3 times a day to confirm you're okay. Consistent wellness tracking with minimum effort.
+                Check in 2-3 times a day to confirm you're okay. Consistent
+                wellness tracking with minimum effort.
               </p>
             </div>
 
@@ -127,7 +140,8 @@ export default function Index() {
                 Emergency Contacts
               </h3>
               <p className="text-slate-700">
-                Add up to 3 trusted family or friends. They'll be notified if something seems off.
+                Add up to 3 trusted family or friends. They'll be notified if
+                something seems off.
               </p>
             </div>
 
@@ -137,7 +151,8 @@ export default function Index() {
                 Express Yourself
               </h3>
               <p className="text-slate-700">
-                Use emojis to share your mood and feeling with every check-in. More expressive, more personal.
+                Use emojis to share your mood and feeling with every check-in.
+                More expressive, more personal.
               </p>
             </div>
 
@@ -147,7 +162,8 @@ export default function Index() {
                 Instant Alerts
               </h3>
               <p className="text-slate-700">
-                Emergency contacts are notified immediately when you check in, and if you miss a check-in.
+                Emergency contacts are notified immediately when you check in,
+                and if you miss a check-in.
               </p>
             </div>
 
@@ -157,7 +173,8 @@ export default function Index() {
                 Share Memories
               </h3>
               <p className="text-slate-700">
-                Upload daily photos and videos to share your life. A visual diary of your wellness journey.
+                Upload daily photos and videos to share your life. A visual
+                diary of your wellness journey.
               </p>
             </div>
 
@@ -167,7 +184,8 @@ export default function Index() {
                 Wellness Insights
               </h3>
               <p className="text-slate-700">
-                Track patterns and trends in your wellness journey. See how you're really doing over time.
+                Track patterns and trends in your wellness journey. See how
+                you're really doing over time.
               </p>
             </div>
           </div>
@@ -178,10 +196,7 @@ export default function Index() {
       <div className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16 text-black">
-            How It{" "}
-            <span className="text-blue-600">
-              Works
-            </span>
+            How It <span className="text-blue-600">Works</span>
           </h2>
 
           <div className="space-y-8">
@@ -190,11 +205,10 @@ export default function Index() {
                 1
               </div>
               <div>
-                <h3 className="text-xl font-bold mb-2 text-black">
-                  Sign Up
-                </h3>
+                <h3 className="text-xl font-bold mb-2 text-black">Sign Up</h3>
                 <p className="text-slate-700">
-                  Create your UOK account in seconds with your email and basic info.
+                  Create your UOK account in seconds with your email and basic
+                  info.
                 </p>
               </div>
             </div>
@@ -208,7 +222,8 @@ export default function Index() {
                   Add Contacts
                 </h3>
                 <p className="text-slate-700">
-                  Add up to 3 emergency contacts with their phone or WhatsApp numbers.
+                  Add up to 3 emergency contacts with their phone or WhatsApp
+                  numbers.
                 </p>
               </div>
             </div>
@@ -222,7 +237,8 @@ export default function Index() {
                   Check In Daily
                 </h3>
                 <p className="text-slate-700">
-                  Check in 2-3 times a day with an emoji expressing your mood. Your contacts are instantly notified.
+                  Check in 2-3 times a day with an emoji expressing your mood.
+                  Your contacts are instantly notified.
                 </p>
               </div>
             </div>
@@ -236,7 +252,8 @@ export default function Index() {
                   Share & Connect
                 </h3>
                 <p className="text-slate-700">
-                  Upload photos and videos to share your moments. Stay truly connected with loved ones.
+                  Upload photos and videos to share your moments. Stay truly
+                  connected with loved ones.
                 </p>
               </div>
             </div>
@@ -248,31 +265,53 @@ export default function Index() {
       <div className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16 text-black">
-            <span className="text-blue-600">
-              Music for Every Mood
-            </span>
+            <span className="text-blue-600">Music for Every Mood</span>
           </h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
-              { mood: "Great", color: "from-yellow-400 to-orange-400", gradient: "from-yellow-50 to-orange-50" },
-              { mood: "Good", color: "from-green-400 to-emerald-400", gradient: "from-green-50 to-emerald-50" },
-              { mood: "Okay", color: "from-blue-400 to-cyan-400", gradient: "from-blue-50 to-cyan-50" },
-              { mood: "Happy", color: "from-pink-400 to-rose-400", gradient: "from-pink-50 to-rose-50" },
+              {
+                mood: "Great",
+                color: "from-yellow-400 to-orange-400",
+                gradient: "from-yellow-50 to-orange-50",
+              },
+              {
+                mood: "Good",
+                color: "from-green-400 to-emerald-400",
+                gradient: "from-green-50 to-emerald-50",
+              },
+              {
+                mood: "Okay",
+                color: "from-blue-400 to-cyan-400",
+                gradient: "from-blue-50 to-cyan-50",
+              },
+              {
+                mood: "Happy",
+                color: "from-pink-400 to-rose-400",
+                gradient: "from-pink-50 to-rose-50",
+              },
             ].map((moodCategory) => (
               <div
                 key={moodCategory.mood}
                 className={`bg-gradient-to-br ${moodCategory.gradient} rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition`}
               >
-                <h3 className="text-xl font-bold text-black mb-4">{moodCategory.mood} Vibes</h3>
+                <h3 className="text-xl font-bold text-black mb-4">
+                  {moodCategory.mood} Vibes
+                </h3>
                 <div className="space-y-3">
-                  {moodSongs[moodCategory.mood]?.slice(0, 2).map((song, idx) => (
-                    <div key={idx} className="bg-white rounded-lg p-3">
-                      <p className="font-medium text-black text-sm">{song.title}</p>
-                      <p className="text-xs text-slate-700">{song.artist}</p>
-                      <p className="text-xs text-blue-600 mt-1">{song.vibe}</p>
-                    </div>
-                  ))}
+                  {moodSongs[moodCategory.mood]
+                    ?.slice(0, 2)
+                    .map((song, idx) => (
+                      <div key={idx} className="bg-white rounded-lg p-3">
+                        <p className="font-medium text-black text-sm">
+                          {song.title}
+                        </p>
+                        <p className="text-xs text-slate-700">{song.artist}</p>
+                        <p className="text-xs text-blue-600 mt-1">
+                          {song.vibe}
+                        </p>
+                      </div>
+                    ))}
                 </div>
               </div>
             ))}
@@ -281,10 +320,14 @@ export default function Index() {
           <div className="bg-blue-50 rounded-2xl border border-blue-200 p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Music className="w-6 h-6 text-blue-600" />
-              <h3 className="text-xl font-bold text-black">Personalized Playlists</h3>
+              <h3 className="text-xl font-bold text-black">
+                Personalized Playlists
+              </h3>
             </div>
             <p className="text-slate-700 max-w-2xl mx-auto">
-              Every mood is valid, and music can help. When you check in with your mood, we'll suggest inspiring songs tailored to how you're feeling. Use music as a tool for wellness and self-expression.
+              Every mood is valid, and music can help. When you check in with
+              your mood, we'll suggest inspiring songs tailored to how you're
+              feeling. Use music as a tool for wellness and self-expression.
             </p>
           </div>
         </div>
@@ -297,7 +340,8 @@ export default function Index() {
             Start Your Wellness Journey Today
           </h2>
           <p className="text-xl text-slate-300 mb-8">
-            Join thousands of people staying connected and keeping their loved ones assured.
+            Join thousands of people staying connected and keeping their loved
+            ones assured.
           </p>
           <Link
             to="/signup"
@@ -327,12 +371,18 @@ export default function Index() {
               <h4 className="font-semibold text-white mb-4">Product</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link to="/features" className="hover:text-blue-400 transition">
+                  <Link
+                    to="/features"
+                    className="hover:text-blue-400 transition"
+                  >
                     Features
                   </Link>
                 </li>
                 <li>
-                  <Link to="/pricing" className="hover:text-blue-400 transition">
+                  <Link
+                    to="/pricing"
+                    className="hover:text-blue-400 transition"
+                  >
                     Pricing
                   </Link>
                 </li>
@@ -347,7 +397,10 @@ export default function Index() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="hover:text-blue-400 transition">
+                  <Link
+                    to="/contact"
+                    className="hover:text-blue-400 transition"
+                  >
                     Contact
                   </Link>
                 </li>
@@ -357,7 +410,10 @@ export default function Index() {
               <h4 className="font-semibold text-white mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link to="/privacy" className="hover:text-blue-400 transition">
+                  <Link
+                    to="/privacy"
+                    className="hover:text-blue-400 transition"
+                  >
                     Privacy
                   </Link>
                 </li>

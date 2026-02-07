@@ -23,7 +23,9 @@ export default function Privacy() {
 
       <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-5xl font-bold text-blue-600 mb-2">Privacy Policy</h1>
+          <h1 className="text-5xl font-bold text-blue-600 mb-2">
+            Privacy Policy
+          </h1>
           <p className="text-gray-600 mb-8">Last updated: February 2025</p>
 
           <div className="space-y-8 text-gray-700 leading-relaxed">
@@ -32,9 +34,9 @@ export default function Privacy() {
                 1. Introduction
               </h2>
               <p>
-                UOK ("we" or "us" or "our") operates the website. This page informs
-                you of our policies regarding the collection, use, and disclosure of
-                personal data.
+                UOK ("we" or "us" or "our") operates the website. This page
+                informs you of our policies regarding the collection, use, and
+                disclosure of personal data.
               </p>
             </section>
 
@@ -43,9 +45,10 @@ export default function Privacy() {
                 2. Information Collection
               </h2>
               <p>
-                We collect information you provide directly, such as when you create
-                an account, including your name, email, and phone number. We also
-                collect device information and usage patterns to improve our service.
+                We collect information you provide directly, such as when you
+                create an account, including your name, email, and phone number.
+                We also collect device information and usage patterns to improve
+                our service.
               </p>
             </section>
 
@@ -67,9 +70,9 @@ export default function Privacy() {
                 4. Data Retention
               </h2>
               <p>
-                Check-in records are automatically deleted after 72 hours. Account
-                information is retained until you delete your account. You can request
-                deletion of your data at any time.
+                Check-in records are automatically deleted after 72 hours.
+                Account information is retained until you delete your account.
+                You can request deletion of your data at any time.
               </p>
             </section>
 
@@ -78,9 +81,9 @@ export default function Privacy() {
                 5. Security
               </h2>
               <p>
-                We use industry-standard encryption to protect your data. However, no
-                method of transmission over the internet is 100% secure. We cannot
-                guarantee absolute security.
+                We use industry-standard encryption to protect your data.
+                However, no method of transmission over the internet is 100%
+                secure. We cannot guarantee absolute security.
               </p>
             </section>
 
@@ -89,16 +92,18 @@ export default function Privacy() {
                 6. Changes to This Policy
               </h2>
               <p>
-                We may update this policy occasionally. We will notify you of any
-                changes by posting the new policy on this page.
+                We may update this policy occasionally. We will notify you of
+                any changes by posting the new policy on this page.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">7. Contact Us</h2>
+              <h2 className="text-2xl font-bold text-blue-900 mb-4">
+                7. Contact Us
+              </h2>
               <p>
-                If you have any questions about this policy, please contact us at
-                support@youok.fit
+                If you have any questions about this policy, please contact us
+                at support@youok.fit
               </p>
             </section>
           </div>

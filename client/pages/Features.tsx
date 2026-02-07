@@ -1,12 +1,20 @@
 import { Link } from "react-router-dom";
-import { Heart, CheckCircle, Bell, Shield, Users, TrendingUp } from "lucide-react";
+import {
+  Heart,
+  CheckCircle,
+  Bell,
+  Shield,
+  Users,
+  TrendingUp,
+} from "lucide-react";
 
 export default function Features() {
   const features = [
     {
       icon: <Heart className="w-6 h-6" />,
       title: "Daily Check-ins",
-      description: "Check in 2-3 times daily to let loved ones know you're okay",
+      description:
+        "Check in 2-3 times daily to let loved ones know you're okay",
     },
     {
       icon: <Bell className="w-6 h-6" />,
@@ -21,7 +29,8 @@ export default function Features() {
     {
       icon: <Shield className="w-6 h-6" />,
       title: "Privacy First",
-      description: "Your data is encrypted and automatically deleted after 72 hours",
+      description:
+        "Your data is encrypted and automatically deleted after 72 hours",
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
@@ -31,7 +40,8 @@ export default function Features() {
     {
       icon: <CheckCircle className="w-6 h-6" />,
       title: "Share Memories",
-      description: "Share photos and videos with your community or bonded contacts",
+      description:
+        "Share photos and videos with your community or bonded contacts",
     },
   ];
 
@@ -56,7 +66,9 @@ export default function Features() {
 
       <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-5xl font-bold text-blue-600 mb-6">Our Features</h1>
+          <h1 className="text-5xl font-bold text-blue-600 mb-6">
+            Our Features
+          </h1>
           <p className="text-xl text-gray-700 mb-16 max-w-2xl">
             UOK is designed with wellness in mind. Here's what makes us special:
           </p>

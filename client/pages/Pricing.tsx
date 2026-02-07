@@ -25,8 +25,9 @@ export default function Pricing() {
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl font-bold text-blue-600 mb-6">Pricing</h1>
           <p className="text-xl text-gray-700 mb-16">
-            UOK is completely <span className="font-bold text-blue-600">free</span> and
-            always will be
+            UOK is completely{" "}
+            <span className="font-bold text-blue-600">free</span> and always
+            will be
           </p>
 
           <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg p-8">
