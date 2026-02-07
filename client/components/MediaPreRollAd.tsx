@@ -117,16 +117,16 @@ export default function MediaPreRollAd({
           {/* Timer Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-700">
-                Ad ends in {timeRemaining}s
+              <span className="text-base font-bold text-gray-800">
+                ⏱️ Video plays in {timeRemaining}s
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
                 {Math.round(percentage)}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden shadow-sm">
               <div
-                className="bg-gradient-to-r from-purple-600 to-pink-500 h-full transition-all duration-1000"
+                className="bg-gradient-to-r from-purple-600 to-pink-500 h-full transition-all duration-1000 shadow-lg"
                 style={{ width: `${percentage}%` }}
               />
             </div>
