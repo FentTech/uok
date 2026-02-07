@@ -172,9 +172,9 @@ Now that the real account exists, set up forwarding:
 3. Look for **"Forwarding"** settings
 4. Enable forwarding and enter:
 
-| Field            | Value                |
-| ---------------- | -------------------- |
-| **Forward to**   | `afenteng@gmail.com` |
+| Field          | Value                |
+| -------------- | -------------------- |
+| **Forward to** | `afenteng@gmail.com` |
 
 **Important Notes:**
 
