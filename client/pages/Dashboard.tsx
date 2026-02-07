@@ -1409,7 +1409,9 @@ export default function Dashboard() {
               {notificationDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-slate-900 border border-blue-400/30 rounded-xl shadow-xl z-50 backdrop-blur-xl max-h-96 overflow-hidden flex flex-col">
                   <div className="p-3 sm:p-4 border-b border-blue-400/20 flex-shrink-0">
-                    <h3 className="text-blue-100 font-bold text-sm sm:text-base">Notifications</h3>
+                    <h3 className="text-blue-100 font-bold text-sm sm:text-base">
+                      Notifications
+                    </h3>
                   </div>
                   <div className="overflow-y-auto flex-1">
                     {notifications.length > 0 ? (
@@ -1613,7 +1615,9 @@ export default function Dashboard() {
                   <h3 className="font-semibold text-blue-100 text-sm sm:text-base">
                     Daily Check-in Status
                   </h3>
-                  <p className="text-xs sm:text-sm text-blue-300/80">{status.text}</p>
+                  <p className="text-xs sm:text-sm text-blue-300/80">
+                    {status.text}
+                  </p>
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
@@ -1658,7 +1662,10 @@ export default function Dashboard() {
                       }`}
                     >
                       {timeSlot.icon}{" "}
-                      <span className="hidden sm:inline">{timeSlot.slot.charAt(0).toUpperCase() + timeSlot.slot.slice(1)}</span>
+                      <span className="hidden sm:inline">
+                        {timeSlot.slot.charAt(0).toUpperCase() +
+                          timeSlot.slot.slice(1)}
+                      </span>
                     </button>
                   ))}
                 </div>
