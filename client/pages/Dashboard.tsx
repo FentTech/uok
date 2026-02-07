@@ -2045,9 +2045,9 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Bonded Emergency Contacts - Futuristic */}
-            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
-              <h3 className="text-lg font-bold text-cyan-100 mb-4">
+            {/* Bonded Emergency Contacts */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
+              <h3 className="text-lg font-bold text-blue-900 mb-4">
                 Bonded Emergency Contacts
               </h3>
 
@@ -2056,7 +2056,7 @@ export default function Dashboard() {
                   bondedContacts.map((contact: any, i: number) => (
                     <div
                       key={i}
-                      className="flex items-center gap-3 p-3 bg-white/10 rounded-lg border border-cyan-400/20 hover:border-cyan-400/40 transition cursor-pointer group"
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-blue-50 transition cursor-pointer group"
                     >
                       <div className="relative">
                         <span className="text-2xl">
@@ -2065,17 +2065,17 @@ export default function Dashboard() {
                         <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-400"></span>
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold text-cyan-100 text-sm">
+                        <p className="font-semibold text-blue-900 text-sm">
                           {contact.name}
                         </p>
-                        <p className="text-xs text-green-400">
+                        <p className="text-xs text-green-600">
                           ● Bonded & Active
                         </p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-cyan-300/80 text-sm p-3 bg-white/5 rounded-lg border border-cyan-400/20 text-center">
+                  <p className="text-gray-600 text-sm p-3 bg-gray-50 rounded-lg border border-gray-200 text-center">
                     No bonded contacts yet. Tap the button below to add family
                     members.
                   </p>
@@ -2084,7 +2084,7 @@ export default function Dashboard() {
 
               <Link
                 to="/bond-contacts"
-                className="block w-full mt-4 py-2 text-cyan-400 font-semibold hover:bg-cyan-400/10 rounded-lg transition text-sm text-center border border-cyan-400/30"
+                className="block w-full mt-4 py-2 text-blue-600 font-semibold hover:bg-blue-50 rounded-lg transition text-sm text-center border border-blue-300"
               >
                 Add Emergency Contacts
               </Link>
