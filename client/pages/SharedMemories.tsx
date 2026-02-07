@@ -71,6 +71,7 @@ export default function SharedMemories() {
   const [likedMemories, setLikedMemories] = useState<Record<string, boolean>>(
     {},
   );
+  const [videoLoadingId, setVideoLoadingId] = useState<string | null>(null);
 
   // Load bonded contacts and shared moments on mount
   useEffect(() => {
