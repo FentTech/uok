@@ -1,33 +1,47 @@
 import "dotenv/config";
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import rateLimit from "express-rate-limit";
-import helmet from "helmet";
 import { handleDemo } from "./routes/demo";
 import { notificationsRouter } from "./routes/notifications";
 import { analyticsRouter } from "./routes/analytics";
 
-// Security Middleware: Rate Limiting
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// Simple in-memory rate limiting (no external package needed)
+interface RateLimitStore {
+  [ip: string]: { count: number; resetTime: number };
+}
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5, // Strict limit for auth endpoints (5 attempts per 15 min)
-  message: "Too many login attempts, please try again later.",
-  skipSuccessfulRequests: true, // Don't count successful logins
-});
+const rateLimitStore: RateLimitStore = {};
 
-const apiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 30, // 30 requests per minute per IP
-  message: "API rate limit exceeded, please try again later.",
-});
+const simpleRateLimit = (maxRequests: number, windowMs: number) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const ip = req.ip || "unknown";
+    const now = Date.now();
+
+    if (!rateLimitStore[ip]) {
+      rateLimitStore[ip] = { count: 1, resetTime: now + windowMs };
+      next();
+      return;
+    }
+
+    const record = rateLimitStore[ip];
+
+    if (now > record.resetTime) {
+      record.count = 1;
+      record.resetTime = now + windowMs;
+      next();
+      return;
+    }
+
+    record.count++;
+
+    if (record.count > maxRequests) {
+      res.status(429).json({ error: "Too many requests, please try again later" });
+      return;
+    }
+
+    next();
+  };
+};
 
 // CORS Configuration: Restrict to your domain only
 const corsOptions = {
@@ -72,9 +86,7 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   // Sanitize user inputs to prevent XSS
   const sanitizeString = (str: string): string => {
     if (typeof str !== "string") return str;
-    return str
-      .replace(/[<>]/g, "") // Remove angle brackets
-      .trim();
+    return str.replace(/[<>]/g, "").trim();
   };
 
   // Deep sanitize all string values in request body
@@ -90,9 +102,7 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   if (req.query && typeof req.query === "object") {
     Object.keys(req.query).forEach((key) => {
       if (Array.isArray(req.query[key])) {
-        return res
-          .status(400)
-          .json({ error: "Duplicate query parameters detected" });
+        return res.status(400).json({ error: "Duplicate query parameters detected" });
       }
     });
   }
@@ -115,6 +125,16 @@ const securityLogger = (req: Request, res: Response, next: NextFunction) => {
     }
   });
 
+  next();
+};
+
+// Set security headers manually (without helmet package)
+const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
   next();
 };
 
