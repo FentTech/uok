@@ -1691,8 +1691,8 @@ export default function Dashboard() {
               </div>
 
               {selectedMood && (
-                <div className="bg-gradient-to-r from-green-500/20 to-cyan-500/20 border border-green-400/50 rounded-lg p-6 backdrop-blur-sm">
-                  <p className="text-green-300 font-semibold mb-4 text-center">
+                <div className="bg-green-500/20 border border-green-400/50 rounded-lg p-3 sm:p-6 backdrop-blur-sm">
+                  <p className="text-green-300 font-semibold mb-3 sm:mb-4 text-center text-xs sm:text-sm">
                     ✓ Check-in recorded! Alert sent to your emergency contacts.
                   </p>
 
