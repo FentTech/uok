@@ -5,7 +5,8 @@ export const audioUtils = {
   playBeep: (frequency: number = 800, duration: number = 100) => {
     try {
       // Get or create audio context
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
 
       // Create oscillator (generates the sound wave)
       const oscillator = audioContext.createOscillator();
@@ -21,7 +22,10 @@ export const audioUtils = {
 
       // Set volume (very quiet so it doesn't startle)
       gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + duration / 1000,
+      );
 
       // Play the beep
       oscillator.start(audioContext.currentTime);
@@ -34,7 +38,8 @@ export const audioUtils = {
   // Play a success sound (ascending tones)
   playSuccess: () => {
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
       const gainNode = audioContext.createGain();
       gainNode.connect(audioContext.destination);
 
@@ -52,10 +57,13 @@ export const audioUtils = {
         osc.connect(gainNode);
 
         const duration = 150;
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime + time / 1000);
+        gainNode.gain.setValueAtTime(
+          0.1,
+          audioContext.currentTime + time / 1000,
+        );
         gainNode.gain.exponentialRampToValueAtTime(
           0.01,
-          audioContext.currentTime + (time + duration) / 1000
+          audioContext.currentTime + (time + duration) / 1000,
         );
 
         osc.start(audioContext.currentTime + time / 1000);
@@ -69,7 +77,8 @@ export const audioUtils = {
   // Play notification sound
   playNotification: () => {
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
       const gainNode = audioContext.createGain();
       gainNode.connect(audioContext.destination);
 
@@ -80,7 +89,10 @@ export const audioUtils = {
 
       const duration = 200;
       gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + duration / 1000,
+      );
 
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + duration / 1000);

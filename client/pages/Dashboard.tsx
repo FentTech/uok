@@ -1722,29 +1722,35 @@ export default function Dashboard() {
                           💡 {moodSuggestions.affirmation}
                         </p>
                         <div className="space-y-2">
-                          {moodSuggestions.suggestions.map((suggestion: string, idx: number) => (
-                            <div
-                              key={idx}
-                              className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900"
-                            >
-                              <p className="flex items-start gap-2">
-                                <span className="flex-shrink-0 mt-0.5">→</span>
-                                <span>{suggestion}</span>
-                              </p>
-                            </div>
-                          ))}
+                          {moodSuggestions.suggestions.map(
+                            (suggestion: string, idx: number) => (
+                              <div
+                                key={idx}
+                                className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900"
+                              >
+                                <p className="flex items-start gap-2">
+                                  <span className="flex-shrink-0 mt-0.5">
+                                    →
+                                  </span>
+                                  <span>{suggestion}</span>
+                                </p>
+                              </div>
+                            ),
+                          )}
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {moodSuggestions.activities.map((activity: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="inline-block bg-blue-200 text-blue-900 px-3 py-1 rounded-full text-xs font-medium"
-                          >
-                            {activity}
-                          </span>
-                        ))}
+                        {moodSuggestions.activities.map(
+                          (activity: string, idx: number) => (
+                            <span
+                              key={idx}
+                              className="inline-block bg-blue-200 text-blue-900 px-3 py-1 rounded-full text-xs font-medium"
+                            >
+                              {activity}
+                            </span>
+                          ),
+                        )}
                       </div>
                     </div>
                   )}
@@ -1810,7 +1816,9 @@ export default function Dashboard() {
                     <p className="font-semibold text-blue-900 group-hover:text-blue-950 text-sm sm:text-base">
                       Add Photo
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-600">Capture a moment</p>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                      Capture a moment
+                    </p>
                   </div>
                 </button>
 

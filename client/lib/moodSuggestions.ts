@@ -19,7 +19,12 @@ export const moodSuggestionsData: Record<string, MoodSuggestion> = {
       "Help someone else feel as good as you do",
     ],
     affirmation: "You're absolutely crushing it! Keep this energy going!",
-    activities: ["Share with friends", "Celebrate", "Create content", "Help others"],
+    activities: [
+      "Share with friends",
+      "Celebrate",
+      "Create content",
+      "Help others",
+    ],
   },
   "🙂": {
     emoji: "🙂",
@@ -55,7 +60,8 @@ export const moodSuggestionsData: Record<string, MoodSuggestion> = {
       "Take a step back and practice self-care",
       "Remember this feeling will pass",
     ],
-    affirmation: "Tough times don't last, but tough people do. You've got this!",
+    affirmation:
+      "Tough times don't last, but tough people do. You've got this!",
     activities: ["Self-care", "Support", "Rest", "Reflection"],
   },
   "😴": {
@@ -92,7 +98,8 @@ export const moodSuggestionsData: Record<string, MoodSuggestion> = {
       "Focus on what you can control, not what you can't",
       "Talk to someone trusted about how you're feeling",
     ],
-    affirmation: "Anxiety is temporary. You have the strength to overcome this.",
+    affirmation:
+      "Anxiety is temporary. You have the strength to overcome this.",
     activities: ["Breathing", "Grounding", "Journal", "Talk"],
   },
   "😆": {
@@ -262,7 +269,9 @@ export const moodSuggestionsService = {
   getRandomSuggestion: (emoji: string): string | null => {
     const data = moodSuggestionsData[emoji];
     if (!data) return null;
-    return data.suggestions[Math.floor(Math.random() * data.suggestions.length)];
+    return data.suggestions[
+      Math.floor(Math.random() * data.suggestions.length)
+    ];
   },
 
   getAffirmationForMood: (emoji: string): string | null => {
