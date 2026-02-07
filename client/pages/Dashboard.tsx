@@ -1714,6 +1714,41 @@ export default function Dashboard() {
                     ✓ Check-in recorded! Alert sent to your emergency contacts.
                   </p>
 
+                  {/* Mood-Based Suggestions */}
+                  {moodSuggestions && (
+                    <div className="mt-4 pt-4 border-t border-green-200">
+                      <div className="mb-4">
+                        <p className="font-semibold text-blue-900 mb-2 text-sm">
+                          💡 {moodSuggestions.affirmation}
+                        </p>
+                        <div className="space-y-2">
+                          {moodSuggestions.suggestions.map((suggestion: string, idx: number) => (
+                            <div
+                              key={idx}
+                              className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900"
+                            >
+                              <p className="flex items-start gap-2">
+                                <span className="flex-shrink-0 mt-0.5">→</span>
+                                <span>{suggestion}</span>
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {moodSuggestions.activities.map((activity: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="inline-block bg-blue-200 text-blue-900 px-3 py-1 rounded-full text-xs font-medium"
+                          >
+                            {activity}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Inspiration Songs */}
                   <div className="mt-4 pt-4 border-t border-green-200">
                     <div className="flex items-center gap-2 mb-3">
