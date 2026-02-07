@@ -1034,12 +1034,11 @@ export default function Dashboard() {
     // Send check-in notification to bonded contacts
     sendCheckInNotification(mood, emoji);
 
-    // Hide confirmation and suggestions after delay
+    // Reset only the selected mood and time slot, but keep suggestions visible for user to read
     setTimeout(() => {
       setSelectedMood(null);
       setSelectedTimeSlot(null);
-      setMoodSuggestions(null);
-    }, 4000);
+    }, 1500); // Quick hide of confirmation, but suggestions stay
   };
 
   // Open share modal for media
@@ -1716,21 +1715,41 @@ export default function Dashboard() {
 
                   {/* Mood-Based Suggestions */}
                   {moodSuggestions && (
-                    <div className="mt-4 pt-4 border-t border-green-200">
+                    <div className="mt-4 pt-4 border-t border-green-200 animate-in fade-in slide-in-from-top-2 duration-300">
+                      {/* Header with Close Button */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-blue-900 mb-3">
+                            💡 Personalized for You
+                          </h3>
+                          <p className="font-semibold text-blue-900 text-base bg-gradient-to-r from-blue-100 to-blue-50 border-l-4 border-blue-600 p-3 rounded italic">
+                            "{moodSuggestions.affirmation}"
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => setMoodSuggestions(null)}
+                          className="flex-shrink-0 ml-4 p-2 hover:bg-blue-100 text-blue-600 rounded-full transition hover:text-blue-800"
+                          title="Close suggestions"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Actionable Suggestions */}
                       <div className="mb-4">
-                        <p className="font-semibold text-blue-900 mb-2 text-sm">
-                          💡 {moodSuggestions.affirmation}
+                        <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2">
+                          What you can do now:
                         </p>
                         <div className="space-y-2">
                           {moodSuggestions.suggestions.map(
                             (suggestion: string, idx: number) => (
                               <div
                                 key={idx}
-                                className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900"
+                                className="bg-gradient-to-r from-blue-50 to-blue-25 border-l-4 border-blue-500 rounded-lg p-3 text-sm text-blue-900 hover:shadow-md transition"
                               >
-                                <p className="flex items-start gap-2">
-                                  <span className="flex-shrink-0 mt-0.5">
-                                    →
+                                <p className="flex items-start gap-3">
+                                  <span className="flex-shrink-0 font-bold text-blue-600 w-5">
+                                    {idx + 1}.
                                   </span>
                                   <span>{suggestion}</span>
                                 </p>
@@ -1740,17 +1759,23 @@ export default function Dashboard() {
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        {moodSuggestions.activities.map(
-                          (activity: string, idx: number) => (
-                            <span
-                              key={idx}
-                              className="inline-block bg-blue-200 text-blue-900 px-3 py-1 rounded-full text-xs font-medium"
-                            >
-                              {activity}
-                            </span>
-                          ),
-                        )}
+                      {/* Activity Tags */}
+                      <div>
+                        <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2">
+                          Quick actions:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {moodSuggestions.activities.map(
+                            (activity: string, idx: number) => (
+                              <span
+                                key={idx}
+                                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 transition cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105"
+                              >
+                                {activity}
+                              </span>
+                            ),
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
