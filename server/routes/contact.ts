@@ -9,9 +9,15 @@ const contactFormSchema = z.object({
     .string()
     .min(1, "Name is required")
     .max(100)
-    .regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, and apostrophes"),
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      "Name can only contain letters, spaces, and apostrophes",
+    ),
   email: z.string().email("Invalid email address").max(255),
-  message: z.string().min(10, "Message must be at least 10 characters").max(5000),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters")
+    .max(5000),
 });
 
 // Store submissions in memory (in production, use database)
@@ -25,7 +31,11 @@ const contactSubmissions: Array<{
 }> = [];
 
 // Validation middleware
-const validateContactForm = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const validateContactForm = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
   try {
     const validated = contactFormSchema.parse(req.body);
     req.body = validated;
@@ -34,7 +44,10 @@ const validateContactForm = (req: express.Request, res: express.Response, next: 
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         error: "Validation failed",
-        details: error.errors.map((e) => ({ field: e.path.join("."), message: e.message })),
+        details: error.errors.map((e) => ({
+          field: e.path.join("."),
+          message: e.message,
+        })),
       });
     }
     res.status(400).json({ error: "Invalid request" });

@@ -201,6 +201,7 @@ The contact form is already implemented in `client/pages/Contact.tsx` and uses:
 5. Check your server console logs to see the submission recorded
 
 **View All Submissions (Dev Only):**
+
 - Visit `/api/contact/submissions` in development mode
 - Shows all submissions with details
 - Not available in production for security
