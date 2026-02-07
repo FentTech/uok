@@ -146,12 +146,15 @@ analyticsRouter.post("/send-weekly-report", validateWeeklyReport, async (req, re
         topMemoriesCount: report.topMemories.length,
         topAdsCount: report.topAds.length,
       },
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Error sending weekly report:", error);
+    console.error("[Error] Weekly report send failed:", error);
     res.status(500).json({
       error: "Failed to send weekly report",
-      details: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && {
+        details: error instanceof Error ? error.message : "Unknown error",
+      }),
     });
   }
 });
