@@ -1600,20 +1600,20 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Main Check-in Section */}
-          <div className="md:col-span-2 space-y-8">
+          <div className="md:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Status Card - Futuristic */}
-            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6 hover:border-cyan-400/60 transition">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-cyan-500/20 rounded-lg">
-                  <StatusIcon className="w-6 h-6 text-cyan-400" />
+            <div className="bg-white/10 backdrop-blur-xl border border-blue-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-blue-400/60 transition">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-2 sm:p-3 bg-blue-500/20 rounded-lg flex-shrink-0">
+                  <StatusIcon className="w-5 sm:w-6 h-5 sm:h-6 text-blue-400" />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-cyan-100">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold text-blue-100 text-sm sm:text-base">
                     Daily Check-in Status
                   </h3>
-                  <p className="text-sm text-cyan-300/80">{status.text}</p>
+                  <p className="text-xs sm:text-sm text-blue-300/80">{status.text}</p>
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
