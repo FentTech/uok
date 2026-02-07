@@ -4,6 +4,7 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { notificationsRouter } from "./routes/notifications";
 import { analyticsRouter } from "./routes/analytics";
+import { contactRouter } from "./routes/contact";
 
 // Simple in-memory rate limiting (no external package needed)
 // Only apply in production to avoid blocking dev requests
