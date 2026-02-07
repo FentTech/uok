@@ -1698,16 +1698,16 @@ export default function Dashboard() {
               </div>
 
               {selectedMood && (
-                <div className="bg-green-500/20 border border-green-400/50 rounded-lg p-3 sm:p-6 backdrop-blur-sm">
-                  <p className="text-green-300 font-semibold mb-3 sm:mb-4 text-center text-xs sm:text-sm">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-6">
+                  <p className="text-green-800 font-semibold mb-3 sm:mb-4 text-center text-xs sm:text-sm">
                     ✓ Check-in recorded! Alert sent to your emergency contacts.
                   </p>
 
                   {/* Inspiration Songs */}
                   <div className="mt-4 pt-4 border-t border-green-200">
                     <div className="flex items-center gap-2 mb-3">
-                      <Music className="w-5 h-5 text-purple-600" />
-                      <p className="font-semibold text-slate-900">
+                      <Music className="w-5 h-5 text-blue-600" />
+                      <p className="font-semibold text-blue-900">
                         Inspiration Playlist
                       </p>
                     </div>
@@ -1718,23 +1718,23 @@ export default function Dashboard() {
                       ]?.map((song, idx) => (
                         <div
                           key={idx}
-                          className="bg-white rounded-lg p-3 hover:shadow-md transition"
+                          className="bg-white rounded-lg p-3 hover:shadow-md transition border border-gray-200"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <p className="font-medium text-slate-900 text-sm">
+                              <p className="font-medium text-blue-900 text-sm">
                                 {song.title}
                               </p>
-                              <p className="text-xs text-slate-600">
+                              <p className="text-xs text-gray-600">
                                 {song.artist}
                               </p>
-                              <p className="text-xs text-purple-600 mt-1">
+                              <p className="text-xs text-blue-600 mt-1">
                                 {song.vibe}
                               </p>
                             </div>
                             <button
                               onClick={playNotificationSound}
-                              className="flex-shrink-0 p-2 bg-purple-100 hover:bg-purple-200 text-purple-600 rounded-lg transition"
+                              className="flex-shrink-0 p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition"
                               title="Play music"
                             >
                               <Play className="w-4 h-4 fill-current" />
