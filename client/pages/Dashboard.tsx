@@ -2121,13 +2121,13 @@ export default function Dashboard() {
             {/* Featured Partners Link */}
             <Link
               to="/featured-partners"
-              className="bg-amber-100 text-amber-900 rounded-2xl border border-amber-300 p-6 hover:shadow-md transition block"
+              className="bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-2xl border-2 border-orange-600 p-6 hover:shadow-xl hover:scale-105 transition block"
             >
               <div className="flex items-center gap-3 mb-2">
-                <Zap className="w-5 h-5 text-amber-600" />
+                <Zap className="w-6 h-6 text-yellow-300" />
                 <h3 className="text-lg font-bold">Featured Partners</h3>
               </div>
-              <p className="text-sm text-amber-800">
+              <p className="text-sm text-orange-100">
                 Advertise your business to our users
               </p>
             </Link>
