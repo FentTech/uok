@@ -694,9 +694,9 @@ export default function SharedMemories() {
                         onClick={() => {
                           setShowPreRollAd(true);
                           setSelectedMemoryForView(memory);
-                          setFullscreenVideo(memory.imageUrl);
+                          // Don't set fullscreenVideo yet - let ad complete first
                         }}
-                        className="absolute inset-0 w-full h-full bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center"
+                        className="absolute inset-0 w-full h-full bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center"
                       >
                         <div className="hidden group-hover:flex items-center justify-center w-16 h-16 bg-white/20 rounded-full backdrop-blur-sm">
                           <Video className="w-8 h-8 text-white" />
