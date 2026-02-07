@@ -176,16 +176,18 @@ You receive it in Gmail ✓
 
 The contact form is already implemented in `client/pages/Contact.tsx` and uses:
 
-- **Service**: FormSubmit.co (completely free, zero setup required)
-- **Destination**: Your Gmail (afenteng@gmail.com)
+- **Backend**: Your own Express API (`/api/contact/submit`)
+- **Validation**: Zod schema validation (prevents spam & malicious input)
+- **Rate Limiting**: 10 requests per minute per IP (prevents flooding)
 - **Status**: ✅ Ready to use
 
-**How FormSubmit Works:**
+**How It Works:**
 
-- No API keys needed
-- No account signup required
-- Submissions go directly to afenteng@gmail.com
-- Works immediately - no configuration needed
+1. User fills in the contact form on `/contact`
+2. Form submits to your backend API at `/api/contact/submit`
+3. Backend validates all inputs (name, email, message)
+4. Submission is logged to server console with timestamp and IP
+5. User gets success confirmation message
 
 ### Testing the Contact Form
 
@@ -193,11 +195,15 @@ The contact form is already implemented in `client/pages/Contact.tsx` and uses:
 2. Fill in:
    - **Name**: Your name
    - **Email**: Your email
-   - **Message**: Test message
+   - **Message**: A test message (at least 10 characters)
 3. Click **"Send Message"**
-4. Check your Gmail inbox (afenteng@gmail.com) - email should arrive in seconds!
+4. You should see: "Thank you for reaching out! We received your message..."
+5. Check your server console logs to see the submission recorded
 
-**That's it!** The form is live and ready to use.
+**View All Submissions (Dev Only):**
+- Visit `/api/contact/submissions` in development mode
+- Shows all submissions with details
+- Not available in production for security
 
 ### If You STILL Want Email Forwarding
 
