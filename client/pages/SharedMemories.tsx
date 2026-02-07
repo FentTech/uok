@@ -898,25 +898,27 @@ export default function SharedMemories() {
           />
         )}
 
-        {/* Fullscreen Video Modal */}
-        {fullscreenVideo && (
-          <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-40 backdrop-blur-sm">
+        {/* Fullscreen Video Modal - Lower z-index so ads appear on top */}
+        {fullscreenVideo && !showPreRollAd && (
+          <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-30 backdrop-blur-sm">
             <div className="relative w-full h-full max-w-6xl flex items-center justify-center">
               <button
                 onClick={() => {
                   setFullscreenVideo(null);
                   setShowPreRollAd(false);
                 }}
-                className="absolute top-4 right-4 z-50 text-white bg-black/50 hover:bg-black/80 p-2 rounded-lg transition"
+                className="absolute top-4 right-4 z-40 text-white bg-black/60 hover:bg-black/90 p-2 rounded-lg transition"
                 title="Close"
               >
                 <X className="w-6 h-6" />
               </button>
               <video
+                key={fullscreenVideo}
                 src={fullscreenVideo}
                 controls
                 autoPlay
-                className="max-w-full max-h-full"
+                preload="metadata"
+                className="max-w-full max-h-full object-contain"
               />
             </div>
           </div>
