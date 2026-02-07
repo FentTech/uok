@@ -2149,13 +2149,13 @@ export default function Dashboard() {
             {/* Advertiser Portal Link */}
             <Link
               to="/advertiser-login"
-              className="bg-amber-100 text-amber-900 rounded-2xl border border-amber-300 p-6 hover:shadow-md transition block"
+              className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl border-2 border-indigo-700 p-6 hover:shadow-xl hover:scale-105 transition block"
             >
               <div className="flex items-center gap-3 mb-2">
-                <Lock className="w-5 h-5 text-amber-600" />
+                <Lock className="w-6 h-6 text-purple-200" />
                 <h3 className="text-lg font-bold">Advertiser Portal</h3>
               </div>
-              <p className="text-sm text-amber-800">
+              <p className="text-sm text-indigo-100">
                 Private analytics for registered advertisers
               </p>
             </Link>
