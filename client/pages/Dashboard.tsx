@@ -1407,9 +1407,9 @@ export default function Dashboard() {
 
               {/* Notification Dropdown Menu */}
               {notificationDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-slate-900 border border-blue-400/30 rounded-xl shadow-xl z-50 backdrop-blur-xl max-h-96 overflow-hidden flex flex-col">
-                  <div className="p-3 sm:p-4 border-b border-blue-400/20 flex-shrink-0">
-                    <h3 className="text-blue-100 font-bold text-sm sm:text-base">
+                <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-96 overflow-hidden flex flex-col">
+                  <div className="p-3 sm:p-4 border-b border-gray-200 flex-shrink-0">
+                    <h3 className="text-blue-900 font-bold text-sm sm:text-base">
                       Notifications
                     </h3>
                   </div>
@@ -1418,26 +1418,26 @@ export default function Dashboard() {
                       notifications.slice(0, 10).map((notif) => (
                         <div
                           key={notif.id}
-                          className="px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-400/10 hover:bg-white/5 transition"
+                          className="px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-100 hover:bg-blue-50 transition"
                         >
-                          <p className="text-blue-300 text-xs sm:text-sm font-medium line-clamp-2">
+                          <p className="text-blue-900 text-xs sm:text-sm font-medium line-clamp-2">
                             {notif.message}
                           </p>
-                          <p className="text-blue-500/60 text-xs mt-1">
+                          <p className="text-gray-500 text-xs mt-1">
                             {notif.timestamp}
                           </p>
                         </div>
                       ))
                     ) : (
-                      <div className="px-3 sm:px-4 py-6 text-center text-blue-400/60 text-sm">
+                      <div className="px-3 sm:px-4 py-6 text-center text-gray-400 text-sm">
                         No notifications yet
                       </div>
                     )}
                   </div>
-                  <div className="p-2 sm:p-3 border-t border-blue-400/20 flex-shrink-0">
+                  <div className="p-2 sm:p-3 border-t border-gray-200 flex-shrink-0">
                     <Link
                       to="/bond-notifications"
-                      className="block text-center text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium hover:bg-white/5 py-2 rounded-lg transition"
+                      className="block text-center text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium hover:bg-blue-50 py-2 rounded-lg transition"
                     >
                       View all
                     </Link>
