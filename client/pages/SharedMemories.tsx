@@ -677,11 +677,13 @@ export default function SharedMemories() {
               {memory.imageUrl && (
                 <div className="w-full bg-slate-900 relative group">
                   {memory.mediaType === "video" ? (
-                    <div className="relative">
+                    <div className="relative bg-black">
                       <video
+                        key={memory.imageUrl}
                         src={memory.imageUrl}
                         className="w-full h-96 object-cover cursor-pointer"
                         controls
+                        preload="metadata"
                         onClick={() => {
                           setShowPreRollAd(true);
                           setSelectedMemoryForView(memory);
