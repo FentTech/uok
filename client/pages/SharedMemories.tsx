@@ -891,6 +891,11 @@ export default function SharedMemories() {
               // NOW show the video fullscreen after ad completes
               setFullscreenVideo(selectedMemoryForView.imageUrl || "");
 
+              // Clear loading state after a brief delay
+              setTimeout(() => {
+                setVideoLoadingId(null);
+              }, 500);
+
               // Track view after ad completes
               const userEmail = localStorage.getItem("userEmail") || "user";
               const today = new Date().toISOString().split("T")[0];
