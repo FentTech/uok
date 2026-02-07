@@ -1806,7 +1806,7 @@ export default function Dashboard() {
               {mediaItems.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-cyan-100">
+                    <h3 className="text-lg font-bold text-blue-900">
                       Today's Memories ({mediaItems.length})
                     </h3>
                   </div>
@@ -1821,7 +1821,7 @@ export default function Dashboard() {
                           }
                           setFullscreenMedia(item);
                         }}
-                        className="relative group rounded-lg overflow-hidden bg-slate-900 border border-cyan-400/30 hover:border-cyan-400/60 transition cursor-pointer"
+                        className="relative group rounded-lg overflow-hidden bg-gray-200 border border-gray-300 hover:border-gray-400 transition cursor-pointer"
                       >
                         {item.type === "photo" ? (
                           <img
