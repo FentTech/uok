@@ -1634,15 +1634,15 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Check-in Section - Futuristic */}
-            <div className="bg-white/10 backdrop-blur-xl border border-blue-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 hover:border-blue-400/60 transition">
-              <h2 className="text-xl sm:text-2xl font-bold text-blue-100 mb-4 sm:mb-6">
+            {/* Check-in Section */}
+            <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-8 hover:shadow-md transition">
+              <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4 sm:mb-6">
                 How are you feeling?
               </h2>
 
               {/* Time Slot Selection */}
               <div className="mb-4 sm:mb-6">
-                <p className="text-blue-200 font-semibold mb-2 sm:mb-3 text-xs sm:text-sm">
+                <p className="text-blue-900 font-semibold mb-2 sm:mb-3 text-xs sm:text-sm">
                   Select check-in time:
                 </p>
                 <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -1657,8 +1657,8 @@ export default function Dashboard() {
                       disabled={todayCheckInCount >= 3}
                       className={`py-2 px-2 sm:px-3 rounded-lg font-semibold text-xs sm:text-sm transition ${
                         selectedTimeSlot === timeSlot.slot
-                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/50"
-                          : "bg-white/10 text-blue-200 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-blue-400/30"
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
                       }`}
                     >
                       {timeSlot.icon}{" "}
@@ -1679,8 +1679,8 @@ export default function Dashboard() {
                     disabled={todayCheckInCount >= 3}
                     className={`aspect-square flex flex-col items-center justify-center rounded-lg sm:rounded-xl transition transform ${
                       selectedMood === item.emoji
-                        ? "bg-blue-600 shadow-lg shadow-blue-500/50 scale-105 sm:scale-110"
-                        : "bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-blue-400/30 hover:border-blue-400/60"
+                        ? "bg-blue-600 shadow-lg scale-105 sm:scale-110"
+                        : "bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
                     }`}
                   >
                     <span className="text-2xl sm:text-3xl">{item.emoji}</span>
@@ -1688,7 +1688,7 @@ export default function Dashboard() {
                       className={`text-xs font-medium mt-0.5 sm:mt-1 ${
                         selectedMood === item.emoji
                           ? "text-white"
-                          : "text-blue-200"
+                          : "text-gray-700"
                       }`}
                     >
                       {item.mood}
