@@ -35,7 +35,9 @@ const simpleRateLimit = (maxRequests: number, windowMs: number) => {
     record.count++;
 
     if (record.count > maxRequests) {
-      res.status(429).json({ error: "Too many requests, please try again later" });
+      res
+        .status(429)
+        .json({ error: "Too many requests, please try again later" });
       return;
     }
 
@@ -102,7 +104,9 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   if (req.query && typeof req.query === "object") {
     Object.keys(req.query).forEach((key) => {
       if (Array.isArray(req.query[key])) {
-        return res.status(400).json({ error: "Duplicate query parameters detected" });
+        return res
+          .status(400)
+          .json({ error: "Duplicate query parameters detected" });
       }
     });
   }
@@ -134,7 +138,10 @@ const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("X-XSS-Protection", "1; mode=block");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  res.setHeader(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload",
+  );
   next();
 };
 
@@ -162,7 +169,11 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Protected API routes with stricter rate limiting
-  app.use("/api/notifications", simpleRateLimit(30, 60 * 1000), notificationsRouter); // 30 req/min
+  app.use(
+    "/api/notifications",
+    simpleRateLimit(30, 60 * 1000),
+    notificationsRouter,
+  ); // 30 req/min
   app.use("/api/analytics", simpleRateLimit(30, 60 * 1000), analyticsRouter); // 30 req/min
 
   // 404 handler
