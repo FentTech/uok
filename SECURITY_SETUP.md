@@ -181,6 +181,7 @@ The contact form is already implemented in `client/pages/Contact.tsx` and uses:
 - **Status**: ✅ Ready to use
 
 **How FormSubmit Works:**
+
 - No API keys needed
 - No account signup required
 - Submissions go directly to afenteng@gmail.com
