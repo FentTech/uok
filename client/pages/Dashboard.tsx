@@ -306,6 +306,7 @@ export default function Dashboard() {
     string[]
   >([]);
   const [bondedCheckIns, setBondedCheckIns] = useState<StoredCheckIn[]>([]);
+  const [moodSuggestions, setMoodSuggestions] = useState<any | null>(null);
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
