@@ -1748,36 +1748,36 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Media Upload Section - Futuristic */}
-            <div className="bg-white/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-8 hover:border-cyan-400/60 transition">
-              <h2 className="text-2xl font-bold text-cyan-100 mb-6">
+            {/* Media Upload Section */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-md transition">
+              <h2 className="text-2xl font-bold text-blue-900 mb-6">
                 Share Your Day
               </h2>
 
               <div className="grid md:grid-cols-2 gap-4 mb-6">
                 <button
                   onClick={() => photoInputRef.current?.click()}
-                  className="p-8 border-2 border-dashed border-cyan-400/50 rounded-2xl hover:bg-cyan-500/10 hover:border-cyan-400 transition flex flex-col items-center justify-center gap-3 cursor-pointer group"
+                  className="p-8 border-2 border-dashed border-blue-300 rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-3 cursor-pointer group"
                 >
-                  <Image className="w-8 h-8 text-cyan-400 group-hover:text-cyan-300" />
+                  <Image className="w-8 h-8 text-blue-600 group-hover:text-blue-700" />
                   <div>
-                    <p className="font-semibold text-cyan-100 group-hover:text-cyan-50">
+                    <p className="font-semibold text-blue-900 group-hover:text-blue-950">
                       Add Photo
                     </p>
-                    <p className="text-sm text-cyan-300/80">Capture a moment</p>
+                    <p className="text-sm text-gray-600">Capture a moment</p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => videoInputRef.current?.click()}
-                  className="p-8 border-2 border-dashed border-purple-400/50 rounded-2xl hover:bg-purple-500/10 hover:border-purple-400 transition flex flex-col items-center justify-center gap-3 cursor-pointer group"
+                  className="p-8 border-2 border-dashed border-blue-300 rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-3 cursor-pointer group"
                 >
-                  <Video className="w-8 h-8 text-purple-400 group-hover:text-purple-300" />
+                  <Video className="w-8 h-8 text-blue-600 group-hover:text-blue-700" />
                   <div>
-                    <p className="font-semibold text-cyan-100 group-hover:text-cyan-50">
+                    <p className="font-semibold text-blue-900 group-hover:text-blue-950">
                       Add Video
                     </p>
-                    <p className="text-sm text-cyan-300/80">
+                    <p className="text-sm text-gray-600">
                       Share a video update
                     </p>
                   </div>
