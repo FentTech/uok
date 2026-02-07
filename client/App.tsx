@@ -24,6 +24,12 @@ import UserProfile from "./pages/UserProfile";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import AdvertiserLogin from "./pages/AdvertiserLogin";
 import AdvertiserAnalytics from "./pages/AdvertiserAnalytics";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
