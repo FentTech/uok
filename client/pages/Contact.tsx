@@ -34,26 +34,22 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      // Send email using Web3Forms (completely free, no signup required)
-      const response = await fetch("https://api.web3forms.com/submit", {
+      // Send email using FormSubmit (completely free, requires zero setup)
+      const response = await fetch("https://formsubmit.co/afenteng@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: "95bf1f2c-1b47-4fd6-b887-1c64c27f3e0c", // Web3Forms public key
           name: formData.name.trim(),
           email: formData.email.trim(),
           message: formData.message.trim(),
-          subject: `New Contact Form Submission from ${formData.name}`,
-          from_name: "UOK Support",
-          redirect: false,
+          subject: `UOK Support: Message from ${formData.name}`,
         }),
       });
 
-      const result = await response.json();
-
-      if (result.success) {
+      if (response.ok) {
         alert(
           "✓ Thank you for reaching out! Your message has been sent to support@youok.fit. We'll get back to you within 24-48 hours.",
         );
