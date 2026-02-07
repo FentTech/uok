@@ -96,9 +96,9 @@ export default function MediaPreRollAd({
   const percentage = (timeRemaining / adDuration) * 100;
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-      {/* Ad Container */}
-      <div className="bg-white rounded-lg overflow-hidden max-w-md w-full mx-4 shadow-2xl">
+    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 backdrop-blur-sm">
+      {/* Ad Container - Full screen blocking ad */}
+      <div className="bg-white rounded-lg overflow-hidden max-w-md w-full mx-4 shadow-2xl border-2 border-gray-300">
         {/* Ad Header */}
         <div className="bg-gradient-to-r from-purple-600 to-pink-500 p-6 text-white relative">
           <div className="flex items-start justify-between gap-4">
