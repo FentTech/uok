@@ -1579,14 +1579,14 @@ export default function Dashboard() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-600 mb-1 sm:mb-2">
             Welcome Back! 👋
           </h1>
-          <p className="text-cyan-300/80">
+          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
             How are you feeling today? Let your contacts know you're okay.
           </p>
         </div>
 
         {/* Data Retention Notice */}
-        <div className="mb-8 p-4 bg-orange-500/10 border border-orange-400/30 rounded-xl backdrop-blur-sm">
-          <p className="text-orange-300 text-sm">
+        <div className="mb-6 sm:mb-8 p-3 sm:p-4 bg-orange-500/10 border border-orange-400/30 rounded-lg sm:rounded-xl backdrop-blur-sm">
+          <p className="text-orange-300 text-xs sm:text-sm">
             <span className="font-semibold">📊 Data Retention:</span> All
             check-in records are automatically deleted after 72 hours to save
             storage space. Go to{" "}
