@@ -1540,20 +1540,20 @@ export default function Dashboard() {
 
       {/* Notifications Panel */}
       {notifications.length > 0 && (
-        <div className="bg-blue-500/10 border-b border-blue-400/20 px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
+        <div className="bg-blue-50 border-b border-blue-200 px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
           <div className="max-w-7xl mx-auto">
             {notifications.slice(0, 2).map((notif) => (
               <div
                 key={notif.id}
-                className="flex items-start sm:items-center justify-between gap-2 bg-white/5 rounded-lg p-2 sm:p-3 mb-2 backdrop-blur-sm border border-blue-400/20"
+                className="flex items-start sm:items-center justify-between gap-2 bg-white rounded-lg p-2 sm:p-3 mb-2 border border-blue-100"
               >
                 <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                  <Zap className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-400 flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <Zap className="w-4 sm:w-5 h-4 sm:h-5 text-amber-500 flex-shrink-0 mt-0.5 sm:mt-0" />
                   <div className="min-w-0 flex-1">
-                    <p className="text-blue-300 text-xs sm:text-sm font-medium line-clamp-2">
+                    <p className="text-blue-900 text-xs sm:text-sm font-medium line-clamp-2">
                       {notif.message}
                     </p>
-                    <p className="text-blue-500/60 text-xs">
+                    <p className="text-gray-500 text-xs">
                       {notif.timestamp}
                     </p>
                   </div>
@@ -1564,7 +1564,7 @@ export default function Dashboard() {
                       prev.filter((n) => n.id !== notif.id),
                     )
                   }
-                  className="text-blue-500/60 hover:text-blue-400 flex-shrink-0"
+                  className="text-gray-400 hover:text-gray-600 flex-shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
