@@ -1581,20 +1581,20 @@ export default function Dashboard() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-600 mb-1 sm:mb-2">
             Welcome Back! 👋
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
+          <p className="text-gray-600 text-sm sm:text-base">
             How are you feeling today? Let your contacts know you're okay.
           </p>
         </div>
 
         {/* Data Retention Notice */}
-        <div className="mb-6 sm:mb-8 p-3 sm:p-4 bg-orange-500/10 border border-orange-400/30 rounded-lg sm:rounded-xl backdrop-blur-sm">
-          <p className="text-orange-300 text-xs sm:text-sm">
+        <div className="mb-6 sm:mb-8 p-3 sm:p-4 bg-orange-50 border border-orange-200 rounded-lg sm:rounded-xl">
+          <p className="text-orange-800 text-xs sm:text-sm">
             <span className="font-semibold">📊 Data Retention:</span> All
             check-in records are automatically deleted after 72 hours to save
             storage space. Go to{" "}
             <Link
               to="/user-profile"
-              className="underline hover:text-orange-200 transition"
+              className="underline hover:text-orange-900 transition"
             >
               Profile Settings
             </Link>{" "}
