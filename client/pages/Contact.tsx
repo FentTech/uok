@@ -13,7 +13,11 @@ export default function Contact() {
     e.preventDefault();
 
     // Validate form
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.message.trim()
+    ) {
       alert("Please fill in all fields");
       return;
     }
@@ -63,7 +67,9 @@ export default function Contact() {
                 <div className="flex items-start gap-4">
                   <Mail className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="font-bold text-blue-900 mb-2">Email Support</h3>
+                    <h3 className="font-bold text-blue-900 mb-2">
+                      Email Support
+                    </h3>
                     <a
                       href="mailto:support@youok.fit"
                       className="text-blue-600 hover:text-blue-700 font-medium block mb-2"
@@ -71,9 +77,10 @@ export default function Contact() {
                       support@youok.fit
                     </a>
                     <p className="text-sm text-gray-600">
-                      ✓ Emails forwarded securely to main inbox<br/>
-                      ✓ Responses within 24-48 hours<br/>
-                      ✓ Available Monday-Friday
+                      ✓ Emails forwarded securely to main inbox
+                      <br />
+                      ✓ Responses within 24-48 hours
+                      <br />✓ Available Monday-Friday
                     </p>
                   </div>
                 </div>
@@ -87,9 +94,12 @@ export default function Contact() {
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-8">
-                  <h4 className="font-bold text-blue-900 mb-2">🔒 Email Security</h4>
+                  <h4 className="font-bold text-blue-900 mb-2">
+                    🔒 Email Security
+                  </h4>
                   <p className="text-sm text-gray-700">
-                    All emails to support@youok.fit are validated and securely forwarded. We never store sensitive information.
+                    All emails to support@youok.fit are validated and securely
+                    forwarded. We never store sensitive information.
                   </p>
                 </div>
               </div>

@@ -31,7 +31,10 @@ const apiLimiter = rateLimit({
 
 // CORS Configuration: Restrict to your domain only
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void,
+  ) => {
     const allowedOrigins = [
       "https://www.youok.fit",
       "https://youok.fit",
@@ -56,8 +59,13 @@ const corsOptions = {
 const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   // Validate Content-Type for POST/PUT requests
   if (["POST", "PUT"].includes(req.method)) {
-    if (req.is("application/json") === false && Object.keys(req.body).length > 0) {
-      return res.status(400).json({ error: "Invalid Content-Type. Expected application/json" });
+    if (
+      req.is("application/json") === false &&
+      Object.keys(req.body).length > 0
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Invalid Content-Type. Expected application/json" });
     }
   }
 
@@ -82,7 +90,9 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   if (req.query && typeof req.query === "object") {
     Object.keys(req.query).forEach((key) => {
       if (Array.isArray(req.query[key])) {
-        return res.status(400).json({ error: "Duplicate query parameters detected" });
+        return res
+          .status(400)
+          .json({ error: "Duplicate query parameters detected" });
       }
     });
   }
@@ -99,7 +109,9 @@ const securityLogger = (req: Request, res: Response, next: NextFunction) => {
     const isError = res.statusCode >= 400;
 
     if (isError || req.method !== "GET") {
-      console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
+      console.log(
+        `[${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`,
+      );
     }
   });
 
@@ -136,7 +148,7 @@ export function createServer() {
       frameguard: { action: "DENY" },
       xssFilter: true,
       noSniff: true,
-    })
+    }),
   );
 
   // Middleware - ordered by priority
