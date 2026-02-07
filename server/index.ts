@@ -144,36 +144,10 @@ export function createServer() {
   // Trust proxy for accurate IP addresses behind Vercel/Netlify
   app.set("trust proxy", 1);
 
-  // Security: Helmet - Set security HTTP headers
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "cdn.builder.io"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", "data:", "https:"],
-          connectSrc: ["'self'", "https://youok.fit", "*.youok.fit"],
-          fontSrc: ["'self'", "data:"],
-          objectSrc: ["'none'"],
-          mediaSrc: ["'self'", "data:"],
-          frameSrc: ["'self'"],
-        },
-      },
-      hsts: {
-        maxAge: 31536000, // 1 year in seconds
-        includeSubDomains: true,
-        preload: true,
-      },
-      frameguard: { action: "DENY" },
-      xssFilter: true,
-      noSniff: true,
-    }),
-  );
-
   // Middleware - ordered by priority
   app.use(securityLogger); // Log all requests for audit trail
-  app.use(generalLimiter); // Apply general rate limit to all routes
+  app.use(securityHeaders); // Set security headers
+  app.use(simpleRateLimit(100, 15 * 60 * 1000)); // General: 100 requests per 15 minutes
   app.use(cors(corsOptions)); // CORS with strict origin validation
   app.use(express.json({ limit: "10kb" })); // Limit JSON payload to 10KB
   app.use(express.urlencoded({ extended: true, limit: "10kb" })); // Limit URL-encoded payload
@@ -188,8 +162,8 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Protected API routes with stricter rate limiting
-  app.use("/api/notifications", apiLimiter, notificationsRouter);
-  app.use("/api/analytics", apiLimiter, analyticsRouter);
+  app.use("/api/notifications", simpleRateLimit(30, 60 * 1000), notificationsRouter); // 30 req/min
+  app.use("/api/analytics", simpleRateLimit(30, 60 * 1000), analyticsRouter); // 30 req/min
 
   // 404 handler
   app.use((_req, res) => {
