@@ -876,26 +876,27 @@ export default function SharedMemories() {
         )}
 
         {/* Pre-Roll Ad for Video Viewing */}
-        {showPreRollAd && (
+        {showPreRollAd && selectedMemoryForView && (
           <MediaPreRollAd
             onAdComplete={() => {
               setShowPreRollAd(false);
+              // NOW show the video fullscreen after ad completes
+              setFullscreenVideo(selectedMemoryForView.imageUrl || "");
+
               // Track view after ad completes
-              if (selectedMemoryForView) {
-                const userEmail = localStorage.getItem("userEmail") || "user";
-                const today = new Date().toISOString().split("T")[0];
-                analyticsService.trackEvent({
-                  type: "view",
-                  targetId: selectedMemoryForView.id,
-                  targetType: "memory",
-                  userEmail,
-                  timestamp: new Date().toISOString(),
-                  date: today,
-                  metadata: {
-                    engagementLevel: "high", // Watched ad = high engagement
-                  },
-                });
-              }
+              const userEmail = localStorage.getItem("userEmail") || "user";
+              const today = new Date().toISOString().split("T")[0];
+              analyticsService.trackEvent({
+                type: "view",
+                targetId: selectedMemoryForView.id,
+                targetType: "memory",
+                userEmail,
+                timestamp: new Date().toISOString(),
+                date: today,
+                metadata: {
+                  engagementLevel: "high", // Watched ad = high engagement
+                },
+              });
             }}
           />
         )}
