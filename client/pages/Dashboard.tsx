@@ -1538,20 +1538,20 @@ export default function Dashboard() {
 
       {/* Notifications Panel */}
       {notifications.length > 0 && (
-        <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border-b border-cyan-400/20 px-4 sm:px-6 lg:px-8 py-3">
+        <div className="bg-blue-500/10 border-b border-blue-400/20 px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
           <div className="max-w-7xl mx-auto">
             {notifications.slice(0, 2).map((notif) => (
               <div
                 key={notif.id}
-                className="flex items-center justify-between bg-white/5 rounded-lg p-3 mb-2 backdrop-blur-sm border border-cyan-400/20"
+                className="flex items-start sm:items-center justify-between gap-2 bg-white/5 rounded-lg p-2 sm:p-3 mb-2 backdrop-blur-sm border border-blue-400/20"
               >
-                <div className="flex items-center gap-3">
-                  <Zap className="w-5 h-5 text-yellow-400" />
-                  <div>
-                    <p className="text-cyan-300 text-sm font-medium">
+                <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <Zap className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-400 flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-blue-300 text-xs sm:text-sm font-medium line-clamp-2">
                       {notif.message}
                     </p>
-                    <p className="text-cyan-500/60 text-xs">
+                    <p className="text-blue-500/60 text-xs">
                       {notif.timestamp}
                     </p>
                   </div>
@@ -1562,7 +1562,7 @@ export default function Dashboard() {
                       prev.filter((n) => n.id !== notif.id),
                     )
                   }
-                  className="text-cyan-500/60 hover:text-cyan-400"
+                  className="text-blue-500/60 hover:text-blue-400 flex-shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
