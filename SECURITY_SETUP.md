@@ -161,18 +161,21 @@ You receive it in Gmail ✓
 ### How Customers Contact You
 
 **Option 1: Contact Form**
+
 - Visit `/contact` page
 - Fill in name, email, message
 - Click "Send Message"
 - Email goes to your Gmail
 
 **Option 2: Direct Email (still works)**
+
 - Email: `support@youok.fit` (still can receive emails here, just as a mention)
 - Tell people to use the contact form instead for best response
 
 ### Current Setup
 
 The contact form is already implemented in `client/pages/Contact.tsx` and uses:
+
 - **Service**: Web3Forms (completely free)
 - **Destination**: Your Gmail (afenteng@gmail.com)
 - **Status**: ✅ Ready to use
@@ -190,12 +193,14 @@ The contact form is already implemented in `client/pages/Contact.tsx` and uses:
 ### If You STILL Want Email Forwarding
 
 If you want the actual `support@youok.fit` email address to receive emails:
+
 - You would need Namecheap email account (**costs $0.80-1.50/month minimum**)
 - Not necessary since contact form already works for free
 
 ### Recommended Approach
 
 **Just use the free contact form** - it's the standard way modern apps handle support emails, and it's:
+
 - ✅ Completely free
 - ✅ No payment required
 - ✅ Professional looking

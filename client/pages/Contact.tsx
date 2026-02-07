@@ -55,18 +55,18 @@ export default function Contact() {
 
       if (result.success) {
         alert(
-          "✓ Thank you for reaching out! Your message has been sent to support@youok.fit. We'll get back to you within 24-48 hours."
+          "✓ Thank you for reaching out! Your message has been sent to support@youok.fit. We'll get back to you within 24-48 hours.",
         );
         setFormData({ name: "", email: "", message: "" });
       } else {
         alert(
-          "There was an issue sending your message. Please try again or email support@youok.fit directly."
+          "There was an issue sending your message. Please try again or email support@youok.fit directly.",
         );
       }
     } catch (error) {
       console.error("Error sending contact form:", error);
       alert(
-        "Failed to send message. Please try emailing support@youok.fit directly."
+        "Failed to send message. Please try emailing support@youok.fit directly.",
       );
     } finally {
       setIsSubmitting(false);
