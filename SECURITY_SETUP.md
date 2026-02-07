@@ -148,38 +148,53 @@ When implementing user authentication:
 2. Click the **down arrow** next to your domain
 3. Click "Manage" button
 
-### Step 3: Go to Email Settings
+### Step 3: Create Email Alias FIRST (Required!)
 
-1. Look for the menu on the left sidebar
-2. Find and click **"Email Forwarding"** or **"Redirect Email"**
+**⚠️ CRITICAL: Namecheap requires a real email account to exist BEFORE you can forward it!**
 
-### Step 4: Create Email Forward
+1. Look for **"Email Accounts"** or **"Mailboxes"** in the left sidebar
+2. Click **"Create Email Account"** or **"Add Email Account"**
+3. Fill in the form:
+   - **Email address:** `support` (just the username part)
+   - **Password:** Create any secure password (you won't actually use this account)
+   - Leave other fields as default
+4. Click **"Create"** or **"Save"**
+5. Wait for account creation (usually instant)
 
-1. Click "**Add Email Forward**" or similar button
-2. Fill in the following:
+✅ **You now have a REAL email account:** `support@youok.fit`
+
+### Step 4: Set Up Email Forwarding
+
+Now that the real account exists, set up forwarding:
+
+1. Find the `support@youok.fit` account in your Email Accounts list
+2. Click on it or click **"Edit"** / **"Manage"**
+3. Look for **"Forwarding"** settings
+4. Enable forwarding and enter:
 
 | Field            | Value                |
 | ---------------- | -------------------- |
-| **Forward from** | `support@youok.fit`  |
 | **Forward to**   | `afenteng@gmail.com` |
 
 **Important Notes:**
 
-- Keep "Forward to" email as your personal Gmail
+- Keep "Forward to" as your personal Gmail
 - You can add multiple forwarding addresses if needed
-- The email is forwarded in real-time, no setup on Gmail needed
+- Email forwards in real-time (no Gmail setup needed)
 
 ### Step 5: Activate the Forward
 
-1. Click "**Save**" or "**Add Email Forward**"
-2. Wait for activation (usually instant to a few minutes)
-3. You should see green checkmark when active
+1. Click **"Save"** or **"Enable"** to activate forwarding
+2. Wait for activation (usually instant to 5 minutes)
+3. You should see a green checkmark or confirmation when active
 
 ### Step 6: Test the Forward
 
 1. Send a test email to `support@youok.fit`
-2. Check your inbox at `afenteng@gmail.com`
+2. Check your Gmail inbox at `afenteng@gmail.com`
 3. Email should arrive within 1-2 minutes
+
+✅ **If you got the email, you're all set!**
 
 ### How It Works
 
