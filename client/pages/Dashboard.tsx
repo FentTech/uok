@@ -1863,7 +1863,7 @@ export default function Dashboard() {
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
-                        <p className="text-xs text-cyan-300 p-2 bg-white/10 backdrop-blur-sm border-t border-cyan-400/20">
+                        <p className="text-xs text-gray-700 p-2 bg-gray-100 border-t border-gray-200">
                           {item.type === "photo" ? "📷" : "🎥"} {item.timestamp}
                         </p>
                       </div>
