@@ -1023,16 +1023,23 @@ export default function Dashboard() {
     setCheckIns([newCheckIn, ...checkIns]);
     setTodayCheckInCount((prev) => Math.min(prev + 1, 3));
     setSelectedMood(emoji);
-    playNotificationSound(); // Play sound when mood is selected
+
+    // Play audio beep when mood is selected
+    audioUtils.playSuccess();
+
+    // Get and display mood suggestions
+    const suggestions = moodSuggestionsService.getSuggestionsForMood(emoji);
+    setMoodSuggestions(suggestions);
 
     // Send check-in notification to bonded contacts
     sendCheckInNotification(mood, emoji);
 
-    // Show confirmation
+    // Hide confirmation and suggestions after delay
     setTimeout(() => {
       setSelectedMood(null);
       setSelectedTimeSlot(null);
-    }, 2000);
+      setMoodSuggestions(null);
+    }, 4000);
   };
 
   // Open share modal for media
