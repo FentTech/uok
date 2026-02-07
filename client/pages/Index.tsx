@@ -327,14 +327,14 @@ export default function Index() {
               <h4 className="font-semibold text-white mb-4">Product</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="hover:text-blue-400 transition">
+                  <Link to="/features" className="hover:text-blue-400 transition">
                     Features
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-blue-400 transition">
+                  <Link to="/pricing" className="hover:text-blue-400 transition">
                     Pricing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -342,14 +342,14 @@ export default function Index() {
               <h4 className="font-semibold text-white mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="hover:text-blue-400 transition">
+                  <Link to="/about" className="hover:text-blue-400 transition">
                     About
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-blue-400 transition">
+                  <Link to="/contact" className="hover:text-blue-400 transition">
                     Contact
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -357,14 +357,14 @@ export default function Index() {
               <h4 className="font-semibold text-white mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="hover:text-blue-400 transition">
+                  <Link to="/privacy" className="hover:text-blue-400 transition">
                     Privacy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-blue-400 transition">
+                  <Link to="/terms" className="hover:text-blue-400 transition">
                     Terms
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
