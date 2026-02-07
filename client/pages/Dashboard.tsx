@@ -1457,17 +1457,17 @@ export default function Dashboard() {
             {/* Settings Modal */}
             {settingsOpen && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm p-3 sm:p-4">
-                <div className="bg-slate-900 border border-blue-400/30 rounded-2xl p-4 sm:p-6 max-w-md w-full backdrop-blur-xl max-h-[90vh] overflow-y-auto">
-                  <h2 className="text-xl sm:text-2xl font-bold text-blue-100 mb-4 sm:mb-6">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+                  <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4 sm:mb-6">
                     Settings
                   </h2>
 
                   <div className="space-y-3 sm:space-y-4">
-                    <div className="border-b border-blue-400/20 pb-3 sm:pb-4">
-                      <h3 className="text-blue-200 font-semibold mb-2 text-sm sm:text-base">
+                    <div className="border-b border-gray-200 pb-3 sm:pb-4">
+                      <h3 className="text-blue-900 font-semibold mb-2 text-sm sm:text-base">
                         Notification Settings
                       </h3>
-                      <label className="flex items-center gap-3 text-blue-300 text-sm">
+                      <label className="flex items-center gap-3 text-gray-700 text-sm">
                         <input
                           type="checkbox"
                           defaultChecked
@@ -1479,11 +1479,11 @@ export default function Dashboard() {
                       </label>
                     </div>
 
-                    <div className="border-b border-cyan-400/20 pb-4">
-                      <h3 className="text-cyan-200 font-semibold mb-2">
+                    <div className="border-b border-gray-200 pb-4">
+                      <h3 className="text-blue-900 font-semibold mb-2">
                         Check-in Reminders
                       </h3>
-                      <label className="flex items-center gap-3 text-cyan-300">
+                      <label className="flex items-center gap-3 text-gray-700">
                         <input
                           type="checkbox"
                           defaultChecked
@@ -1495,14 +1495,14 @@ export default function Dashboard() {
                       </label>
                     </div>
 
-                    <div className="border-b border-cyan-400/20 pb-4">
-                      <h3 className="text-cyan-200 font-semibold mb-2">
+                    <div className="border-b border-gray-200 pb-4">
+                      <h3 className="text-blue-900 font-semibold mb-2">
                         Account
                       </h3>
                       <Link
                         to="/user-profile"
                         onClick={() => setSettingsOpen(false)}
-                        className="block w-full px-4 py-2 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 hover:text-cyan-200 rounded-lg font-medium text-sm transition border border-cyan-400/30 text-center"
+                        className="block w-full px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 rounded-lg font-medium text-sm transition border border-blue-200 text-center"
                       >
                         👤 Manage Profile
                       </Link>
@@ -1511,7 +1511,7 @@ export default function Dashboard() {
                     <div className="pt-4 space-y-2">
                       <button
                         onClick={() => setSettingsOpen(false)}
-                        className="w-full py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium transition"
+                        className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
                       >
                         Close
                       </button>
