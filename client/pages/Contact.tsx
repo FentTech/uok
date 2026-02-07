@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Heart, Mail, MapPin } from "lucide-react";
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
