@@ -213,37 +213,37 @@ export const advertiserAuthService = {
   },
 
   // Sync advertiser credentials to Supabase (fire-and-forget)
-  syncToSupabase: (): void => {
+  syncToSupabase: async (): Promise<void> => {
     try {
       const credentials = advertiserAuthService.getAllAdvertisers();
+      if (credentials.length === 0) return;
 
-      import("./supabase")
-        .then(({ getSupabase }) => {
-          const supabase = getSupabase();
-          if (!supabase || credentials.length === 0) return;
+      try {
+        const { getSupabase } = await import("./supabase");
+        const supabase = getSupabase();
+        if (!supabase) {
+          console.log("ℹ️ Supabase not configured for advertiser sync");
+          return;
+        }
 
-          return Promise.all(
-            credentials.map((cred) =>
-              supabase.from("advertiser_credentials").upsert(
-                {
-                  email: cred.email,
-                  password: cred.password,
-                  company_name: cred.companyName,
-                  registered_at: cred.registeredAt,
-                  verified: cred.verified,
-                },
-                { onConflict: "email" },
-              ),
+        await Promise.all(
+          credentials.map((cred) =>
+            supabase.from("advertiser_credentials").upsert(
+              {
+                email: cred.email,
+                password: cred.password,
+                company_name: cred.companyName,
+                registered_at: cred.registeredAt,
+                verified: cred.verified,
+              },
+              { onConflict: "email" },
             ),
-          );
-        })
-        .then(() => console.log("✅ Advertiser credentials synced to Supabase"))
-        .catch((error) => {
-          console.log(
-            "⚠️ Failed to sync advertiser credentials to Supabase:",
-            error,
-          );
-        });
+          ),
+        );
+        console.log("✅ Advertiser credentials synced to Supabase");
+      } catch (error) {
+        console.warn("⚠️ Failed to sync advertiser credentials (non-critical):", error);
+      }
     } catch (error) {
       console.error("Error syncing advertiser credentials:", error);
     }
