@@ -68,6 +68,12 @@ const corsOptions = {
       process.env.FRONTEND_URL,
     ].filter(Boolean);
 
+    // In development, allow localhost and 127.0.0.1
+    if (process.env.NODE_ENV === "development") {
+      allowedOrigins.push("http://localhost:8080");
+      allowedOrigins.push("http://127.0.0.1:8080");
+    }
+
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
