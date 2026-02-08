@@ -60,6 +60,9 @@ export default function App() {
         msg.includes("github-installs") ||
         msg.includes("iframe evaluation") ||
         msg.includes("postmessage") ||
+        msg.includes("could not postmessage") ||
+        msg.includes("function object could not be cloned") ||
+        msg.includes("unsupported type for structured data") ||
         msg.includes("mobx.array") ||
         msg.includes("quill overwriting") ||
         msg.includes("textsection endpoint") ||
