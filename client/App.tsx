@@ -44,9 +44,12 @@ export default function App() {
     mediaStorage.cleanupExpiredMedia();
 
     // Set up periodic cleanup every hour
-    const cleanupInterval = setInterval(() => {
-      mediaStorage.cleanupExpiredMedia();
-    }, 60 * 60 * 1000); // 1 hour
+    const cleanupInterval = setInterval(
+      () => {
+        mediaStorage.cleanupExpiredMedia();
+      },
+      60 * 60 * 1000,
+    ); // 1 hour
 
     return () => clearInterval(cleanupInterval);
   }, []);
