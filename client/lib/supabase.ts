@@ -6,6 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 // Initialize Supabase client with error handling
 let supabaseClientInstance: ReturnType<typeof createClient> | null = null;
 let lastInitAttempt = 0;
+let isNetworkAvailable = true;
 
 const getSupabaseClient = () => {
   const url = import.meta.env.VITE_SUPABASE_URL;
@@ -30,6 +31,19 @@ const getSupabaseClient = () => {
     return null;
   }
 };
+
+// Monitor network connectivity
+if (typeof window !== "undefined") {
+  window.addEventListener("online", () => {
+    isNetworkAvailable = true;
+    console.log("✅ Network is available");
+  });
+
+  window.addEventListener("offline", () => {
+    isNetworkAvailable = false;
+    console.warn("⚠️ Network is unavailable");
+  });
+}
 
 export const supabaseCheckInService = {
   // Save check-in to Supabase
