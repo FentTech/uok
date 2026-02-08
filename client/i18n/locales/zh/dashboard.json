@@ -1,0 +1,69 @@
+{
+  "dashboard": {
+    "title": "Daily Wellness Check-In",
+    "subtitle": "How are you feeling today?",
+    "selectMood": "Select your mood:",
+    "selectedMood": "You selected:",
+    "selectTimeSlot": "When did you check in?",
+    "timeSlots": {
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening"
+    },
+    "submit": "Submit Check-In",
+    "submitting": "Submitting...",
+    "submitSuccess": "Check-in recorded successfully!",
+    "submitError": "Failed to submit check-in. Please try again.",
+    "suggestions": "Wellness Suggestions",
+    "closeModal": "Close suggestions"
+  },
+  "moods": {
+    "happy": "Happy",
+    "sad": "Sad",
+    "anxious": "Anxious",
+    "excited": "Excited",
+    "tired": "Tired",
+    "angry": "Angry",
+    "calm": "Calm",
+    "stressed": "Stressed",
+    "peaceful": "Peaceful",
+    "frustrated": "Frustrated",
+    "confident": "Confident",
+    "lonely": "Lonely",
+    "hopeful": "Hopeful",
+    "confused": "Confused",
+    "energetic": "Energetic",
+    "neutral": "Neutral",
+    "grateful": "Grateful",
+    "scared": "Scared",
+    "motivated": "Motivated",
+    "overwhelmed": "Overwhelmed"
+  },
+  "affirmations": {
+    "header": "Affirmation for you"
+  },
+  "suggestions": {
+    "header": "Actionable Suggestions",
+    "activities": "Recommended Activities"
+  },
+  "recentCheckins": {
+    "title": "Recent Check-Ins",
+    "noData": "No check-ins yet",
+    "date": "Date",
+    "mood": "Mood",
+    "timeSlot": "Time"
+  },
+  "weeklyTrend": {
+    "title": "Weekly Wellness Trend",
+    "noData": "Not enough data for weekly trend"
+  },
+  "contacts": {
+    "title": "My Wellness Circle",
+    "description": "People who care about your wellness",
+    "addContact": "Add Contact",
+    "noContacts": "No contacts added yet",
+    "setupNow": "Set up your wellness circle",
+    "lastCheckIn": "Last check-in",
+    "never": "Never"
+  }
+}
