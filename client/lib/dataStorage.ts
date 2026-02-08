@@ -156,7 +156,7 @@ export const mediaStorage = {
 export const notificationStorage = {
   getAll: (): StoredNotification[] => {
     try {
-      const data = localStorage.getItem("uok_notifications");
+      const data = safeLocalStorage.getItem("uok_notifications");
       return data ? JSON.parse(data) : [];
     } catch (e) {
       console.error("Error loading notifications:", e);
