@@ -34,11 +34,24 @@ class VisitorTrackingService {
    */
   private getOrCreateSessionId(): string {
     const storageKey = "uok_visitor_session_id";
-    let sessionId = localStorage.getItem(storageKey);
+
+    // Safe localStorage access for sandboxed environments
+    let sessionId: string | null = null;
+    try {
+      sessionId = localStorage.getItem(storageKey);
+    } catch (error) {
+      // localStorage not available (e.g., in Builder sandbox)
+      console.warn("⚠️ localStorage not available");
+    }
 
     if (!sessionId) {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem(storageKey, sessionId);
+      try {
+        localStorage.setItem(storageKey, sessionId);
+      } catch (error) {
+        // localStorage not available (e.g., in Builder sandbox)
+        console.warn("⚠️ Could not save session ID to localStorage");
+      }
     }
 
     return sessionId;
