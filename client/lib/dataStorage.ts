@@ -97,12 +97,34 @@ export const mediaStorage = {
 
   add: (media: Omit<StoredMedia, "id">): StoredMedia => {
     const allMedia = mediaStorage.getAll();
+    const activeMedia = mediaStorage.getActive();
+
+    // LIMIT: Maximum 5 active media items per user
+    // If adding new item would exceed limit, remove oldest one
+    if (activeMedia.length >= 5) {
+      // Find the oldest active media item (by timestamp)
+      const oldest = activeMedia.reduce((prev, current) => {
+        return new Date(current.timestamp) < new Date(prev.timestamp)
+          ? current
+          : prev;
+      });
+
+      // Mark oldest as deleted instead of removing it
+      const index = allMedia.findIndex((m) => m.id === oldest.id);
+      if (index !== -1) {
+        allMedia[index].deletedAt = new Date().toISOString();
+        console.log(`📦 Storage limit reached (5/5). Removing oldest media: ${oldest.id}`);
+      }
+    }
+
     const newMedia: StoredMedia = {
       ...media,
       id: Date.now().toString() + Math.random(),
     };
+
     allMedia.push(newMedia);
     safeLocalStorage.setItem("uok_media", JSON.stringify(allMedia));
+    console.log(`✅ Media added. Active: ${mediaStorage.getActive().length}/5`);
     return newMedia;
   },
 
