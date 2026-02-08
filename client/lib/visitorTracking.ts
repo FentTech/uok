@@ -138,19 +138,23 @@ class VisitorTrackingService {
         },
       };
 
-      // Try to save to Supabase (fire-and-forget)
-      import("./supabase").then(async () => {
-        try {
-          const { getSupabase } = await import("./supabase");
-          const supabase = getSupabase();
-          if (!supabase) return;
+      // Try to save to Supabase (fire-and-forget) with proper error handling
+      try {
+        const { getSupabase } = await import("./supabase");
+        const supabase = getSupabase();
+        if (!supabase) return;
 
-          await supabase.from("visitor_events").insert([event]);
-          console.log("📊 Event tracked:", eventType);
-        } catch (error) {
-          console.warn("⚠️ Failed to save event:", error);
+        await supabase.from("visitor_events").insert([event]);
+        console.log("📊 Event tracked:", eventType);
+      } catch (error) {
+        // Silently fail - Supabase may not be configured or network may be unavailable
+        // This is not a critical error
+        if (error instanceof Error && error.message.includes("Supabase credentials not configured")) {
+          console.log("ℹ️ Supabase event tracking disabled");
+        } else {
+          console.warn("⚠️ Failed to save event (non-critical):", error);
         }
-      });
+      }
     } catch (error) {
       console.warn("⚠️ Error tracking event:", error);
     }
