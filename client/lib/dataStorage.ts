@@ -122,7 +122,7 @@ export const mediaStorage = {
     const index = media.findIndex((m) => m.id === id);
     if (index !== -1) {
       media[index].deletedAt = new Date().toISOString();
-      localStorage.setItem("uok_media", JSON.stringify(media));
+      safeLocalStorage.setItem("uok_media", JSON.stringify(media));
       return true;
     }
     return false;
