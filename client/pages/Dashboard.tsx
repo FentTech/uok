@@ -628,6 +628,8 @@ export default function Dashboard() {
         console.error("Error loading user data from Supabase:", error);
         // Fall back to using what's in localStorage
         loadDemoBondedContacts(setBondedContacts);
+      } finally {
+        setIsLoading(false);
       }
     };
 
