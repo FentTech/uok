@@ -65,6 +65,9 @@ export default function App() {
         msg.includes("textsection endpoint") ||
         msg.includes("storage error") ||
         msg.includes("session storage") ||
+        msg.includes("domexception") ||
+        msg.includes("window.localstorage") ||
+        msg.includes("sandboxed document") ||
         msg.includes("could not get cookie") ||
         msg.includes("could not set cookie") ||
         msg.includes("scroll-linked positioning")
