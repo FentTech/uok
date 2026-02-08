@@ -55,7 +55,7 @@ export default function SharedMemories() {
   const [showPreRollAd, setShowPreRollAd] = useState(false);
   const [selectedMemoryForView, setSelectedMemoryForView] =
     useState<SharedMemory | null>(null);
-  const [adTimer, setAdTimer] = useState(10); // 10 second timer for video ads
+  const [adTimer, setAdTimer] = useState(20); // 20 second timer for video ads (skip after 10)
   const [featuredAds, setFeaturedAds] = useState<any[]>([]);
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
