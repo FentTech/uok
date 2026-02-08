@@ -161,6 +161,10 @@ export function createServer() {
   // Trust proxy for accurate IP addresses behind Vercel/Netlify
   app.set("trust proxy", 1);
 
+  // Serve static files FIRST (before CORS/security middleware)
+  const distPath = path.join(__dirname, "../dist/spa");
+  app.use(express.static(distPath, { maxAge: "1h" }));
+
   // Middleware - ordered by priority
   app.use(securityLogger); // Log all requests for audit trail
   app.use(securityHeaders); // Set security headers
@@ -187,10 +191,6 @@ export function createServer() {
   app.use("/api/analytics", simpleRateLimit(30, 60 * 1000), analyticsRouter); // 30 req/min
   app.use("/api/contact", simpleRateLimit(10, 60 * 1000), contactRouter); // 10 req/min to prevent spam
   app.use("/api/translate", simpleRateLimit(50, 60 * 1000), translateRouter); // 50 req/min for translations
-
-  // Serve static files from dist/spa in production
-  const distPath = path.join(__dirname, "../dist/spa");
-  app.use(express.static(distPath, { maxAge: "1h" }));
 
   // SPA fallback: Serve index.html for all non-API routes (client-side routing)
   app.use((req: Request, res: Response) => {
