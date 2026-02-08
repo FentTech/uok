@@ -218,7 +218,6 @@ export function createServer() {
   ); // 30 req/min
   app.use("/api/analytics", simpleRateLimit(30, 60 * 1000), analyticsRouter); // 30 req/min
   app.use("/api/contact", simpleRateLimit(10, 60 * 1000), contactRouter); // 10 req/min to prevent spam
-  app.use("/api/translate", simpleRateLimit(50, 60 * 1000), translateRouter); // 50 req/min for translations
 
   // SPA fallback: Only needed in Node.js server mode, not in Vercel serverless
   // Vercel serverless functions only handle API routes
