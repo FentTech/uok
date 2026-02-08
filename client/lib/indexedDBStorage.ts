@@ -127,7 +127,8 @@ export async function getMediaUrl(mediaId: string): Promise<string | null> {
           let mimeType = request.result.mimeType || "image/jpeg";
           if (!mimeType || mimeType === "application/octet-stream") {
             // Fallback to inferred type based on metadata
-            mimeType = request.result.type === "video" ? "video/mp4" : "image/jpeg";
+            mimeType =
+              request.result.type === "video" ? "video/mp4" : "image/jpeg";
           }
 
           const blob = new Blob([request.result.data], {

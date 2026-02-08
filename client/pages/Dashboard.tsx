@@ -833,7 +833,10 @@ export default function Dashboard() {
                 const blobUrl = await getMediaUrl(item.url); // item.url contains mediaId
                 return { ...item, url: blobUrl || item.url };
               } catch (error) {
-                console.warn(`Failed to load media URL for ${item.url}:`, error);
+                console.warn(
+                  `Failed to load media URL for ${item.url}:`,
+                  error,
+                );
                 return item;
               }
             }),
