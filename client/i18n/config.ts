@@ -134,7 +134,8 @@ const enTranslations = {
       },
       step2: {
         title: "Check In",
-        description: "Share your daily mood and wellness status 2-3 times per day",
+        description:
+          "Share your daily mood and wellness status 2-3 times per day",
       },
       step3: {
         title: "Connect",
@@ -409,8 +410,7 @@ const enTranslations = {
       },
       sharedMemories: {
         title: "Shared Memory Hub",
-        description:
-          "Create and share wellness memories with your community",
+        description: "Create and share wellness memories with your community",
       },
       partnerIntegration: {
         title: "Partner Wellness Programs",
@@ -525,8 +525,7 @@ const enTranslations = {
       network: "Network error. Please check your connection.",
       timeout: "Request timed out. Please try again.",
       unauthorized: "You are not authorized to perform this action.",
-      forbidden:
-        "You do not have permission to access this resource.",
+      forbidden: "You do not have permission to access this resource.",
       notFound: "The requested resource was not found.",
       conflict: "This resource already exists.",
       server: "Server error. Please try again later.",
@@ -560,20 +559,18 @@ const savedLanguage =
     ? localStorage.getItem("preferredLanguage")
     : "en";
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: savedLanguage || "en",
-    fallbackLng: "en",
-    defaultNS: "common",
-    ns: ["common", "home", "auth", "dashboard", "contact", "pages", "validation"],
-    interpolation: {
-      escapeValue: false,
-    },
-    react: {
-      useSuspense: false,
-    },
-  });
+i18n.use(initReactI18next).init({
+  resources,
+  lng: savedLanguage || "en",
+  fallbackLng: "en",
+  defaultNS: "common",
+  ns: ["common", "home", "auth", "dashboard", "contact", "pages", "validation"],
+  interpolation: {
+    escapeValue: false,
+  },
+  react: {
+    useSuspense: false,
+  },
+});
 
 export default i18n;
