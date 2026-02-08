@@ -64,6 +64,25 @@ export interface StoredCheckIn {
   createdAt: string;
 }
 
+// Safe localStorage wrapper for Builder.io sandbox compatibility
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      // localStorage not available in Builder sandbox - return null
+      return null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      // localStorage not available in Builder sandbox - silently fail
+    }
+  },
+};
+
 // ===== MEDIA STORAGE =====
 export const mediaStorage = {
   getAll: (): StoredMedia[] => {
