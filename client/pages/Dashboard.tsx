@@ -815,14 +815,44 @@ export default function Dashboard() {
       hasInitializedRef.current = true;
 
       // Load media from persistent storage
-      const savedMedia = mediaStorage.getActive();
-      // Filter to show only today's media
-      const today = new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-      const todayMedia = savedMedia.filter((m) => m.date === today);
-      setMediaItems(todayMedia as any[]);
+      const loadMediaWithUrls = async () => {
+        try {
+          const { getMediaUrl } = await import("../lib/indexedDBStorage");
+          const savedMedia = mediaStorage.getActive();
+          // Filter to show only today's media
+          const today = new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+          const todayMedia = savedMedia.filter((m) => m.date === today);
+
+          // Retrieve blob URLs from IndexedDB for each media item
+          const mediaWithUrls = await Promise.all(
+            todayMedia.map(async (item) => {
+              try {
+                const blobUrl = await getMediaUrl(item.url); // item.url contains mediaId
+                return { ...item, url: blobUrl || item.url };
+              } catch (error) {
+                console.warn(`Failed to load media URL for ${item.url}:`, error);
+                return item;
+              }
+            }),
+          );
+
+          setMediaItems(mediaWithUrls as any[]);
+        } catch (error) {
+          console.error("Error loading media:", error);
+          const savedMedia = mediaStorage.getActive();
+          const today = new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+          const todayMedia = savedMedia.filter((m) => m.date === today);
+          setMediaItems(todayMedia as any[]);
+        }
+      };
+
+      loadMediaWithUrls();
 
       // Load notifications from persistent storage
       const savedNotifications = notificationStorage.getAll();
