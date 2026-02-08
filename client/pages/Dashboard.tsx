@@ -1447,6 +1447,9 @@ export default function Dashboard() {
           </Link>
 
           <div className="flex items-center gap-3">
+            {/* Language Selector */}
+            <LanguageSelector />
+
             {/* Notifications Dropdown */}
             <div className="relative">
               <button
