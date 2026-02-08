@@ -3,8 +3,6 @@ import { Heart } from "lucide-react";
 import { moodSongs } from "../data/songs";
 
 export default function Index() {
-  const { t } = useTranslation(["home", "common"]);
-
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation with Language Selector */}
