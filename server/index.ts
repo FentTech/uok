@@ -193,7 +193,12 @@ export function createServer() {
   app.use(express.static(distPath, { maxAge: "1h" }));
 
   // SPA fallback: Serve index.html for all non-API routes (client-side routing)
-  app.get("*", (_req, res) => {
+  app.use((req: Request, res: Response) => {
+    // Skip if this looks like a file request (has extension)
+    if (req.path.includes(".")) {
+      return res.status(404).json({ error: "Not found" });
+    }
+
     res.sendFile(path.join(distPath, "index.html"), (err) => {
       if (err) {
         // If index.html doesn't exist (development mode), send a simple HTML
