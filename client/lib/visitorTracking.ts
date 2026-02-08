@@ -209,6 +209,7 @@ class VisitorTrackingService {
 
   /**
    * Get total page views/clicks
+   * Works globally across all browsers - returns 0 if unavailable
    */
   async getTotalPageViews(): Promise<number> {
     try {
