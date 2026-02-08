@@ -37,14 +37,13 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-blue-600">
-                  Check In,
-                </span>
+                <span className="text-blue-600">Check In,</span>
                 <br />
                 <span className="text-black">Stay Connected</span>
               </h1>
               <p className="text-xl text-slate-700 mb-8 leading-relaxed">
-                UOK is your daily wellness companion. Check in 2-3 times a day to let your loved ones know you're okay.
+                UOK is your daily wellness companion. Check in 2-3 times a day
+                to let your loved ones know you're okay.
               </p>
               <div className="flex gap-4">
                 <Link

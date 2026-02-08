@@ -126,43 +126,37 @@ export default function App() {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-              <VisitorCounter />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/setup-contacts" element={<SetupContacts />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/bond-contacts" element={<BondContacts />} />
-                <Route
-                  path="/bond-notifications"
-                  element={<BondNotifications />}
-                />
-                <Route path="/user-profile" element={<UserProfile />} />
-                <Route
-                  path="/wellness-insights"
-                  element={<WellnessInsights />}
-                />
-                <Route path="/shared-memories" element={<SharedMemories />} />
-                <Route
-                  path="/featured-partners"
-                  element={<FeaturedPartners />}
-                />
-                <Route path="/analytics" element={<AnalyticsDashboard />} />
-                <Route path="/advertiser-login" element={<AdvertiserLogin />} />
-                <Route
-                  path="/advertiser-analytics"
-                  element={<AdvertiserAnalytics />}
-                />
-                <Route path="/features" element={<Features />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+            <VisitorCounter />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/setup-contacts" element={<SetupContacts />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/bond-contacts" element={<BondContacts />} />
+              <Route
+                path="/bond-notifications"
+                element={<BondNotifications />}
+              />
+              <Route path="/user-profile" element={<UserProfile />} />
+              <Route path="/wellness-insights" element={<WellnessInsights />} />
+              <Route path="/shared-memories" element={<SharedMemories />} />
+              <Route path="/featured-partners" element={<FeaturedPartners />} />
+              <Route path="/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/advertiser-login" element={<AdvertiserLogin />} />
+              <Route
+                path="/advertiser-analytics"
+                element={<AdvertiserAnalytics />}
+              />
+              <Route path="/features" element={<Features />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
