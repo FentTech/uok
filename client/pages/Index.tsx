@@ -17,21 +17,21 @@ export default function Index() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-blue-600">UOK</span>
+            <span className="text-lg sm:text-xl font-bold text-blue-600">UOK</span>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3 items-center">
             <Link
               to="/login"
-              className="px-6 py-2 text-blue-600 hover:text-blue-700 font-medium transition"
+              className="px-3 sm:px-6 py-2 text-blue-600 hover:text-blue-700 font-medium transition text-sm sm:text-base"
             >
               Login
             </Link>
             <Link
               to="/signup"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+              className="px-3 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm sm:text-base"
             >
               Sign Up
             </Link>
