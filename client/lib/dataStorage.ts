@@ -172,7 +172,7 @@ export const notificationStorage = {
       read: false,
     };
     allNotifications.unshift(newNotification); // Add to beginning
-    localStorage.setItem("uok_notifications", JSON.stringify(allNotifications));
+    safeLocalStorage.setItem("uok_notifications", JSON.stringify(allNotifications));
     return newNotification;
   },
 
