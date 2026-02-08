@@ -63,7 +63,11 @@ const corsOptions = {
   ) => {
     // In development, allow localhost
     if (process.env.NODE_ENV === "development") {
-      if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1")) {
+      if (
+        !origin ||
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1")
+      ) {
         callback(null, true);
         return;
       }
