@@ -87,7 +87,7 @@ const safeLocalStorage = {
 export const mediaStorage = {
   getAll: (): StoredMedia[] => {
     try {
-      const data = localStorage.getItem("uok_media");
+      const data = safeLocalStorage.getItem("uok_media");
       return data ? JSON.parse(data) : [];
     } catch (e) {
       console.error("Error loading media:", e);
