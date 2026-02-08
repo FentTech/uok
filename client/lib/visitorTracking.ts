@@ -182,6 +182,7 @@ class VisitorTrackingService {
 
   /**
    * Get total unique visitors count
+   * Works globally across all browsers - returns 0 if unavailable
    */
   async getTotalVisitors(): Promise<number> {
     try {
