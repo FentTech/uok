@@ -25,7 +25,7 @@ export async function initializeIndexedDB(): Promise<IDBDatabase> {
 
     request.onupgradeneeded = (event) => {
       const database = (event.target as IDBOpenDBRequest).result;
-      
+
       // Create object store if it doesn't exist
       if (!database.objectStoreNames.contains(MEDIA_STORE)) {
         const objectStore = database.createObjectStore(MEDIA_STORE, {
@@ -55,7 +55,7 @@ export async function storeMedia(
     date: string;
     mood?: string;
     visibility?: string;
-  }
+  },
 ): Promise<{
   id: string;
   url: string;
@@ -87,7 +87,7 @@ export async function storeMedia(
         // Return object URL that can be used immediately
         const blob = new Blob([arrayBuffer], { type: file.type });
         const url = URL.createObjectURL(blob);
-        
+
         resolve({
           id: metadata.id,
           url: url,
@@ -111,9 +111,7 @@ export async function storeMedia(
 }
 
 // Retrieve media URL from IndexedDB
-export async function getMediaUrl(
-  mediaId: string
-): Promise<string | null> {
+export async function getMediaUrl(mediaId: string): Promise<string | null> {
   const database = await getDB();
 
   return new Promise((resolve, reject) => {

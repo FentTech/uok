@@ -20,7 +20,9 @@ export default function Index() {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg sm:text-xl font-bold text-blue-600">UOK</span>
+            <span className="text-lg sm:text-xl font-bold text-blue-600">
+              UOK
+            </span>
           </div>
           <div className="flex gap-2 sm:gap-3 items-center">
             <Link
