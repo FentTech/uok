@@ -123,6 +123,7 @@ export const mediaStorage = {
     const newMedia: StoredMedia = {
       ...media,
       id: Date.now().toString() + Math.random(),
+      createdAt: new Date().toISOString(),
     };
 
     allMedia.push(newMedia);
