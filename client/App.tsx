@@ -39,7 +39,11 @@ export default function App() {
   // Initialize demo advertiser, visitor tracking, and clean up expired media
   useEffect(() => {
     advertiserAuthService.initializeDemoAdvertiser();
-    visitorTracking.initialize();
+
+    // Initialize visitor tracking with proper error handling
+    visitorTracking.initialize().catch((error) => {
+      console.warn("⚠️ Visitor tracking failed to initialize (non-critical):", error);
+    });
 
     // Check for expiring media and notify users
     const checkExpiringMedia = () => {
