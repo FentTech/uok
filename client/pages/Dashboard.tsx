@@ -1239,50 +1239,76 @@ export default function Dashboard() {
         }
 
         try {
-          // Use createObjectURL for video playback
-          const url = URL.createObjectURL(file);
-          const timestamp = new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          const date = new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
+          // Import IndexedDB storage for persistent media
+          import("../lib/indexedDBStorage").then(({ storeMedia }) => {
+            const timestamp = new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const date = new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
 
-          console.log("📹 Video file loaded:", {
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            url: url,
-          });
+            const mediaId = Date.now().toString() + Math.random();
 
-          // Save to persistent storage
-          const savedMedia = mediaStorage.add({
-            type: "video",
-            url: url,
-            timestamp,
-            date,
-            mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
-            visibility: "personal",
-          });
+            console.log("📹 Video file loading to IndexedDB:", {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+            });
 
-          // Update local state
-          setMediaItems((prev) => [savedMedia as any, ...prev]);
+            // Store media in IndexedDB (persistent across sessions)
+            storeMedia(file, {
+              id: mediaId,
+              type: "video",
+              timestamp,
+              date,
+              mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+              visibility: "personal",
+            })
+              .then(({ url }) => {
+                // Save reference to persistent storage
+                const savedMedia = mediaStorage.add({
+                  type: "video",
+                  url: mediaId, // Store ID instead of URL
+                  timestamp,
+                  date,
+                  mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+                  visibility: "personal",
+                });
 
-          // Sync to Supabase (fire and forget)
-          const userEmail = localStorage.getItem("userEmail");
-          if (userEmail && userEmail !== "user") {
-            import("../lib/supabase")
-              .then(({ supabaseUserSyncService }) => {
-                const allMedia = mediaStorage.getActive();
-                return supabaseUserSyncService.syncMedia(userEmail, allMedia);
+                // Update local state
+                setMediaItems((prev) => [
+                  { ...savedMedia, url } as any,
+                  ...prev,
+                ]);
+
+                // Sync to Supabase (fire and forget)
+                const userEmail = localStorage.getItem("userEmail");
+                if (userEmail && userEmail !== "user") {
+                  import("../lib/supabase")
+                    .then(({ supabaseUserSyncService }) => {
+                      const allMedia = mediaStorage.getActive();
+                      return supabaseUserSyncService.syncMedia(
+                        userEmail,
+                        allMedia
+                      );
+                    })
+                    .then(() => console.log("✅ Video synced to Supabase"))
+                    .catch((error) =>
+                      console.log(
+                        "⚠️ Could not sync video to Supabase:",
+                        error
+                      )
+                    );
+                }
               })
-              .then(() => console.log("✅ Video synced to Supabase"))
-              .catch((error) =>
-                console.log("⚠️ Could not sync video to Supabase:", error),
-              );
-          }
+              .catch((error) => {
+                console.error("Error storing video:", error);
+                alert("Failed to store video. Please try again.");
+              });
+          });
         } catch (error) {
           console.error("Error processing video file:", error);
           alert("Error processing video file. Please try again.");
