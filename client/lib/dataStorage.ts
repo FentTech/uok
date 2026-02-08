@@ -216,7 +216,7 @@ export const sharedMomentsStorage = {
       createdAt: new Date().toISOString(),
     };
     allMoments.unshift(newMoment); // Add to beginning
-    localStorage.setItem("uok_shared_moments", JSON.stringify(allMoments));
+    safeLocalStorage.setItem("uok_shared_moments", JSON.stringify(allMoments));
     return newMoment;
   },
 
@@ -228,7 +228,7 @@ export const sharedMomentsStorage = {
     const index = allMoments.findIndex((m) => m.id === id);
     if (index !== -1) {
       allMoments[index] = { ...allMoments[index], ...updates };
-      localStorage.setItem("uok_shared_moments", JSON.stringify(allMoments));
+      safeLocalStorage.setItem("uok_shared_moments", JSON.stringify(allMoments));
       return allMoments[index];
     }
     return null;
