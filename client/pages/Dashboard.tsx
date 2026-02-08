@@ -1952,16 +1952,16 @@ export default function Dashboard() {
                           }
                           setFullscreenMedia(item);
                         }}
-                        className="relative group rounded-lg overflow-hidden bg-gray-200 border border-gray-300 hover:border-gray-400 transition cursor-pointer"
+                        className="relative group rounded-lg overflow-hidden bg-gray-200 border border-gray-300 hover:border-gray-400 transition cursor-pointer aspect-square"
                       >
                         {item.type === "photo" ? (
                           <img
                             src={item.url}
                             alt="Shared photo"
-                            className="w-full h-48 object-cover group-hover:scale-105 transition"
+                            className="w-full h-full object-cover group-hover:scale-105 transition"
                           />
                         ) : (
-                          <div className="w-full h-48 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative overflow-hidden">
+                          <div className="w-full h-full bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative overflow-hidden">
                             <video
                               className="w-full h-full object-contain"
                               controls
