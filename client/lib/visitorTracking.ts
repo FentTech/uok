@@ -167,7 +167,10 @@ class VisitorTrackingService {
     try {
       const { getSupabase } = await import("./supabase");
       const supabase = getSupabase();
-      if (!supabase) return 0;
+      if (!supabase) {
+        console.log("ℹ️ Supabase not configured, returning 0 for visitor count");
+        return 0;
+      }
 
       const { count, error } = await supabase
         .from("visitors")
@@ -176,7 +179,7 @@ class VisitorTrackingService {
       if (error) throw error;
       return count || 0;
     } catch (error) {
-      console.warn("⚠️ Failed to get visitor count:", error);
+      console.warn("⚠️ Failed to get visitor count (non-critical):", error);
       return 0;
     }
   }
@@ -188,7 +191,10 @@ class VisitorTrackingService {
     try {
       const { getSupabase } = await import("./supabase");
       const supabase = getSupabase();
-      if (!supabase) return 0;
+      if (!supabase) {
+        console.log("ℹ️ Supabase not configured, returning 0 for page views count");
+        return 0;
+      }
 
       const { count, error } = await supabase
         .from("visitor_events")
@@ -197,7 +203,7 @@ class VisitorTrackingService {
       if (error) throw error;
       return count || 0;
     } catch (error) {
-      console.warn("⚠️ Failed to get page views:", error);
+      console.warn("⚠️ Failed to get page views (non-critical):", error);
       return 0;
     }
   }
