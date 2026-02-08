@@ -102,7 +102,7 @@ export const mediaStorage = {
       id: Date.now().toString() + Math.random(),
     };
     allMedia.push(newMedia);
-    localStorage.setItem("uok_media", JSON.stringify(allMedia));
+    safeLocalStorage.setItem("uok_media", JSON.stringify(allMedia));
     return newMedia;
   },
 
@@ -111,7 +111,7 @@ export const mediaStorage = {
     const index = allMedia.findIndex((m) => m.id === id);
     if (index !== -1) {
       allMedia[index] = { ...allMedia[index], ...updates };
-      localStorage.setItem("uok_media", JSON.stringify(allMedia));
+      safeLocalStorage.setItem("uok_media", JSON.stringify(allMedia));
       return allMedia[index];
     }
     return null;
