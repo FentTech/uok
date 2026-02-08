@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { Heart } from "lucide-react";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import { moodSongs } from "../data/songs";
 
 export default function Index() {
