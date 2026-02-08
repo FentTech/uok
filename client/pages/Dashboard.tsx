@@ -23,7 +23,6 @@ import {
   Lock,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
-import { LanguageSelector } from "../components/LanguageSelector";
 import RotatingAds from "../components/RotatingAds";
 import MediaPreRollAd from "../components/MediaPreRollAd";
 import { analyticsService } from "../lib/analytics";
