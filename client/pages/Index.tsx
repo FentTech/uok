@@ -52,9 +52,12 @@ export default function Index() {
                 >
                   Get Started
                 </Link>
-                <button className="px-8 py-3 border-2 border-slate-300 text-black rounded-lg hover:border-blue-600 hover:text-blue-600 transition font-semibold">
+                <Link
+                  to="/features"
+                  className="px-8 py-3 border-2 border-slate-300 text-black rounded-lg hover:border-blue-600 hover:text-blue-600 transition font-semibold inline-block"
+                >
                   Learn More
-                </button>
+                </Link>
               </div>
             </div>
 
