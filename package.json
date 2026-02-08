@@ -2,6 +2,7 @@
   "name": "fusion-starter",
   "private": true,
   "type": "module",
+  "_comment": "Force Vercel rebuild with fixed routing config",
   "pkg": {
     "assets": [
       "dist/spa/*"
