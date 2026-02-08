@@ -957,7 +957,7 @@ export default function Dashboard() {
           const notification: Notification = {
             id: Date.now().toString(),
             type: "missed",
-            message: `⚠ ALERT: You missed your 3rd check-in! Alert sent to ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""} + email notifications.`,
+            message: `⚠ ALERT: You missed your 3rd check-in! Alert sent to ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}.`,
             timestamp: new Date().toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
