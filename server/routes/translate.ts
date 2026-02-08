@@ -1,12 +1,12 @@
-import { Router, Request, Response } from 'express';
-import { z } from 'zod';
+import { Router, Request, Response } from "express";
+import { z } from "zod";
 
 const translateRouter = Router();
 
 // Translation schema
 const translateRequestSchema = z.object({
   text: z.string().min(1),
-  targetLanguage: z.enum(['zh', 'ja', 'ar', 'fr', 'ko', 'es', 'pt']),
+  targetLanguage: z.enum(["zh", "ja", "ar", "fr", "ko", "es", "pt"]),
 });
 
 type TranslationCache = {
@@ -20,41 +20,41 @@ const translationCache: TranslationCache = {};
 
 // Language names for context
 const languageNames: { [key: string]: string } = {
-  zh: 'Chinese (Simplified)',
-  ja: 'Japanese',
-  ar: 'Arabic',
-  fr: 'French',
-  ko: 'Korean',
-  es: 'Spanish',
-  pt: 'Portuguese',
+  zh: "Chinese (Simplified)",
+  ja: "Japanese",
+  ar: "Arabic",
+  fr: "French",
+  ko: "Korean",
+  es: "Spanish",
+  pt: "Portuguese",
 };
 
 // Function to call Claude for translation
 async function translateWithClaude(
   text: string,
-  targetLanguage: string
+  targetLanguage: string,
 ): Promise<string> {
   const apiKey = process.env.CLAUDE_API_KEY;
-  
+
   if (!apiKey) {
     // Fallback: return placeholder if no API key
     return `[${targetLanguage}] ${text}`;
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 1024,
         messages: [
           {
-            role: 'user',
+            role: "user",
             content: `Translate the following text to ${languageNames[targetLanguage]}. Return ONLY the translated text, no explanations:\n\n${text}`,
           },
         ],
@@ -62,15 +62,16 @@ async function translateWithClaude(
     });
 
     if (!response.ok) {
-      console.error('Claude API error:', response.statusText);
+      console.error("Claude API error:", response.statusText);
       return `[${targetLanguage}] ${text}`;
     }
 
     const data = await response.json();
-    const translatedText = data.content[0]?.text || `[${targetLanguage}] ${text}`;
+    const translatedText =
+      data.content[0]?.text || `[${targetLanguage}] ${text}`;
     return translatedText.trim();
   } catch (error) {
-    console.error('Translation error:', error);
+    console.error("Translation error:", error);
     return `[${targetLanguage}] ${text}`;
   }
 }
@@ -78,30 +79,30 @@ async function translateWithClaude(
 // Batch translate multiple strings
 async function batchTranslate(
   strings: string[],
-  targetLanguage: string
+  targetLanguage: string,
 ): Promise<string[]> {
   const apiKey = process.env.CLAUDE_API_KEY;
-  
+
   if (!apiKey) {
     return strings.map((s) => `[${targetLanguage}] ${s}`);
   }
 
   try {
-    const stringsList = strings.map((s, i) => `${i + 1}. ${s}`).join('\n');
-    
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+    const stringsList = strings.map((s, i) => `${i + 1}. ${s}`).join("\n");
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 2048,
         messages: [
           {
-            role: 'user',
+            role: "user",
             content: `Translate the following numbered items to ${languageNames[targetLanguage]}. Return ONLY the translated items in the same numbered format, no explanations:\n\n${stringsList}`,
           },
         ],
@@ -109,33 +110,33 @@ async function batchTranslate(
     });
 
     if (!response.ok) {
-      console.error('Claude API error:', response.statusText);
+      console.error("Claude API error:", response.statusText);
       return strings.map((s) => `[${targetLanguage}] ${s}`);
     }
 
     const data = await response.json();
-    const responseText = data.content[0]?.text || '';
-    
+    const responseText = data.content[0]?.text || "";
+
     // Parse numbered responses
     const translatedStrings = responseText
-      .split('\n')
+      .split("\n")
       .filter((line: string) => line.trim())
       .map((line: string) => {
         // Remove numbering and return just the translation
-        return line.replace(/^\d+\.\s*/, '').trim();
+        return line.replace(/^\d+\.\s*/, "").trim();
       });
 
     return translatedStrings.length === strings.length
       ? translatedStrings
       : strings.map((s) => `[${targetLanguage}] ${s}`);
   } catch (error) {
-    console.error('Batch translation error:', error);
+    console.error("Batch translation error:", error);
     return strings.map((s) => `[${targetLanguage}] ${s}`);
   }
 }
 
 // POST /api/translate/single
-translateRouter.post('/single', async (req: Request, res: Response) => {
+translateRouter.post("/single", async (req: Request, res: Response) => {
   try {
     const { text, targetLanguage } = translateRequestSchema.parse(req.body);
 
@@ -164,21 +165,21 @@ translateRouter.post('/single', async (req: Request, res: Response) => {
       cached: false,
     });
   } catch (error) {
-    console.error('Translation error:', error);
+    console.error("Translation error:", error);
     res.status(400).json({
       success: false,
-      error: 'Translation failed',
+      error: "Translation failed",
     });
   }
 });
 
 // POST /api/translate/batch
-translateRouter.post('/batch', async (req: Request, res: Response) => {
+translateRouter.post("/batch", async (req: Request, res: Response) => {
   try {
     const { strings, targetLanguage } = z
       .object({
         strings: z.array(z.string()),
-        targetLanguage: z.enum(['zh', 'ja', 'ar', 'fr', 'ko', 'es', 'pt']),
+        targetLanguage: z.enum(["zh", "ja", "ar", "fr", "ko", "es", "pt"]),
       })
       .parse(req.body);
 
@@ -201,7 +202,7 @@ translateRouter.post('/batch', async (req: Request, res: Response) => {
     if (uncachedStrings.length > 0) {
       const translatedUncached = await batchTranslate(
         uncachedStrings,
-        targetLanguage
+        targetLanguage,
       );
 
       for (let i = 0; i < uncachedIndices.length; i++) {
@@ -223,22 +224,22 @@ translateRouter.post('/batch', async (req: Request, res: Response) => {
       targetLanguage,
     });
   } catch (error) {
-    console.error('Batch translation error:', error);
+    console.error("Batch translation error:", error);
     res.status(400).json({
       success: false,
-      error: 'Batch translation failed',
+      error: "Batch translation failed",
     });
   }
 });
 
 // POST /api/translate/json
 // Translate an entire JSON object
-translateRouter.post('/json', async (req: Request, res: Response) => {
+translateRouter.post("/json", async (req: Request, res: Response) => {
   try {
     const { json, targetLanguage } = z
       .object({
         json: z.record(z.any()),
-        targetLanguage: z.enum(['zh', 'ja', 'ar', 'fr', 'ko', 'es', 'pt']),
+        targetLanguage: z.enum(["zh", "ja", "ar", "fr", "ko", "es", "pt"]),
       })
       .parse(req.body);
 
@@ -246,11 +247,11 @@ translateRouter.post('/json', async (req: Request, res: Response) => {
     const strings: string[] = [];
     const stringPaths: string[] = [];
 
-    function extractStrings(obj: any, path: string = '') {
-      if (typeof obj === 'string') {
+    function extractStrings(obj: any, path: string = "") {
+      if (typeof obj === "string") {
         strings.push(obj);
         stringPaths.push(path);
-      } else if (typeof obj === 'object' && obj !== null) {
+      } else if (typeof obj === "object" && obj !== null) {
         if (Array.isArray(obj)) {
           obj.forEach((item, i) => {
             extractStrings(item, `${path}[${i}]`);
@@ -272,14 +273,14 @@ translateRouter.post('/json', async (req: Request, res: Response) => {
     const result: any = JSON.parse(JSON.stringify(json));
 
     function setValues(obj: any, path: string, value: string) {
-      const parts = path.split('.');
+      const parts = path.split(".");
       let current = obj;
 
       for (let i = 0; i < parts.length - 1; i++) {
         const part = parts[i];
-        if (part.includes('[')) {
-          const [key, indexStr] = part.split('[');
-          const index = parseInt(indexStr.replace(']', ''));
+        if (part.includes("[")) {
+          const [key, indexStr] = part.split("[");
+          const index = parseInt(indexStr.replace("]", ""));
           if (!current[key]) current[key] = [];
           if (!current[key][index]) current[key][index] = {};
           current = current[key][index];
@@ -290,9 +291,9 @@ translateRouter.post('/json', async (req: Request, res: Response) => {
       }
 
       const lastPart = parts[parts.length - 1];
-      if (lastPart.includes('[')) {
-        const [key, indexStr] = lastPart.split('[');
-        const index = parseInt(indexStr.replace(']', ''));
+      if (lastPart.includes("[")) {
+        const [key, indexStr] = lastPart.split("[");
+        const index = parseInt(indexStr.replace("]", ""));
         if (!current[key]) current[key] = [];
         current[key][index] = value;
       } else {
@@ -311,10 +312,10 @@ translateRouter.post('/json', async (req: Request, res: Response) => {
       stringsTranslated: strings.length,
     });
   } catch (error) {
-    console.error('JSON translation error:', error);
+    console.error("JSON translation error:", error);
     res.status(400).json({
       success: false,
-      error: 'JSON translation failed',
+      error: "JSON translation failed",
     });
   }
 });

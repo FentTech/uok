@@ -136,9 +136,15 @@ export default function App() {
                   element={<BondNotifications />}
                 />
                 <Route path="/user-profile" element={<UserProfile />} />
-                <Route path="/wellness-insights" element={<WellnessInsights />} />
+                <Route
+                  path="/wellness-insights"
+                  element={<WellnessInsights />}
+                />
                 <Route path="/shared-memories" element={<SharedMemories />} />
-                <Route path="/featured-partners" element={<FeaturedPartners />} />
+                <Route
+                  path="/featured-partners"
+                  element={<FeaturedPartners />}
+                />
                 <Route path="/analytics" element={<AnalyticsDashboard />} />
                 <Route path="/advertiser-login" element={<AdvertiserLogin />} />
                 <Route
@@ -154,10 +160,10 @@ export default function App() {
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </I18nextProvider>
   );
 }

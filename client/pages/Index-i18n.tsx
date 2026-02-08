@@ -43,7 +43,9 @@ export default function IndexI18n() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-blue-600">{t("home:hero.mainTitle")}</span>
+                <span className="text-blue-600">
+                  {t("home:hero.mainTitle")}
+                </span>
                 <br />
                 <span className="text-black">{t("home:hero.subTitle")}</span>
               </h1>
@@ -75,7 +77,8 @@ export default function IndexI18n() {
                     </div>
                     <div>
                       <p className="font-semibold text-black">
-                        {t("dashboard:timeSlots.morning")} {t("common:common.loading")}
+                        {t("dashboard:timeSlots.morning")}{" "}
+                        {t("common:common.loading")}
                       </p>
                     </div>
                   </div>

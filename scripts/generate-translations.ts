@@ -1,18 +1,26 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-const API_URL = process.env.API_URL || 'http://localhost:8080';
+const API_URL = process.env.API_URL || "http://localhost:8080";
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 
-const SUPPORTED_LANGUAGES = ['zh', 'ja', 'ar', 'fr', 'ko', 'es', 'pt'];
-const TRANSLATION_NAMESPACES = ['common', 'home', 'auth', 'dashboard', 'contact', 'pages', 'validation'];
+const SUPPORTED_LANGUAGES = ["zh", "ja", "ar", "fr", "ko", "es", "pt"];
+const TRANSLATION_NAMESPACES = [
+  "common",
+  "home",
+  "auth",
+  "dashboard",
+  "contact",
+  "pages",
+  "validation",
+];
 
 async function translateJson(json: any, targetLanguage: string): Promise<any> {
   try {
     const response = await fetch(`${API_URL}/api/translate/json`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         json,
@@ -21,7 +29,10 @@ async function translateJson(json: any, targetLanguage: string): Promise<any> {
     });
 
     if (!response.ok) {
-      console.error(`Failed to translate to ${targetLanguage}:`, response.statusText);
+      console.error(
+        `Failed to translate to ${targetLanguage}:`,
+        response.statusText,
+      );
       return json; // Return original if translation fails
     }
 
@@ -34,17 +45,21 @@ async function translateJson(json: any, targetLanguage: string): Promise<any> {
 }
 
 async function generateTranslations() {
-  console.log('Starting translation generation...');
-  
+  console.log("Starting translation generation...");
+
   if (!CLAUDE_API_KEY) {
-    console.warn('⚠️  CLAUDE_API_KEY not set. Using placeholder translations.');
-    console.warn('Set CLAUDE_API_KEY environment variable to enable AI translations.');
+    console.warn("⚠️  CLAUDE_API_KEY not set. Using placeholder translations.");
+    console.warn(
+      "Set CLAUDE_API_KEY environment variable to enable AI translations.",
+    );
   }
 
-  const enLocalesDir = path.join(process.cwd(), 'client/i18n/locales/en');
+  const enLocalesDir = path.join(process.cwd(), "client/i18n/locales/en");
 
   // Get all English translation files
-  const enFiles = fs.readdirSync(enLocalesDir).filter((f) => f.endsWith('.json'));
+  const enFiles = fs
+    .readdirSync(enLocalesDir)
+    .filter((f) => f.endsWith(".json"));
 
   console.log(`Found ${enFiles.length} English translation files`);
 
@@ -70,7 +85,7 @@ async function generateTranslations() {
 
       try {
         // Read English file
-        const enContent = JSON.parse(fs.readFileSync(enFile, 'utf-8'));
+        const enContent = JSON.parse(fs.readFileSync(enFile, "utf-8"));
 
         console.log(`📝 Translating ${file} to ${lang}...`);
 
@@ -90,10 +105,10 @@ async function generateTranslations() {
     }
   }
 
-  console.log('✨ Translation generation complete!');
+  console.log("✨ Translation generation complete!");
 }
 
 generateTranslations().catch((error) => {
-  console.error('Fatal error:', error);
+  console.error("Fatal error:", error);
   process.exit(1);
 });

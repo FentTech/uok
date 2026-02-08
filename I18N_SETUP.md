@@ -1,6 +1,7 @@
 # Multi-Language Support (i18n) Setup Guide
 
 Your UOK wellness app now supports **8 languages** with AI-powered translations:
+
 - 🇬🇧 English
 - 🇨🇳 Chinese
 - 🇯🇵 Japanese
@@ -13,6 +14,7 @@ Your UOK wellness app now supports **8 languages** with AI-powered translations:
 ## Architecture Overview
 
 ### Translation Files Structure
+
 ```
 client/i18n/
 ├── config.ts                    # i18n configuration
@@ -35,6 +37,7 @@ client/i18n/
 ```
 
 ### Components
+
 - **LanguageSelector.tsx**: Dropdown component for language selection
 - Located in: `client/components/LanguageSelector.tsx`
 - Features:
@@ -44,6 +47,7 @@ client/i18n/
   - Shows checkmark for currently selected language
 
 ### Backend Translation API
+
 - **Endpoint**: `/api/translate/json`
 - **Method**: POST
 - **Purpose**: Auto-translate JSON files using Claude AI
@@ -70,6 +74,7 @@ export default function MyComponent() {
 ```
 
 **Key Points:**
+
 - Import `useTranslation` from "react-i18next"
 - Specify which namespaces you need (e.g., "common", "home")
 - Use format: `t("namespace:key.nested_key")`
@@ -78,6 +83,7 @@ export default function MyComponent() {
 ### 2. Translation Key Structure
 
 Keys follow a hierarchical pattern:
+
 ```json
 {
   "nav": {
@@ -92,14 +98,16 @@ Keys follow a hierarchical pattern:
 ```
 
 Usage:
+
 ```tsx
-t("common:nav.login")      // "Login"
-t("common:messages.success") // "Success"
+t("common:nav.login"); // "Login"
+t("common:messages.success"); // "Success"
 ```
 
 ### 3. Updating Pages to Use i18n
 
 **Before (hardcoded):**
+
 ```tsx
 export default function Login() {
   return (
@@ -113,12 +121,13 @@ export default function Login() {
 ```
 
 **After (with i18n):**
+
 ```tsx
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const { t } = useTranslation(["auth", "common"]);
-  
+
   return (
     <div>
       <h1>{t("auth:login.title")}</h1>
@@ -147,6 +156,7 @@ export default function Header() {
 ```
 
 The selector:
+
 - Shows current language with flag emoji
 - Dropdown with all available languages
 - Automatically saves preference
@@ -155,6 +165,7 @@ The selector:
 ## Translation Workflow
 
 ### Current Status
+
 ✅ All translation files created for 8 languages
 ✅ English (base language) fully translated
 ⏳ Other languages contain English as placeholder text
@@ -178,6 +189,7 @@ node scripts/generate-translations.ts
 ```
 
 **Setup:**
+
 1. Get Claude API key from [console.anthropic.com](https://console.anthropic.com)
 2. Set environment variable: `CLAUDE_API_KEY=sk_...`
 3. Run the generation script
@@ -199,16 +211,16 @@ nano client/i18n/locales/zh/common.json
 POST request to translate JSON files:
 
 ```javascript
-const response = await fetch('/api/translate/json', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("/api/translate/json", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     json: {
-      "hello": "Hello world",
-      "goodbye": "Goodbye"
+      hello: "Hello world",
+      goodbye: "Goodbye",
     },
-    targetLanguage: 'fr' // French
-  })
+    targetLanguage: "fr", // French
+  }),
 });
 
 const translated = await response.json();
@@ -218,16 +230,20 @@ const translated = await response.json();
 ## Features
 
 ### Language Persistence
+
 - Selected language saved to `localStorage` key: `preferredLanguage`
 - User's choice persists across sessions
 - Automatically restored on page reload
 
 ### RTL Support
+
 - Arabic automatically sets RTL direction on document
 - Proper text alignment and spacing for RTL languages
 
 ### Namespaces
+
 Translation strings organized by feature for better maintainability:
+
 - **common**: Shared UI elements (buttons, nav, footer)
 - **home**: Homepage content
 - **auth**: Login/signup pages
@@ -239,11 +255,13 @@ Translation strings organized by feature for better maintainability:
 ## Environment Variables
 
 Required for auto-translation:
+
 ```env
 CLAUDE_API_KEY=sk_ant_... # Claude API key from Anthropic
 ```
 
 Optional:
+
 ```env
 API_URL=http://localhost:8080  # For development translation API
 ```
@@ -251,12 +269,15 @@ API_URL=http://localhost:8080  # For development translation API
 ## Translation Coverage
 
 ### Fully Translated Pages
+
 - ✅ Navigation & Footer
 - ✅ Common UI strings
 - ✅ Validation messages
 
 ### Pages Needing Updates
+
 The following pages should be updated to use i18n (placeholder example provided in `Index-i18n.tsx`):
+
 - Login (`client/pages/Login.tsx`)
 - Sign Up (`client/pages/SignUp.tsx`)
 - Dashboard (`client/pages/Dashboard.tsx`)
@@ -269,27 +290,35 @@ The following pages should be updated to use i18n (placeholder example provided 
 ## Troubleshooting
 
 ### Language not changing
+
 **Solution**: Check browser console for errors
+
 ```javascript
 // In browser console:
-i18n.language  // Should show current language code
-localStorage.getItem('preferredLanguage')  // Should match
+i18n.language; // Should show current language code
+localStorage.getItem("preferredLanguage"); // Should match
 ```
 
 ### Translations not loading
+
 **Solution**: Ensure translation files exist
+
 ```bash
 # Check if all language files exist:
 ls -la client/i18n/locales/*/common.json
 ```
 
 ### Arabic not right-to-left
+
 **Solution**: LanguageSelector sets `dir="rtl"` automatically
+
 - Ensure parent elements respect dir attribute
 - CSS may need adjustments for RTL layout
 
 ### Special Characters Not Displaying
+
 **Solution**: Ensure JSON files are saved as UTF-8
+
 ```bash
 file client/i18n/locales/*/common.json
 ```
@@ -301,14 +330,15 @@ file client/i18n/locales/*/common.json
 3. **Keep English as source of truth** - update English first, then translate
 4. **Test all languages** including RTL languages (Arabic)
 5. **Use descriptive keys** that indicate context:
+
    ```javascript
    // Good
-   t("auth:login.title")
-   t("dashboard:chart.title")
-   
+   t("auth:login.title");
+   t("dashboard:chart.title");
+
    // Avoid
-   t("string1")
-   t("text2")
+   t("string1");
+   t("text2");
    ```
 
 6. **Handle dynamic content carefully**:
@@ -321,6 +351,7 @@ file client/i18n/locales/*/common.json
 ## File Size Impact
 
 Translation files are lightweight:
+
 - ~10KB per language for all namespaces
 - Total size across 8 languages: ~80KB
 - Loaded dynamically by namespace for better performance
@@ -338,6 +369,7 @@ Translation files are lightweight:
 See `client/pages/Index-i18n.tsx` for a complete example of how to convert a page to use i18n.
 
 **To use it:**
+
 1. Copy the pattern from `Index-i18n.tsx`
 2. Import `useTranslation` hook
 3. Replace hardcoded strings with `t("namespace:key")` calls
