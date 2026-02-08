@@ -5,7 +5,15 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const LANGUAGES = ["zh", "ja", "ar", "fr", "ko", "es", "pt"];
-const NAMESPACES = ["common", "home", "auth", "dashboard", "contact", "pages", "validation"];
+const NAMESPACES = [
+  "common",
+  "home",
+  "auth",
+  "dashboard",
+  "contact",
+  "pages",
+  "validation",
+];
 
 const enLocalesDir = path.join(__dirname, "../client/i18n/locales/en");
 
@@ -48,5 +56,5 @@ console.log("✨ Done! All files are now in place.");
 console.log(
   "Next: Use the Claude API endpoint to translate them properly:\n" +
     '  export CLAUDE_API_KEY="sk_..."\n' +
-    "  node scripts/generate-translations.ts"
+    "  node scripts/generate-translations.ts",
 );
