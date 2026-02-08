@@ -1941,7 +1941,7 @@ export default function Dashboard() {
                       Today's Memories ({mediaItems.length})
                     </h3>
                   </div>
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                     {mediaItems.map((item) => (
                       <div
                         key={item.id}
