@@ -9,9 +9,10 @@ interface MediaPreRollAdProps {
 
 export default function MediaPreRollAd({
   onAdComplete,
-  adDuration = 10,
+  adDuration = 20, // Changed to 20 seconds for pre-roll ads
 }: MediaPreRollAdProps) {
   const [timeRemaining, setTimeRemaining] = useState(adDuration);
+  const [canSkip, setCanSkip] = useState(false); // Skip available after 10 seconds
   const [currentAd] = useState(() => {
     // Randomly select an ad from demo ads
     return DEMO_ADS[Math.floor(Math.random() * DEMO_ADS.length)];
