@@ -419,7 +419,7 @@ export const notificationHelpers = {
 export const checkInStorage = {
   getAll: (): StoredCheckIn[] => {
     try {
-      const data = localStorage.getItem("uok_checkins");
+      const data = safeLocalStorage.getItem("uok_checkins");
       return data ? JSON.parse(data) : [];
     } catch (e) {
       console.error("Error loading check-ins:", e);
