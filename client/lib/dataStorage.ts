@@ -516,7 +516,7 @@ export const checkInStorage = {
     const deletedCount = allCheckIns.length - filtered.length;
 
     if (deletedCount > 0) {
-      localStorage.setItem("uok_checkins", JSON.stringify(filtered));
+      safeLocalStorage.setItem("uok_checkins", JSON.stringify(filtered));
       console.log(
         `🧹 Cleaned up ${deletedCount} check-in(s) older than 72 hours`,
       );
