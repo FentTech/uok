@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
+import path from "path";
 import { handleDemo } from "./routes/demo";
 import { notificationsRouter } from "./routes/notifications";
 import { analyticsRouter } from "./routes/analytics";
