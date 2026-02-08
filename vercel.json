@@ -1,9 +1,37 @@
 {
   "buildCommand": "npm run build:client",
   "outputDirectory": "dist/spa",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "framework": "vite",
+  "headers": [
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "^/assets/.*",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "^/(?!assets/).*",
+      "dest": "/index.html"
+    }
+  ]
 }
