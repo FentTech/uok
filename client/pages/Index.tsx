@@ -55,10 +55,10 @@ export default function Index() {
                 feeling with emojis and stay connected with those who matter
                 most.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   to="/signup"
-                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
+                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-center"
                 >
                   Get Started
                 </Link>
