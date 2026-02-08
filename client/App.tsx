@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { advertiserAuthService } from "./lib/advertiserAuth";
 import { visitorTracking } from "./lib/visitorTracking";
+import { mediaStorage } from "./lib/dataStorage";
 import { VisitorCounter } from "./components/VisitorCounter";
 import Index from "./pages/Index";
 import SignUp from "./pages/SignUp";
