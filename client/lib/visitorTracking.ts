@@ -215,7 +215,10 @@ class VisitorTrackingService {
     try {
       const { getSupabaseClient } = await import("./supabase");
       const supabase = getSupabaseClient();
-      if (!supabase) return { visitors: 0, events: 0 };
+      if (!supabase) {
+        console.log("ℹ️ Supabase not configured, returning 0 for today stats");
+        return { visitors: 0, events: 0 };
+      }
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -236,7 +239,7 @@ class VisitorTrackingService {
         events: eventRes.count || 0,
       };
     } catch (error) {
-      console.warn("⚠️ Failed to get today stats:", error);
+      console.warn("⚠️ Failed to get today stats (non-critical):", error);
       return { visitors: 0, events: 0 };
     }
   }
