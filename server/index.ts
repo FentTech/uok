@@ -217,12 +217,12 @@ export function createServer() {
   app.use("/api/contact", simpleRateLimit(10, 60 * 1000), contactRouter); // 10 req/min to prevent spam
   app.use("/api/translate", simpleRateLimit(50, 60 * 1000), translateRouter); // 50 req/min for translations
 
-  // SPA fallback: Only needed for production mode (Vercel/Netlify)
-  // In development, Vite handles SPA routing
+  // SPA fallback: Only needed in Node.js server mode, not in Vercel serverless
+  // Vercel serverless functions only handle API routes
+  // Static files and SPA fallback are handled by Vercel's file serving
   if (
-    process.env.NODE_ENV === "production" ||
-    process.env.VERCEL ||
-    process.env.NETLIFY
+    process.env.NODE_ENV === "production" &&
+    !process.env.VERCEL_FUNCTION_ID
   ) {
     const distPath = path.resolve(process.cwd(), "dist/spa");
 
