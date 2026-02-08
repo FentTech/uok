@@ -54,7 +54,9 @@ class VisitorTrackingService {
       }
     } catch (error) {
       // localStorage not available (e.g., in private browsing, Builder sandbox, etc.)
-      console.log("ℹ️ localStorage not available, using fallback session tracking");
+      console.log(
+        "ℹ️ localStorage not available, using fallback session tracking",
+      );
     }
 
     // Create new session ID
@@ -65,7 +67,9 @@ class VisitorTrackingService {
       localStorage.setItem(storageKey, newSessionId);
     } catch (error) {
       // localStorage not available - we'll use the fallback in memory
-      console.log("ℹ️ Could not save session ID to localStorage, using in-memory session");
+      console.log(
+        "ℹ️ Could not save session ID to localStorage, using in-memory session",
+      );
     }
 
     return newSessionId;

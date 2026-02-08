@@ -12,7 +12,10 @@ export function VisitorCounter() {
     const loadStats = async () => {
       try {
         // Set timeout to prevent hanging in slow networks
-        const loadWithTimeout = async <T,>(promise: Promise<T>, timeoutMs = 5000): Promise<T | null> => {
+        const loadWithTimeout = async <T,>(
+          promise: Promise<T>,
+          timeoutMs = 5000,
+        ): Promise<T | null> => {
           return Promise.race([
             promise,
             new Promise<null>((resolve) =>
