@@ -75,6 +75,7 @@ export async function storeMedia(
       const mediaRecord = {
         ...metadata,
         data: arrayBuffer, // Store actual file data
+        mimeType: file.type, // Preserve original MIME type
         fileSize: file.size,
         fileName: file.name,
         cachedAt: new Date().toISOString(),
