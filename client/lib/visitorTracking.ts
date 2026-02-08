@@ -90,28 +90,32 @@ class VisitorTrackingService {
         referrer: document.referrer,
       };
 
-      // Try to save to Supabase (fire-and-forget)
-      import("./supabase").then(async () => {
-        try {
-          const { getSupabase } = await import("./supabase");
-          const supabase = getSupabase();
-          if (!supabase) return;
+      // Try to save to Supabase (fire-and-forget) with proper error handling
+      try {
+        const { getSupabase } = await import("./supabase");
+        const supabase = getSupabase();
+        if (!supabase) return;
 
-          // Check if session already exists
-          const { data: existing } = await supabase
-            .from("visitors")
-            .select("id")
-            .eq("session_id", this.sessionId)
-            .single();
+        // Check if session already exists
+        const { data: existing } = await supabase
+          .from("visitors")
+          .select("id")
+          .eq("session_id", this.sessionId)
+          .single();
 
-          if (!existing) {
-            await supabase.from("visitors").insert([visitorData]);
-            console.log("📊 Visitor tracked:", this.sessionId);
-          }
-        } catch (error) {
-          console.warn("⚠️ Failed to save visitor data:", error);
+        if (!existing) {
+          await supabase.from("visitors").insert([visitorData]);
+          console.log("📊 Visitor tracked:", this.sessionId);
         }
-      });
+      } catch (error) {
+        // Silently fail - Supabase may not be configured or network may be unavailable
+        // This is not a critical error
+        if (error instanceof Error && error.message.includes("Supabase credentials not configured")) {
+          console.log("ℹ️ Supabase visitor tracking disabled");
+        } else {
+          console.warn("⚠️ Failed to save visitor data (non-critical):", error);
+        }
+      }
     } catch (error) {
       console.warn("⚠️ Error tracking visit:", error);
     }
