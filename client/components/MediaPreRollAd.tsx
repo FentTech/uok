@@ -162,14 +162,18 @@ export default function MediaPreRollAd({
             {currentAd.cta}
           </button>
 
-          {/* Skip Button (only shows if has time left) */}
-          {timeRemaining > 2 && (
+          {/* Skip Button (available after 10 seconds) */}
+          {canSkip && timeRemaining > 0 ? (
             <button
               onClick={handleSkip}
-              className="w-full text-gray-600 hover:text-gray-800 font-medium py-2 text-sm transition-colors"
+              className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 text-sm transition-colors rounded"
             >
-              Skip Ad (in {timeRemaining}s)
+              Skip Ad (Skip available)
             </button>
+          ) : (
+            <p className="text-center text-sm text-gray-600">
+              Skip available in {adDuration - timeRemaining}s...
+            </p>
           )}
 
           {/* Auto-continue message */}
