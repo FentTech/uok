@@ -113,7 +113,9 @@ export const mediaStorage = {
       const index = allMedia.findIndex((m) => m.id === oldest.id);
       if (index !== -1) {
         allMedia[index].deletedAt = new Date().toISOString();
-        console.log(`📦 Storage limit reached (5/5). Removing oldest media: ${oldest.id}`);
+        console.log(
+          `📦 Storage limit reached (5/5). Removing oldest media: ${oldest.id}`,
+        );
       }
     }
 
