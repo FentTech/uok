@@ -144,8 +144,8 @@ class VisitorTrackingService {
    */
   async getTotalVisitors(): Promise<number> {
     try {
-      const { getSupabaseClient } = await import("./supabase");
-      const supabase = getSupabaseClient();
+      const { getSupabase } = await import("./supabase");
+      const supabase = getSupabase();
       if (!supabase) return 0;
 
       const { count, error } = await supabase
