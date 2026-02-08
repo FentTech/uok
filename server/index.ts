@@ -55,29 +55,38 @@ const simpleRateLimit = (maxRequests: number, windowMs: number) => {
   };
 };
 
-// CORS Configuration: Restrict to your domain only
+// CORS Configuration: Allow your domain and all Vercel preview URLs
 const corsOptions = {
   origin: (
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void,
   ) => {
-    const allowedOrigins = [
-      "https://www.youok.fit",
-      "https://youok.fit",
-      "https://youok-5hbm.vercel.app",
-      process.env.FRONTEND_URL,
-    ].filter(Boolean);
-
-    // In development, allow localhost and 127.0.0.1
+    // In development, allow localhost
     if (process.env.NODE_ENV === "development") {
-      allowedOrigins.push("http://localhost:8080");
-      allowedOrigins.push("http://127.0.0.1:8080");
+      if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1")) {
+        callback(null, true);
+        return;
+      }
     }
 
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    // Check if origin matches allowed patterns
+    const isAllowed =
+      origin === "https://www.youok.fit" || // Your custom domain
+      origin === "https://youok.fit" || // Your custom domain (non-www)
+      origin.endsWith(".vercel.app") || // All Vercel preview URLs
+      origin === process.env.FRONTEND_URL; // Environment variable override
+
+    if (isAllowed) {
       callback(null, true);
     } else {
+      // Log rejected origins for debugging
+      console.warn(`CORS rejected origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
