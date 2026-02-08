@@ -37,6 +37,15 @@ export default function MediaPreRollAd({
     });
   }, [currentAd]);
 
+  // Enable skip after 10 seconds (out of 20 second ad)
+  useEffect(() => {
+    const skipTimer = setTimeout(() => {
+      setCanSkip(true);
+    }, (adDuration - 10) * 1000); // 10 seconds into the ad
+
+    return () => clearTimeout(skipTimer);
+  }, [adDuration]);
+
   // Countdown timer
   useEffect(() => {
     if (timeRemaining <= 0) {
