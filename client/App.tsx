@@ -42,7 +42,10 @@ export default function App() {
 
     // Initialize visitor tracking with proper error handling
     visitorTracking.initialize().catch((error) => {
-      console.warn("⚠️ Visitor tracking failed to initialize (non-critical):", error);
+      console.warn(
+        "⚠️ Visitor tracking failed to initialize (non-critical):",
+        error,
+      );
     });
 
     // Check for expiring media and notify users
