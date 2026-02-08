@@ -1771,7 +1771,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 {MOOD_EMOJIS.map((item) => (
                   <button
                     key={item.emoji}
