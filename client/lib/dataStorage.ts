@@ -172,7 +172,10 @@ export const notificationStorage = {
       read: false,
     };
     allNotifications.unshift(newNotification); // Add to beginning
-    safeLocalStorage.setItem("uok_notifications", JSON.stringify(allNotifications));
+    safeLocalStorage.setItem(
+      "uok_notifications",
+      JSON.stringify(allNotifications),
+    );
     return newNotification;
   },
 
@@ -181,7 +184,10 @@ export const notificationStorage = {
     const notification = notifications.find((n) => n.id === id);
     if (notification) {
       notification.read = true;
-      safeLocalStorage.setItem("uok_notifications", JSON.stringify(notifications));
+      safeLocalStorage.setItem(
+        "uok_notifications",
+        JSON.stringify(notifications),
+      );
     }
   },
 
@@ -228,7 +234,10 @@ export const sharedMomentsStorage = {
     const index = allMoments.findIndex((m) => m.id === id);
     if (index !== -1) {
       allMoments[index] = { ...allMoments[index], ...updates };
-      safeLocalStorage.setItem("uok_shared_moments", JSON.stringify(allMoments));
+      safeLocalStorage.setItem(
+        "uok_shared_moments",
+        JSON.stringify(allMoments),
+      );
       return allMoments[index];
     }
     return null;
