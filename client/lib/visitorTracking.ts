@@ -80,8 +80,8 @@ class VisitorTrackingService {
       // Try to save to Supabase (fire-and-forget)
       import("./supabase").then(async () => {
         try {
-          const { getSupabaseClient } = await import("./supabase");
-          const supabase = getSupabaseClient();
+          const { getSupabase } = await import("./supabase");
+          const supabase = getSupabase();
           if (!supabase) return;
 
           // Check if session already exists
@@ -124,8 +124,8 @@ class VisitorTrackingService {
       // Try to save to Supabase (fire-and-forget)
       import("./supabase").then(async () => {
         try {
-          const { getSupabaseClient } = await import("./supabase");
-          const supabase = getSupabaseClient();
+          const { getSupabase } = await import("./supabase");
+          const supabase = getSupabase();
           if (!supabase) return;
 
           await supabase.from("visitor_events").insert([event]);
