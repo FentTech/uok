@@ -161,14 +161,16 @@ export function createServer() {
   // Trust proxy for accurate IP addresses behind Vercel/Netlify
   app.set("trust proxy", 1);
 
-  // Serve static files FIRST (before CORS/security middleware)
-  const distPath = path.join(__dirname, "../dist/spa");
-  app.use(express.static(distPath, { maxAge: "1h" }));
-
   // Middleware - ordered by priority
   app.use(securityLogger); // Log all requests for audit trail
   app.use(securityHeaders); // Set security headers
   app.use(simpleRateLimit(100, 15 * 60 * 1000)); // General: 100 requests per 15 minutes
+
+  // Serve static files BEFORE CORS (static files don't need CORS validation)
+  const distPath = path.join(__dirname, "../dist/spa");
+  app.use(express.static(distPath, { maxAge: "1h" }));
+
+  // Apply CORS only to API and dynamic routes (not static files)
   app.use(cors(corsOptions)); // CORS with strict origin validation
   app.use(express.json({ limit: "10kb" })); // Limit JSON payload to 10KB
   app.use(express.urlencoded({ extended: true, limit: "10kb" })); // Limit URL-encoded payload
