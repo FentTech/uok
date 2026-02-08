@@ -1,4 +1,5 @@
 // Visitor tracking service - tracks app visits and interactions
+// Works across all browsers and environments globally
 
 import { supabaseUserSyncService } from "./supabase";
 
@@ -24,37 +25,50 @@ interface VisitorEvent {
 class VisitorTrackingService {
   private sessionId: string;
   private initialized = false;
+  private fallbackSessionId: string = ""; // Fallback for browsers without localStorage
 
   constructor() {
+    this.fallbackSessionId = this.generateSessionId();
     this.sessionId = this.getOrCreateSessionId();
   }
 
   /**
+   * Generate a unique session ID
+   */
+  private generateSessionId(): string {
+    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+  }
+
+  /**
    * Get or create a unique session ID for this visitor
+   * Works across all browsers including those with localStorage disabled
    */
   private getOrCreateSessionId(): string {
     const storageKey = "uok_visitor_session_id";
 
-    // Safe localStorage access for sandboxed environments
-    let sessionId: string | null = null;
+    // Try localStorage first (works in most browsers)
     try {
-      sessionId = localStorage.getItem(storageKey);
-    } catch (error) {
-      // localStorage not available (e.g., in Builder sandbox)
-      console.warn("⚠️ localStorage not available");
-    }
-
-    if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      try {
-        localStorage.setItem(storageKey, sessionId);
-      } catch (error) {
-        // localStorage not available (e.g., in Builder sandbox)
-        console.warn("⚠️ Could not save session ID to localStorage");
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        return stored;
       }
+    } catch (error) {
+      // localStorage not available (e.g., in private browsing, Builder sandbox, etc.)
+      console.log("ℹ️ localStorage not available, using fallback session tracking");
     }
 
-    return sessionId;
+    // Create new session ID
+    const newSessionId = this.generateSessionId();
+
+    // Try to store it
+    try {
+      localStorage.setItem(storageKey, newSessionId);
+    } catch (error) {
+      // localStorage not available - we'll use the fallback in memory
+      console.log("ℹ️ Could not save session ID to localStorage, using in-memory session");
+    }
+
+    return newSessionId;
   }
 
   /**
