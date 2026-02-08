@@ -190,7 +190,7 @@ export const notificationStorage = {
   },
 
   clear: (): void => {
-    localStorage.setItem("uok_notifications", JSON.stringify([]));
+    safeLocalStorage.setItem("uok_notifications", JSON.stringify([]));
   },
 };
 
