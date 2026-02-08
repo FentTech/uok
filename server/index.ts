@@ -194,7 +194,11 @@ export function createServer() {
 
   // SPA fallback: Only needed for production mode (Vercel/Netlify)
   // In development, Vite handles SPA routing
-  if (process.env.NODE_ENV === "production" || process.env.VERCEL || process.env.NETLIFY) {
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.VERCEL ||
+    process.env.NETLIFY
+  ) {
     const distPath = path.resolve(process.cwd(), "dist/spa");
 
     app.use((req: Request, res: Response) => {
