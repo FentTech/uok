@@ -192,45 +192,30 @@ export function createServer() {
   app.use("/api/contact", simpleRateLimit(10, 60 * 1000), contactRouter); // 10 req/min to prevent spam
   app.use("/api/translate", simpleRateLimit(50, 60 * 1000), translateRouter); // 50 req/min for translations
 
-  // SPA fallback: Serve index.html for all non-API, non-static routes (client-side routing)
-  app.use((req: Request, res: Response) => {
-    // Don't serve files with extensions - they should have been handled by static middleware
-    if (req.path.includes(".")) {
-      return res.status(404).json({ error: "Not found" });
-    }
+  // SPA fallback: Only needed for production mode (Vercel/Netlify)
+  // In development, Vite handles SPA routing
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL || process.env.NETLIFY) {
+    const distPath = path.resolve(process.cwd(), "dist/spa");
 
-    // Don't serve API routes - they should have been handled earlier
-    if (req.path.startsWith("/api")) {
-      return res.status(404).json({ error: "API route not found" });
-    }
-
-    // For all other routes, serve index.html for client-side routing
-    res.sendFile(path.join(distPath, "index.html"), (err) => {
-      if (err) {
-        // If index.html doesn't exist (development mode), send basic SPA HTML
-        console.log(
-          "📄 Serving SPA HTML fallback for route:",
-          req.path,
-          "(dist not found)",
-        );
-        res.status(200).set("Content-Type", "text/html").send(`
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <title>UOK - Understand Our Knowing</title>
-              <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-            </head>
-            <body>
-              <div id="root"></div>
-              <script type="module" src="/assets/main.js"></script>
-            </body>
-          </html>
-        `);
+    app.use((req: Request, res: Response) => {
+      // Don't serve files with extensions
+      if (req.path.includes(".")) {
+        return res.status(404).json({ error: "Not found" });
       }
+
+      // Don't serve API routes
+      if (req.path.startsWith("/api")) {
+        return res.status(404).json({ error: "API route not found" });
+      }
+
+      // For all other routes, serve index.html for client-side routing
+      res.sendFile(path.join(distPath, "index.html"), (err) => {
+        if (err) {
+          res.status(404).json({ error: "Not found" });
+        }
+      });
     });
-  });
+  }
 
   // Error handler
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
