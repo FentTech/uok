@@ -437,7 +437,7 @@ export const checkInStorage = {
       createdAt: new Date().toISOString(),
     };
     allCheckIns.push(newCheckIn);
-    localStorage.setItem("uok_checkins", JSON.stringify(allCheckIns));
+    safeLocalStorage.setItem("uok_checkins", JSON.stringify(allCheckIns));
 
     // Also save to Supabase for syncing with bonded contacts
     try {
