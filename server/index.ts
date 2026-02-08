@@ -188,9 +188,32 @@ export function createServer() {
   app.use("/api/contact", simpleRateLimit(10, 60 * 1000), contactRouter); // 10 req/min to prevent spam
   app.use("/api/translate", simpleRateLimit(50, 60 * 1000), translateRouter); // 50 req/min for translations
 
-  // 404 handler
-  app.use((_req, res) => {
-    res.status(404).json({ error: "Not found" });
+  // Serve static files from dist/spa in production
+  const distPath = path.join(__dirname, "../dist/spa");
+  app.use(express.static(distPath, { maxAge: "1h" }));
+
+  // SPA fallback: Serve index.html for all non-API routes (client-side routing)
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(distPath, "index.html"), (err) => {
+      if (err) {
+        // If index.html doesn't exist (development mode), send a simple HTML
+        res.status(200).send(`
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <title>UOK - Understand Our Knowing</title>
+              <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+            </head>
+            <body>
+              <div id="root"></div>
+              <script type="module" src="/assets/main.js"></script>
+            </body>
+          </html>
+        `);
+      }
+    });
   });
 
   // Error handler
