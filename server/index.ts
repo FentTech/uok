@@ -192,17 +192,28 @@ export function createServer() {
   app.use("/api/contact", simpleRateLimit(10, 60 * 1000), contactRouter); // 10 req/min to prevent spam
   app.use("/api/translate", simpleRateLimit(50, 60 * 1000), translateRouter); // 50 req/min for translations
 
-  // SPA fallback: Serve index.html for all non-API routes (client-side routing)
+  // SPA fallback: Serve index.html for all non-API, non-static routes (client-side routing)
   app.use((req: Request, res: Response) => {
-    // Skip if this looks like a file request (has extension)
+    // Don't serve files with extensions - they should have been handled by static middleware
     if (req.path.includes(".")) {
       return res.status(404).json({ error: "Not found" });
     }
 
+    // Don't serve API routes - they should have been handled earlier
+    if (req.path.startsWith("/api")) {
+      return res.status(404).json({ error: "API route not found" });
+    }
+
+    // For all other routes, serve index.html for client-side routing
     res.sendFile(path.join(distPath, "index.html"), (err) => {
       if (err) {
-        // If index.html doesn't exist (development mode), send a simple HTML
-        res.status(200).send(`
+        // If index.html doesn't exist (development mode), send basic SPA HTML
+        console.log(
+          "📄 Serving SPA HTML fallback for route:",
+          req.path,
+          "(dist not found)",
+        );
+        res.status(200).set("Content-Type", "text/html").send(`
           <!DOCTYPE html>
           <html lang="en">
             <head>
