@@ -1150,43 +1150,69 @@ export default function Dashboard() {
     const files = e.target.files;
     if (files) {
       Array.from(files).forEach((file) => {
-        // Use createObjectURL for better performance and compatibility
-        const url = URL.createObjectURL(file);
-        const timestamp = new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        const date = new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        });
+        // Import IndexedDB storage for persistent media
+        import("../lib/indexedDBStorage").then(
+          ({ storeMedia }) => {
+            const timestamp = new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const date = new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
 
-        // Save to persistent storage
-        const savedMedia = mediaStorage.add({
-          type: "photo",
-          url: url,
-          timestamp,
-          date,
-          mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
-          visibility: "personal",
-        });
+            const mediaId = Date.now().toString() + Math.random();
 
-        // Update local state
-        setMediaItems((prev) => [savedMedia as any, ...prev]);
-
-        // Sync to Supabase (fire and forget)
-        const userEmail = localStorage.getItem("userEmail");
-        if (userEmail && userEmail !== "user") {
-          import("../lib/supabase")
-            .then(({ supabaseUserSyncService }) => {
-              const allMedia = mediaStorage.getActive();
-              return supabaseUserSyncService.syncMedia(userEmail, allMedia);
+            // Store media in IndexedDB (persistent across sessions)
+            storeMedia(file, {
+              id: mediaId,
+              type: "photo",
+              timestamp,
+              date,
+              mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+              visibility: "personal",
             })
-            .then(() => console.log("✅ Photo synced to Firebase"))
-            .catch((error) =>
-              console.log("⚠️ Could not sync photo to Firebase:", error),
-            );
-        }
+              .then(({ url }) => {
+                // Save reference to persistent storage
+                const savedMedia = mediaStorage.add({
+                  type: "photo",
+                  url: mediaId, // Store ID instead of URL
+                  timestamp,
+                  date,
+                  mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+                  visibility: "personal",
+                });
+
+                // Update local state
+                setMediaItems((prev) => [
+                  { ...savedMedia, url } as any,
+                  ...prev,
+                ]);
+
+                // Sync to Supabase (fire and forget)
+                const userEmail = localStorage.getItem("userEmail");
+                if (userEmail && userEmail !== "user") {
+                  import("../lib/supabase")
+                    .then(({ supabaseUserSyncService }) => {
+                      const allMedia = mediaStorage.getActive();
+                      return supabaseUserSyncService.syncMedia(userEmail, allMedia);
+                    })
+                    .then(() => console.log("✅ Photo synced to Supabase"))
+                    .catch((error) =>
+                      console.log(
+                        "⚠️ Could not sync photo to Supabase:",
+                        error,
+                      ),
+                    );
+                }
+              })
+              .catch((error) => {
+                console.error("Error storing photo:", error);
+                alert("Failed to store photo. Please try again.");
+              });
+          }
+        );
       });
     }
     // Reset input
