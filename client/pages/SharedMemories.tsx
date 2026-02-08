@@ -883,9 +883,10 @@ export default function SharedMemories() {
           </div>
         )}
 
-        {/* Pre-Roll Ad for Video Viewing */}
+        {/* Pre-Roll Ad for Video Viewing (20 seconds max, skip after 10) */}
         {showPreRollAd && selectedMemoryForView && (
           <MediaPreRollAd
+            adDuration={20}
             onAdComplete={() => {
               setShowPreRollAd(false);
               // NOW show the video fullscreen after ad completes
