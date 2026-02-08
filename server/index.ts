@@ -167,7 +167,9 @@ export function createServer() {
   app.use(simpleRateLimit(100, 15 * 60 * 1000)); // General: 100 requests per 15 minutes
 
   // Serve static files BEFORE CORS (static files don't need CORS validation)
-  const distPath = path.join(__dirname, "../dist/spa");
+  // Use process.cwd() to ensure correct path in both dev and production
+  const distPath = path.resolve(process.cwd(), "dist/spa");
+  console.log("📁 Serving static files from:", distPath);
   app.use(express.static(distPath, { maxAge: "1h" }));
 
   // Apply CORS only to API and dynamic routes (not static files)
