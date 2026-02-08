@@ -543,99 +543,15 @@ const enTranslations = {
 };
 
 // Create resources with English as fallback for all languages
-// Simplified translations for other languages (Spanish, French, Chinese, Japanese, Korean, Arabic, Portuguese)
-const otherLanguageTranslations = {
-  common: {
-    nav: {
-      login: "Iniciar sesión",
-      signup: "Registrarse",
-      features: "Características",
-      pricing: "Precios",
-      about: "Acerca de",
-      contact: "Contacto",
-      privacy: "Privacidad",
-      terms: "Términos",
-      dashboard: "Panel de control",
-      profile: "Perfil",
-      logout: "Cerrar sesión",
-      wellness: "Bienestar",
-      bonds: "Mis Conexiones",
-      memories: "Memorias Compartidas",
-      partners: "Socios Destacados",
-      analytics: "Analítica",
-    },
-    footer: {
-      description: "Tu compañero de bienestar diario",
-      product: "Producto",
-      company: "Empresa",
-      legal: "Legal",
-      rights: "Todos los derechos reservados",
-      followUs: "Síguenos",
-    },
-    common: {
-      loading: "Cargando...",
-      error: "Se produjo un error",
-      success: "Éxito",
-      cancel: "Cancelar",
-      save: "Guardar",
-      delete: "Eliminar",
-      edit: "Editar",
-      close: "Cerrar",
-      back: "Atrás",
-      next: "Siguiente",
-      previous: "Anterior",
-      submit: "Enviar",
-      search: "Buscar",
-      filter: "Filtrar",
-      sort: "Ordenar",
-      language: "Idioma",
-      theme: "Tema",
-      lightMode: "Modo Claro",
-      darkMode: "Modo Oscuro",
-      yes: "Sí",
-      no: "No",
-      confirm: "Confirmar",
-      settings: "Configuración",
-      help: "Ayuda",
-      support: "Soporte",
-      visitors: "Visitantes",
-      interactions: "Interacciones",
-    },
-    messages: {
-      loadingError: "Error al cargar el contenido. Por favor, inténtalo de nuevo.",
-      networkError: "Error de red. Por favor, verifica tu conexión.",
-      unauthorizedError: "No estás autorizado para acceder a este recurso.",
-      notFoundError: "No se encontró el recurso que buscas.",
-      serverError: "Error del servidor. Por favor, inténtalo más tarde.",
-      confirmDelete: "¿Estás seguro de que deseas eliminar esto?",
-      savingChanges: "Guardando cambios...",
-      changessSaved: "Cambios guardados correctamente.",
-      deleteSuccess: "Eliminado correctamente.",
-      deleteError: "Error al eliminar. Por favor, inténtalo de nuevo.",
-    },
-  },
-  home: {
-    hero: {
-      mainTitle: "Registrate,",
-      subTitle: "Mantente Conectado",
-      description:
-        "UOK es tu compañero de bienestar diario. Comparte tu estado 2-3 veces al día.",
-      cta: "Comenzar",
-      learnMore: "Saber Más",
-      createAccount: "Crea tu Cuenta Gratuita",
-    },
-  },
-};
-
 const resources = {
   en: enTranslations,
-  zh: enTranslations, // Chinese - using English as placeholder
-  ja: enTranslations, // Japanese - using English as placeholder
-  ar: enTranslations, // Arabic - using English as placeholder
-  fr: otherLanguageTranslations, // French - using Spanish translations as base
-  ko: enTranslations, // Korean - using English as placeholder
-  es: otherLanguageTranslations, // Spanish
-  pt: enTranslations, // Portuguese - using English as placeholder
+  zh: enTranslations, // Chinese - using English as fallback
+  ja: enTranslations, // Japanese - using English as fallback
+  ar: enTranslations, // Arabic - using English as fallback
+  fr: enTranslations, // French - using English as fallback
+  ko: enTranslations, // Korean - using English as fallback
+  es: enTranslations, // Spanish - using English as fallback
+  pt: enTranslations, // Portuguese - using English as fallback
 };
 
 const savedLanguage =
