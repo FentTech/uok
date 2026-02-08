@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Heart,
   LogOut,
@@ -22,6 +23,7 @@ import {
   Lock,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
+import { LanguageSelector } from "../components/LanguageSelector";
 import RotatingAds from "../components/RotatingAds";
 import MediaPreRollAd from "../components/MediaPreRollAd";
 import { analyticsService } from "../lib/analytics";
