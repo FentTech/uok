@@ -977,16 +977,6 @@ export default function Dashboard() {
             });
           });
 
-          // Send email alerts (Backend integration)
-          console.log("📧 Email alerts would be sent to bonded contacts at:", {
-            timestamp: new Date().toISOString(),
-            emailSubject: "UOK Alert: Family Member Missed Check-In",
-            bondedContacts: bondedContacts.map((c: any) => c.name),
-          });
-
-          // In production, this would call your backend API:
-          // POST /api/alerts/missed-checkin
-          // Body: { bondedContacts, message, timestamp }
         }, 30000); // 30 seconds
 
         missedCheckInTimerRef.current = timer;
