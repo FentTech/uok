@@ -40,8 +40,15 @@ export default function App() {
   useEffect(() => {
     advertiserAuthService.initializeDemoAdvertiser();
     visitorTracking.initialize();
-    // Auto-delete media older than 3 days
+    // Auto-delete media older than 3 days on app load
     mediaStorage.cleanupExpiredMedia();
+
+    // Set up periodic cleanup every hour
+    const cleanupInterval = setInterval(() => {
+      mediaStorage.cleanupExpiredMedia();
+    }, 60 * 60 * 1000); // 1 hour
+
+    return () => clearInterval(cleanupInterval);
   }, []);
 
   // Global error handler for network errors
