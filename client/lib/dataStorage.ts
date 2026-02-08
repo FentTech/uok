@@ -198,7 +198,7 @@ export const notificationStorage = {
 export const sharedMomentsStorage = {
   getAll: (): StoredSharedMoment[] => {
     try {
-      const data = localStorage.getItem("uok_shared_moments");
+      const data = safeLocalStorage.getItem("uok_shared_moments");
       return data ? JSON.parse(data) : [];
     } catch (e) {
       console.error("Error loading shared moments:", e);
