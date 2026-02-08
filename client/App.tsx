@@ -36,10 +36,12 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 export default function App() {
-  // Initialize demo advertiser and visitor tracking on app load
+  // Initialize demo advertiser, visitor tracking, and clean up expired media
   useEffect(() => {
     advertiserAuthService.initializeDemoAdvertiser();
     visitorTracking.initialize();
+    // Auto-delete media older than 3 days
+    mediaStorage.cleanupExpiredMedia();
   }, []);
 
   // Global error handler for network errors
