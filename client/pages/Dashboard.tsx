@@ -976,7 +976,6 @@ export default function Dashboard() {
                 "Your bonded family member missed their 30-second check-in window!",
             });
           });
-
         }, 30000); // 30 seconds
 
         missedCheckInTimerRef.current = timer;
