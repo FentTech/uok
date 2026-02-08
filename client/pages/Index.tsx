@@ -5,7 +5,7 @@ import { moodSongs } from "../data/songs";
 export default function Index() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation with Language Selector */}
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -15,19 +15,17 @@ export default function Index() {
             <span className="text-xl font-bold text-blue-600">UOK</span>
           </div>
           <div className="flex gap-3 items-center">
-            {/* Language Selector */}
-            <LanguageSelector />
             <Link
               to="/login"
               className="px-6 py-2 text-blue-600 hover:text-blue-700 font-medium transition hidden sm:block"
             >
-              {t("common:nav.login")}
+              Login
             </Link>
             <Link
               to="/signup"
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
             >
-              {t("common:nav.signup")}
+              Sign Up
             </Link>
           </div>
         </div>
@@ -40,23 +38,23 @@ export default function Index() {
             <div>
               <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
                 <span className="text-blue-600">
-                  {t("home:hero.mainTitle")}
+                  Check In,
                 </span>
                 <br />
-                <span className="text-black">{t("home:hero.subTitle")}</span>
+                <span className="text-black">Stay Connected</span>
               </h1>
               <p className="text-xl text-slate-700 mb-8 leading-relaxed">
-                {t("home:hero.description")}
+                UOK is your daily wellness companion. Check in 2-3 times a day to let your loved ones know you're okay.
               </p>
               <div className="flex gap-4">
                 <Link
                   to="/signup"
                   className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
                 >
-                  {t("home:hero.cta")}
+                  Get Started
                 </Link>
                 <button className="px-8 py-3 border-2 border-slate-300 text-black rounded-lg hover:border-blue-600 hover:text-blue-600 transition font-semibold">
-                  {t("home:hero.learnMore")}
+                  Learn More
                 </button>
               </div>
             </div>
@@ -66,15 +64,13 @@ export default function Index() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl blur-3xl opacity-10"></div>
               <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-blue-100">
                 <div className="space-y-4">
-                  {/* Placeholder - Can be updated with translations for time slots */}
                   <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
                     <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-xl">
                       😊
                     </div>
                     <div>
                       <p className="font-semibold text-black">
-                        {t("dashboard:timeSlots.morning")}{" "}
-                        {t("common:common.loading")}
+                        Morning Check-In
                       </p>
                     </div>
                   </div>
@@ -89,7 +85,7 @@ export default function Index() {
       <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-200">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16 text-black">
-            {t("home:features.title")}
+            Why Choose UOK?
           </h2>
         </div>
       </div>
@@ -106,12 +102,12 @@ export default function Index() {
                 <span className="text-lg font-bold text-white">UOK</span>
               </div>
               <p className="text-sm text-slate-400">
-                {t("common:footer.description")}
+                Your daily wellness companion
               </p>
             </div>
           </div>
           <div className="border-t border-slate-700 pt-8 text-center text-sm text-slate-400">
-            <p>&copy; 2024 UOK. {t("common:footer.rights")}</p>
+            <p>&copy; 2024 UOK. All rights reserved</p>
           </div>
         </div>
       </footer>
