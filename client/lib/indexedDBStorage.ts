@@ -122,8 +122,14 @@ export async function getMediaUrl(mediaId: string): Promise<string | null> {
     request.onsuccess = () => {
       if (request.result && request.result.data) {
         try {
+          // Determine media type based on stored metadata
+          let mimeType = "image/jpeg";
+          if (request.result.type === "video") {
+            mimeType = "video/mp4";
+          }
+
           const blob = new Blob([request.result.data], {
-            type: request.result.type === "video" ? "video/mp4" : "image/jpeg",
+            type: mimeType,
           });
           const url = URL.createObjectURL(blob);
           resolve(url);
