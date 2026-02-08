@@ -181,7 +181,7 @@ export const notificationStorage = {
     const notification = notifications.find((n) => n.id === id);
     if (notification) {
       notification.read = true;
-      localStorage.setItem("uok_notifications", JSON.stringify(notifications));
+      safeLocalStorage.setItem("uok_notifications", JSON.stringify(notifications));
     }
   },
 
