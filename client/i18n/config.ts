@@ -41,7 +41,7 @@ const enTranslations = {
       rights: "All rights reserved",
       followUs: "Follow Us",
     },
-    common: {
+    words: {
       loading: "Loading...",
       error: "An error occurred",
       success: "Success",
