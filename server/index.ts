@@ -165,7 +165,17 @@ export function createServer() {
   app.use(securityLogger); // Log all requests for audit trail
   app.use(securityHeaders); // Set security headers
   app.use(simpleRateLimit(100, 15 * 60 * 1000)); // General: 100 requests per 15 minutes
-  app.use(cors(corsOptions)); // CORS with strict origin validation
+
+  // Skip CORS for Vite internal development paths
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    // Allow Vite internal requests in development
+    const vitePaths = ["/@vite/", "/client/", "/@react-refresh", "/@id/"];
+    if (vitePaths.some((path) => req.path.startsWith(path))) {
+      return next(); // Skip CORS for Vite paths
+    }
+    cors(corsOptions)(req, res, next); // Apply CORS to other routes
+  });
+
   app.use(express.json({ limit: "10kb" })); // Limit JSON payload to 10KB
   app.use(express.urlencoded({ extended: true, limit: "10kb" })); // Limit URL-encoded payload
   app.use(validateRequest); // Validate and sanitize all inputs
