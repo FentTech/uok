@@ -1174,6 +1174,15 @@ export default function Dashboard() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
+      // Check storage limit (maximum 5 media items)
+      const activeMedia = mediaStorage.getActive();
+      if (activeMedia.length >= 5) {
+        alert(
+          "Storage limit reached! You can only store 5 photos/videos. Please delete some to add more.",
+        );
+        return;
+      }
+
       Array.from(files).forEach((file) => {
         // Import IndexedDB storage for persistent media
         import("../lib/indexedDBStorage").then(({ storeMedia }) => {
