@@ -110,7 +110,10 @@ class VisitorTrackingService {
       } catch (error) {
         // Silently fail - Supabase may not be configured or network may be unavailable
         // This is not a critical error
-        if (error instanceof Error && error.message.includes("Supabase credentials not configured")) {
+        if (
+          error instanceof Error &&
+          error.message.includes("Supabase credentials not configured")
+        ) {
           console.log("ℹ️ Supabase visitor tracking disabled");
         } else {
           console.warn("⚠️ Failed to save visitor data (non-critical):", error);
@@ -149,7 +152,10 @@ class VisitorTrackingService {
       } catch (error) {
         // Silently fail - Supabase may not be configured or network may be unavailable
         // This is not a critical error
-        if (error instanceof Error && error.message.includes("Supabase credentials not configured")) {
+        if (
+          error instanceof Error &&
+          error.message.includes("Supabase credentials not configured")
+        ) {
           console.log("ℹ️ Supabase event tracking disabled");
         } else {
           console.warn("⚠️ Failed to save event (non-critical):", error);
@@ -168,7 +174,9 @@ class VisitorTrackingService {
       const { getSupabase } = await import("./supabase");
       const supabase = getSupabase();
       if (!supabase) {
-        console.log("ℹ️ Supabase not configured, returning 0 for visitor count");
+        console.log(
+          "ℹ️ Supabase not configured, returning 0 for visitor count",
+        );
         return 0;
       }
 
@@ -192,7 +200,9 @@ class VisitorTrackingService {
       const { getSupabase } = await import("./supabase");
       const supabase = getSupabase();
       if (!supabase) {
-        console.log("ℹ️ Supabase not configured, returning 0 for page views count");
+        console.log(
+          "ℹ️ Supabase not configured, returning 0 for page views count",
+        );
         return 0;
       }
 

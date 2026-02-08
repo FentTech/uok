@@ -15,7 +15,12 @@ export interface StoredMedia {
 
 export interface StoredNotification {
   id: string;
-  type: "checkin" | "missed" | "media-shared" | "media-received" | "media-expiring";
+  type:
+    | "checkin"
+    | "missed"
+    | "media-shared"
+    | "media-received"
+    | "media-expiring";
   message: string;
   timestamp: string;
   date: string;

@@ -242,7 +242,10 @@ export const advertiserAuthService = {
         );
         console.log("✅ Advertiser credentials synced to Supabase");
       } catch (error) {
-        console.warn("⚠️ Failed to sync advertiser credentials (non-critical):", error);
+        console.warn(
+          "⚠️ Failed to sync advertiser credentials (non-critical):",
+          error,
+        );
       }
     } catch (error) {
       console.error("Error syncing advertiser credentials:", error);

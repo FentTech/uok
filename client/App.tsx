@@ -65,8 +65,7 @@ export default function App() {
             .getAll()
             .some(
               (n) =>
-                n.type === "media-expiring" &&
-                n.message.includes(media.id),
+                n.type === "media-expiring" && n.message.includes(media.id),
             );
 
           if (!notificationExists && hoursLeft > 0) {
