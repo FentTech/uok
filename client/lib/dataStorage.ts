@@ -9,6 +9,7 @@ export interface StoredMedia {
   mood?: string;
   sharedWith?: string[]; // bond codes of contacts it's shared with
   visibility?: "personal" | "bonded-contacts" | "community";
+  createdAt: string; // ISO timestamp for 3-day auto-deletion tracking
   deletedAt?: string | null; // null if not deleted
 }
 
