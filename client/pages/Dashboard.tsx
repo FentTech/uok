@@ -2256,12 +2256,13 @@ export default function Dashboard() {
                 {bondedCheckIns && bondedCheckIns.length > 0 ? (
                   bondedCheckIns.map((checkIn) => {
                     // Get the current name from bonded contacts, fallback to stored name
+                    // Try matching by email first (for email-bonded contacts), then by name (for QR-bonded)
                     const currentContact = bondedContacts.find(
-                      (c) => c.email === checkIn.userEmail,
+                      (c) => c.email === checkIn.userEmail || c.name === checkIn.userName,
                     );
                     const displayName =
                       currentContact?.name || checkIn.userName;
-                    const displayEmoji = currentContact?.emoji || checkIn.emoji;
+                    const displayEmoji = checkIn.emoji;
 
                     return (
                       <div
