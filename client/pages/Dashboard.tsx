@@ -1495,6 +1495,9 @@ export default function Dashboard() {
                     <h3 className="text-blue-900 font-bold text-sm sm:text-base">
                       Notifications
                     </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      📬 Your check-in alerts appear here and are shared with bonded contacts
+                    </p>
                   </div>
                   <div className="overflow-y-auto flex-1">
                     {notifications.length > 0 ? (
