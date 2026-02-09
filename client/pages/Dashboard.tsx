@@ -656,12 +656,17 @@ export default function Dashboard() {
             const sharedCheckIns = JSON.parse(sharedCheckInsStr);
             const bondedIds = new Set(bondedContacts.map((c: any) => c.id));
 
-            const relevantShared = sharedCheckIns.filter((c: any) =>
-              c.bondedWith && c.bondedWith.some((id: string) => bondedIds.has(id))
+            const relevantShared = sharedCheckIns.filter(
+              (c: any) =>
+                c.bondedWith &&
+                c.bondedWith.some((id: string) => bondedIds.has(id)),
             );
 
             if (relevantShared.length > 0) {
-              console.log("📥 Loaded bonded check-ins from shared storage:", relevantShared.length);
+              console.log(
+                "📥 Loaded bonded check-ins from shared storage:",
+                relevantShared.length,
+              );
               allCheckIns.push(
                 ...relevantShared.map((c: any) => ({
                   id: c.id,
@@ -672,7 +677,7 @@ export default function Dashboard() {
                   timestamp: c.timestamp,
                   date: c.date,
                   createdAt: c.createdAt,
-                }))
+                })),
               );
             }
           }
@@ -958,7 +963,9 @@ export default function Dashboard() {
 
         // Store check-in in a shared location that bonded contacts can access
         const sharedCheckInKey = "uok_shared_checkins";
-        const sharedCheckIns = JSON.parse(localStorage.getItem(sharedCheckInKey) || "[]");
+        const sharedCheckIns = JSON.parse(
+          localStorage.getItem(sharedCheckInKey) || "[]",
+        );
 
         sharedCheckIns.unshift({
           id: `checkin-${Date.now()}`,
@@ -973,7 +980,10 @@ export default function Dashboard() {
         });
 
         // Keep only last 100 shared check-ins
-        localStorage.setItem(sharedCheckInKey, JSON.stringify(sharedCheckIns.slice(0, 100)));
+        localStorage.setItem(
+          sharedCheckInKey,
+          JSON.stringify(sharedCheckIns.slice(0, 100)),
+        );
 
         // Create local notifications for this user that check-in was sent
         notificationStorage.add({
@@ -985,7 +995,9 @@ export default function Dashboard() {
           read: false,
         });
 
-        console.log(`📢 Check-in shared with ${bondedContacts.length} bonded contact(s)`);
+        console.log(
+          `📢 Check-in shared with ${bondedContacts.length} bonded contact(s)`,
+        );
       }
     } catch (error) {
       console.warn("⚠️ Failed to share check-in with bonded contacts:", error);
@@ -1464,7 +1476,7 @@ export default function Dashboard() {
               <span className="text-sm font-semibold text-blue-900">
                 {(() => {
                   const currentUser = JSON.parse(
-                    localStorage.getItem("currentUser") || "{}"
+                    localStorage.getItem("currentUser") || "{}",
                   );
                   return currentUser.name || currentUser.username || "User";
                 })()}
@@ -1496,7 +1508,8 @@ export default function Dashboard() {
                       Notifications
                     </h3>
                     <p className="text-xs text-gray-500 mt-1">
-                      📬 Your check-in alerts appear here and are shared with bonded contacts
+                      📬 Your check-in alerts appear here and are shared with
+                      bonded contacts
                     </p>
                   </div>
                   <div className="overflow-y-auto flex-1">
@@ -2183,7 +2196,8 @@ export default function Dashboard() {
                       No check-ins from bonded members yet today
                     </p>
                     <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                      💡 Once your bonded contacts check in, their status will appear here
+                      💡 Once your bonded contacts check in, their status will
+                      appear here
                     </p>
                   </div>
                 )}
@@ -2200,7 +2214,8 @@ export default function Dashboard() {
                 {bondedContacts && bondedContacts.length > 0 ? (
                   <>
                     <p className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200 mb-3">
-                      ✅ Your check-ins are automatically shared with these emergency contacts
+                      ✅ Your check-ins are automatically shared with these
+                      emergency contacts
                     </p>
                     {bondedContacts.map((contact: any, i: number) => (
                       <div
@@ -2228,7 +2243,8 @@ export default function Dashboard() {
                       ⚠️ No emergency contacts set up yet
                     </p>
                     <p className="text-xs text-yellow-800">
-                      Add emergency contacts to share your check-ins and receive alerts from them.
+                      Add emergency contacts to share your check-ins and receive
+                      alerts from them.
                     </p>
                   </div>
                 )}
