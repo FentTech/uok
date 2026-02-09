@@ -220,9 +220,7 @@ export default function Dashboard() {
     const bondedContactsStr = localStorage.getItem("bondedContacts");
     let bondedContacts = [];
     try {
-      bondedContacts = bondedContactsStr
-        ? JSON.parse(bondedContactsStr)
-        : [];
+      bondedContacts = bondedContactsStr ? JSON.parse(bondedContactsStr) : [];
     } catch (error) {
       console.warn("⚠️ Could not parse bonded contacts:", error);
       bondedContacts = [];
