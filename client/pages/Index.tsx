@@ -228,6 +228,33 @@ export default function Index() {
         </div>
       </div>
 
+      {/* YouTube Community Section */}
+      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-50 to-pink-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-8">
+            <span className="text-6xl">📺</span>
+          </div>
+          <h2 className="text-4xl font-bold mb-6 text-black">
+            Join Our YouTube Community
+          </h2>
+          <p className="text-xl text-slate-700 mb-8 leading-relaxed">
+            Subscribe to our YouTube channel to watch tutorials, wellness tips, success stories, and more. Be part of our growing community of people committed to staying connected and healthy!
+          </p>
+          <a
+            href="https://www.youtube.com/@YOUOK-FIT"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold text-lg"
+          >
+            <span>▶</span>
+            Subscribe on YouTube
+          </a>
+          <p className="text-sm text-slate-600 mt-6">
+            Watch our latest videos, learn wellness strategies, and join thousands of UOK users
+          </p>
+        </div>
+      </div>
+
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-300 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
