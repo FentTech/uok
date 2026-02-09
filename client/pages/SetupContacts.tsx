@@ -156,14 +156,44 @@ export default function SetupContacts() {
     }
   };
 
-  const handleContinue = () => {
-    // Save contacts and navigate to dashboard
+  const handleContinue = async () => {
+    // Save contacts locally and to Supabase
     const bondedContacts = contacts.map((c) => ({
       ...c,
       status: "pending" as const,
     }));
     localStorage.setItem("bondedContacts", JSON.stringify(bondedContacts));
     console.log("Emergency contacts created:", bondedContacts);
+
+    // Save bonds to Supabase for multi-device sync
+    try {
+      const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "{}",
+      );
+      const userEmail = localStorage.getItem("userEmail") || "user";
+      const userName = currentUser.name || currentUser.username || "User";
+
+      // Import bond service and save each bond to Supabase
+      const { supabaseBondService } = await import("../lib/supabase");
+
+      for (const contact of bondedContacts) {
+        await supabaseBondService.createBond(
+          userName,
+          userEmail,
+          contact.name,
+          contact.bondCode,
+          contact.email,
+        );
+      }
+
+      console.log("✅ Bonds saved to Supabase for multi-device sync");
+    } catch (error) {
+      console.warn(
+        "⚠️ Failed to save bonds to Supabase (local storage backup will be used):",
+        error,
+      );
+    }
+
     navigate("/dashboard");
   };
 
