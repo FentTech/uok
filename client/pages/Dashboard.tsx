@@ -1497,14 +1497,14 @@ export default function Dashboard() {
                     const currentUser = JSON.parse(
                       localStorage.getItem("currentUser") || "{}",
                     );
-                    return currentUser.name || currentUser.username || "User";
+                    const displayName = (currentUser.name || currentUser.username || "User").toUpperCase();
+                    return `${displayName} Online`;
                   } catch (error) {
                     console.warn("⚠️ Could not parse currentUser:", error);
-                    return "User";
+                    return "USER ONLINE";
                   }
                 })()}
               </span>
-              <span className="text-xs text-green-600">Online</span>
             </div>
 
             {/* Notifications Dropdown */}
