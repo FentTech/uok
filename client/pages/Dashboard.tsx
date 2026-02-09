@@ -1475,10 +1475,15 @@ export default function Dashboard() {
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm font-semibold text-blue-900">
                 {(() => {
-                  const currentUser = JSON.parse(
-                    localStorage.getItem("currentUser") || "{}",
-                  );
-                  return currentUser.name || currentUser.username || "User";
+                  try {
+                    const currentUser = JSON.parse(
+                      localStorage.getItem("currentUser") || "{}",
+                    );
+                    return currentUser.name || currentUser.username || "User";
+                  } catch (error) {
+                    console.warn("⚠️ Could not parse currentUser:", error);
+                    return "User";
+                  }
                 })()}
               </span>
               <span className="text-xs text-green-600">Online</span>
