@@ -218,9 +218,15 @@ export default function Dashboard() {
   const sendCheckInNotification = (mood: string, emoji: string) => {
     // Get bonded contacts from localStorage
     const bondedContactsStr = localStorage.getItem("bondedContacts");
-    const bondedContacts = bondedContactsStr
-      ? JSON.parse(bondedContactsStr)
-      : [];
+    let bondedContacts = [];
+    try {
+      bondedContacts = bondedContactsStr
+        ? JSON.parse(bondedContactsStr)
+        : [];
+    } catch (error) {
+      console.warn("⚠️ Could not parse bonded contacts:", error);
+      bondedContacts = [];
+    }
 
     const contactCount = bondedContacts.length;
 
