@@ -649,6 +649,37 @@ export default function Dashboard() {
           allCheckIns.push(...localCheckIns);
         }
 
+        // Also load shared check-ins sent by bonded contacts
+        try {
+          const sharedCheckInsStr = localStorage.getItem("uok_shared_checkins");
+          if (sharedCheckInsStr) {
+            const sharedCheckIns = JSON.parse(sharedCheckInsStr);
+            const bondedIds = new Set(bondedContacts.map((c: any) => c.id));
+
+            const relevantShared = sharedCheckIns.filter((c: any) =>
+              c.bondedWith && c.bondedWith.some((id: string) => bondedIds.has(id))
+            );
+
+            if (relevantShared.length > 0) {
+              console.log("📥 Loaded bonded check-ins from shared storage:", relevantShared.length);
+              allCheckIns.push(
+                ...relevantShared.map((c: any) => ({
+                  id: c.id,
+                  userEmail: c.fromUser,
+                  userName: c.fromUserName,
+                  emoji: c.emoji,
+                  mood: c.mood,
+                  timestamp: c.timestamp,
+                  date: c.date,
+                  createdAt: c.createdAt,
+                }))
+              );
+            }
+          }
+        } catch (error) {
+          console.warn("⚠️ Failed to load shared check-ins:", error);
+        }
+
         // Remove duplicates (in case same check-in is in both Supabase and local)
         const uniqueCheckIns = Array.from(
           new Map(allCheckIns.map((c) => [c.id, c])).values(),
