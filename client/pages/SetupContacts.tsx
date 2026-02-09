@@ -19,8 +19,12 @@ export default function SetupContacts() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [expandedContactId, setExpandedContactId] = useState<string | null>(null);
-  const [emailModalContactId, setEmailModalContactId] = useState<string | null>(null);
+  const [expandedContactId, setExpandedContactId] = useState<string | null>(
+    null,
+  );
+  const [emailModalContactId, setEmailModalContactId] = useState<string | null>(
+    null,
+  );
   const [emailInput, setEmailInput] = useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
   const navigate = useNavigate();
@@ -89,7 +93,10 @@ export default function SetupContacts() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleSendBondCodeViaEmail = async (contactId: string, bondCode: string) => {
+  const handleSendBondCodeViaEmail = async (
+    contactId: string,
+    bondCode: string,
+  ) => {
     if (!emailInput.trim()) {
       alert("Please enter an email address");
       return;
@@ -102,7 +109,9 @@ export default function SetupContacts() {
 
     setSendingEmail(true);
     try {
-      const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "{}",
+      );
       const userUsername = currentUser.username || "UOK User";
       const userDisplayName = currentUser.name || "A friend";
 
@@ -117,7 +126,8 @@ export default function SetupContacts() {
           recipient_email: emailInput.trim(),
           sender_name: userDisplayName,
           sender_username: userUsername,
-          contact_name: contacts.find(c => c.id === contactId)?.name || "Contact",
+          contact_name:
+            contacts.find((c) => c.id === contactId)?.name || "Contact",
           bond_code: bondCode,
           message: `Hi! I'd like to bond with you on UOK. Please use this bond code to connect: ${bondCode}\n\nOr scan the QR code I'll send you separately. Let's stay connected!`,
         }),
@@ -125,8 +135,8 @@ export default function SetupContacts() {
 
       if (response.ok) {
         // Update contact with email
-        const updatedContacts = contacts.map(c =>
-          c.id === contactId ? { ...c, email: emailInput.trim() } : c
+        const updatedContacts = contacts.map((c) =>
+          c.id === contactId ? { ...c, email: emailInput.trim() } : c,
         );
         setContacts(updatedContacts);
 
@@ -213,7 +223,7 @@ export default function SetupContacts() {
                                 setExpandedContactId(
                                   expandedContactId === contact.id
                                     ? null
-                                    : contact.id
+                                    : contact.id,
                                 )
                               }
                               className="p-2 hover:bg-cyan-100 rounded transition text-cyan-600"
@@ -325,7 +335,8 @@ export default function SetupContacts() {
                   <br />
                   3. Share the QR code - they scan it with their phone camera
                   <br />
-                  4. Or manually share the bond code for them to enter in the app
+                  4. Or manually share the bond code for them to enter in the
+                  app
                   <br />
                   5. Optionally send the bond code via email
                   <br />
@@ -356,7 +367,10 @@ export default function SetupContacts() {
                     <p className="text-sm text-slate-600 mb-4">
                       Send the bond code to{" "}
                       <span className="font-semibold">
-                        {contacts.find(c => c.id === emailModalContactId)?.name}
+                        {
+                          contacts.find((c) => c.id === emailModalContactId)
+                            ?.name
+                        }
                       </span>
                       's email address
                     </p>
@@ -382,12 +396,12 @@ export default function SetupContacts() {
                       <button
                         onClick={() => {
                           const contact = contacts.find(
-                            c => c.id === emailModalContactId
+                            (c) => c.id === emailModalContactId,
                           );
                           if (contact) {
                             handleSendBondCodeViaEmail(
                               emailModalContactId,
-                              contact.bondCode
+                              contact.bondCode,
                             );
                           }
                         }}

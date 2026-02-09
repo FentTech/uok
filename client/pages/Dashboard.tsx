@@ -905,7 +905,8 @@ export default function Dashboard() {
 
     // Save check-in to persistent storage and Firebase
     const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
-    const userEmail = localStorage.getItem("userEmail") || currentUser.username || "user";
+    const userEmail =
+      localStorage.getItem("userEmail") || currentUser.username || "user";
     const userName = currentUser.name || userEmail.split("@")[0];
 
     const checkInRecord = await checkInStorage.add({

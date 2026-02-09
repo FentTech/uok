@@ -25,7 +25,8 @@ export default function SignUp() {
     } else if (formData.username.length < 3) {
       newErrors.username = "Username must be at least 3 characters";
     } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
-      newErrors.username = "Username can only contain letters, numbers, and underscores";
+      newErrors.username =
+        "Username can only contain letters, numbers, and underscores";
     }
     if (!formData.password) {
       newErrors.password = "Password is required";
@@ -200,9 +201,7 @@ export default function SignUp() {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
                     {showConfirmPassword ? (
@@ -245,11 +244,17 @@ export default function SignUp() {
           {/* Terms */}
           <p className="text-center text-sm text-slate-600 mt-6">
             By signing up, you agree to our{" "}
-            <a href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+            <a
+              href="#"
+              className="text-cyan-600 hover:text-cyan-700 font-medium"
+            >
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+            <a
+              href="#"
+              className="text-cyan-600 hover:text-cyan-700 font-medium"
+            >
               Privacy Policy
             </a>
           </p>
