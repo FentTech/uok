@@ -348,6 +348,16 @@ export default function Index() {
                 </li>
                 <li>
                   <a
+                    href="https://www.youtube.com/@YOUOK-FIT"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    YouTube Channel
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="mailto:support@youok.fit"
                     className="hover:text-white transition"
                   >
