@@ -411,12 +411,11 @@ export default function Dashboard() {
   // Load all user data on mount (bonded contacts, check-ins, media, shared moments)
   useEffect(() => {
     const loadAllUserData = async () => {
-      const userEmail = localStorage.getItem("userEmail");
+      const currentUser = localStorage.getItem("currentUser");
 
-      if (!userEmail) {
-        console.log("⚠️ No user email found, cannot load user data");
-        // Still initialize demo data even without user email for testing
-        initializeDemoData();
+      if (!currentUser) {
+        console.log("⚠️ No user found, please login");
+        // Load only real bonded contacts, no demo data
         loadDemoBondedContacts(setBondedContacts);
         return;
       }
