@@ -89,6 +89,61 @@ export default function SetupContacts() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const handleSendBondCodeViaEmail = async (contactId: string, bondCode: string) => {
+    if (!emailInput.trim()) {
+      alert("Please enter an email address");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
+      alert("Please enter a valid email address");
+      return;
+    }
+
+    setSendingEmail(true);
+    try {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      const userUsername = currentUser.username || "UOK User";
+      const userDisplayName = currentUser.name || "A friend";
+
+      const response = await fetch("https://formsubmit.co/afenteng@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _subject: `UOK Bond Code for ${userDisplayName}`,
+          _captcha: "false",
+          recipient_email: emailInput.trim(),
+          sender_name: userDisplayName,
+          sender_username: userUsername,
+          contact_name: contacts.find(c => c.id === contactId)?.name || "Contact",
+          bond_code: bondCode,
+          message: `Hi! I'd like to bond with you on UOK. Please use this bond code to connect: ${bondCode}\n\nOr scan the QR code I'll send you separately. Let's stay connected!`,
+        }),
+      });
+
+      if (response.ok) {
+        // Update contact with email
+        const updatedContacts = contacts.map(c =>
+          c.id === contactId ? { ...c, email: emailInput.trim() } : c
+        );
+        setContacts(updatedContacts);
+
+        alert(`Bond code sent to ${emailInput}!`);
+        setEmailModalContactId(null);
+        setEmailInput("");
+      } else {
+        alert("Failed to send email. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error sending bond code via email:", error);
+      alert("Error sending email. Please try again.");
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   const handleContinue = () => {
     // Save contacts and navigate to dashboard
     const bondedContacts = contacts.map((c) => ({
