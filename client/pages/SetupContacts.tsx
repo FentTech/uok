@@ -235,6 +235,13 @@ export default function SetupContacts() {
                               )}
                             </button>
                             <button
+                              onClick={() => setEmailModalContactId(contact.id)}
+                              className="p-2 hover:bg-blue-100 rounded transition text-blue-600"
+                              title="Send bond code via email"
+                            >
+                              <Mail className="w-5 h-5" />
+                            </button>
+                            <button
                               onClick={() => handleRemoveContact(contact.id)}
                               className="p-2 hover:bg-red-50 rounded-lg transition text-red-500 hover:text-red-600"
                             >
