@@ -313,6 +313,7 @@ export default function Dashboard() {
         return;
       }
 
+      const userEmail = localStorage.getItem("userEmail") || "user";
       console.log("🔄 Loading user data for:", userEmail);
 
       try {
