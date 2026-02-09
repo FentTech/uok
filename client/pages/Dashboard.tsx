@@ -888,9 +888,11 @@ export default function Dashboard() {
     };
 
     // Save check-in to persistent storage and Firebase
-    const userEmail = localStorage.getItem("userEmail") || "user";
-    const userName = userEmail === "user" ? "You" : userEmail.split("@")[0];
-    await checkInStorage.add({
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    const userEmail = localStorage.getItem("userEmail") || currentUser.username || "user";
+    const userName = currentUser.name || userEmail.split("@")[0];
+
+    const checkInRecord = await checkInStorage.add({
       userEmail,
       userName,
       emoji,
@@ -899,6 +901,31 @@ export default function Dashboard() {
       date,
       timeSlot: selectedTimeSlot,
     });
+
+    // SEND NOTIFICATIONS TO BONDED CONTACTS
+    try {
+      const bondedContactsStr = localStorage.getItem("bondedContacts");
+      if (bondedContactsStr) {
+        const bondedContacts = JSON.parse(bondedContactsStr);
+
+        bondedContacts.forEach((contact: any) => {
+          // Create a notification that this contact received
+          notificationStorage.add({
+            id: `checkin-${contact.id}-${Date.now()}`,
+            type: "checkin",
+            message: `${userName} checked in as ${mood} ${emoji}`,
+            timestamp: timestamp,
+            date: date,
+            fromContact: contact.name,
+            read: false,
+          });
+
+          console.log(`📢 Check-in notification sent to: ${contact.name}`);
+        });
+      }
+    } catch (error) {
+      console.warn("⚠️ Failed to send check-in notifications:", error);
+    }
 
     // Sync check-ins to Supabase (fire and forget)
     const allCheckIns = checkInStorage.getAll();
