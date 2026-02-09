@@ -2132,14 +2132,9 @@ export default function Dashboard() {
                     <p className="text-gray-600 text-sm">
                       No check-ins from bonded members yet today
                     </p>
-                    {bondedContacts.length > 0 && (
-                      <button
-                        onClick={addDemoBondedCheckIns}
-                        className="w-full px-4 py-2 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 hover:text-blue-800 font-semibold rounded-lg transition border border-blue-300"
-                      >
-                        📋 Add Demo Check-ins (Test)
-                      </button>
-                    )}
+                    <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                      💡 Once your bonded contacts check in, their status will appear here
+                    </p>
                   </div>
                 )}
               </div>
