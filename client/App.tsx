@@ -196,7 +196,15 @@ export default function App() {
           ? event.reason.message
           : String(event.reason);
 
+      // Suppress non-critical service errors
       if (isBuilderPlatformError(message)) {
+        event.preventDefault();
+        return;
+      }
+
+      // Also suppress any fetch/network errors from background services
+      if (message.includes("fetch") || message.includes("network")) {
+        console.warn("⚠️ Non-critical network error suppressed:", message);
         event.preventDefault();
         return;
       }
