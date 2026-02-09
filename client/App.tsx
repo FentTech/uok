@@ -59,56 +59,64 @@ export default function App() {
 
     // Check for expiring media and notify users
     const checkExpiringMedia = () => {
-      const allMedia = mediaStorage.getAll();
-      const now = new Date();
-      const twoDaysInMs = 2 * 24 * 60 * 60 * 1000; // 2 days
-      const threeDaysInMs = 3 * 24 * 60 * 60 * 1000; // 3 days
+      try {
+        if (!mediaStorage || typeof mediaStorage.getAll !== 'function') {
+          return;
+        }
 
-      allMedia.forEach((media) => {
-        if (media.deletedAt) return; // Skip already deleted
+        const allMedia = mediaStorage.getAll();
+        const now = new Date();
+        const twoDaysInMs = 2 * 24 * 60 * 60 * 1000; // 2 days
+        const threeDaysInMs = 3 * 24 * 60 * 60 * 1000; // 3 days
 
-        const createdDate = new Date(media.createdAt);
-        const ageInMs = now.getTime() - createdDate.getTime();
+        allMedia.forEach((media) => {
+          if (media.deletedAt) return; // Skip already deleted
 
-        // Notify when media is about to expire (approaching 3-day mark)
-        if (ageInMs > twoDaysInMs && ageInMs < threeDaysInMs) {
-          const hoursLeft = Math.floor(
-            (threeDaysInMs - ageInMs) / (60 * 60 * 1000),
-          );
+          const createdDate = new Date(media.createdAt);
+          const ageInMs = now.getTime() - createdDate.getTime();
 
-          // Check if we've already notified about this media
-          const notificationExists = notificationStorage
-            .getAll()
-            .some(
-              (n) =>
-                n.type === "media-expiring" && n.message.includes(media.id),
+          // Notify when media is about to expire (approaching 3-day mark)
+          if (ageInMs > twoDaysInMs && ageInMs < threeDaysInMs) {
+            const hoursLeft = Math.floor(
+              (threeDaysInMs - ageInMs) / (60 * 60 * 1000),
             );
 
-          if (!notificationExists && hoursLeft > 0) {
-            notificationStorage.add({
-              type: "media-expiring" as any,
-              message: `⏰ Your ${media.type} will be automatically deleted in ${hoursLeft} hours`,
-              timestamp: new Date().toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
-              date: new Date().toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              }),
-            });
-            console.log(
-              `📢 User notified: ${media.type} expiring in ${hoursLeft} hours`,
-            );
+            // Check if we've already notified about this media
+            const notificationExists = notificationStorage
+              .getAll()
+              .some(
+                (n) =>
+                  n.type === "media-expiring" && n.message.includes(media.id),
+              );
+
+            if (!notificationExists && hoursLeft > 0) {
+              notificationStorage.add({
+                type: "media-expiring" as any,
+                message: `⏰ Your ${media.type} will be automatically deleted in ${hoursLeft} hours`,
+                timestamp: new Date().toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+                date: new Date().toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                }),
+              });
+              console.log(
+                `📢 User notified: ${media.type} expiring in ${hoursLeft} hours`,
+              );
+            }
           }
-        }
 
-        // Auto-delete media older than 3 days
-        if (ageInMs > threeDaysInMs) {
-          mediaStorage.delete(media.id);
-          console.log(`🗑️ Media auto-deleted after 3 days: ${media.id}`);
-        }
-      });
+          // Auto-delete media older than 3 days
+          if (ageInMs > threeDaysInMs) {
+            mediaStorage.delete(media.id);
+            console.log(`🗑️ Media auto-deleted after 3 days: ${media.id}`);
+          }
+        });
+      } catch (error) {
+        console.warn("⚠️ Error checking expiring media (non-critical):", error);
+      }
     };
 
     // Check expiring media on app load
@@ -117,8 +125,14 @@ export default function App() {
     // Set up periodic checks and cleanup every hour
     const cleanupInterval = setInterval(
       () => {
-        checkExpiringMedia();
-        mediaStorage.cleanupExpiredMedia();
+        try {
+          checkExpiringMedia();
+          if (mediaStorage && typeof mediaStorage.cleanupExpiredMedia === 'function') {
+            mediaStorage.cleanupExpiredMedia();
+          }
+        } catch (error) {
+          console.warn("⚠️ Error in cleanup interval (non-critical):", error);
+        }
       },
       60 * 60 * 1000,
     ); // 1 hour
