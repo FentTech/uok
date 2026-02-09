@@ -214,7 +214,7 @@ export default function Dashboard() {
     }
   };
 
-  // Send check-in notifications to bonded contacts via Supabase (completely free, real-time)
+  // Send check-in notifications to bonded contacts (via shared localStorage)
   const sendCheckInNotification = (mood: string, emoji: string) => {
     // Get bonded contacts from localStorage
     const bondedContactsStr = localStorage.getItem("bondedContacts");
@@ -244,32 +244,50 @@ export default function Dashboard() {
 
     setNotifications((prev) => [notification as any, ...prev]);
 
-    // Get user's name/email
-    const userEmail = localStorage.getItem("userEmail") || "User";
-    const userName = userEmail === "user" ? "User" : userEmail.split("@")[0];
+    // Get user's name
+    let currentUser = {};
+    try {
+      currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    } catch (error) {
+      console.warn("⚠️ Could not parse currentUser:", error);
+    }
+    const userName = (currentUser as any).name || (currentUser as any).username || "User";
 
-    // Send real-time notifications to bonded contacts via Supabase (fire-and-forget)
+    // Store notifications for each bonded contact in a shared location
+    // Each bonded contact's name becomes a key where notifications are stored
     bondedContacts.forEach((contact: any) => {
-      if (contact.email) {
-        // Save notification to Supabase database - completely free, no email service needed
-        import("../lib/supabase")
-          .then(({ supabaseNotificationService }) => {
-            return supabaseNotificationService.sendCheckInNotification(
-              contact.email,
-              userEmail,
-              userName,
-              mood,
-              emoji,
-            );
-          })
-          .then((success) => {
-            if (success) {
-              console.log("✅ Real-time notification saved for:", contact.name);
-            }
-          })
-          .catch((error) => {
-            console.warn("⚠️ Could not save notification to Supabase:", error);
-          });
+      const notificationKey = `uok_bonded_notifications_${contact.name.toLowerCase().replace(/\s+/g, "_")}`;
+      try {
+        const existingNotifications = JSON.parse(
+          localStorage.getItem(notificationKey) || "[]",
+        );
+
+        const newNotification = {
+          id: `checkin-${Date.now()}`,
+          type: "checkin",
+          fromUser: userName,
+          mood: mood,
+          emoji: emoji,
+          message: `${userName} checked in and is feeling ${mood}`,
+          timestamp: new Date().toISOString(),
+          read: false,
+        };
+
+        existingNotifications.unshift(newNotification);
+        // Keep only last 50 notifications
+        localStorage.setItem(
+          notificationKey,
+          JSON.stringify(existingNotifications.slice(0, 50)),
+        );
+
+        console.log(
+          `✅ Check-in notification stored for ${contact.name} at ${notificationKey}`,
+        );
+      } catch (error) {
+        console.warn(
+          `⚠️ Failed to store notification for ${contact.name}:`,
+          error,
+        );
       }
     });
 
