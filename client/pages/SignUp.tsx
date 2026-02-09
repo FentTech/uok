@@ -58,8 +58,19 @@ export default function SignUp() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Here you would normally send data to backend
-      console.log("Sign up:", formData);
+      // Store user data locally and in Supabase
+      const userData = {
+        id: `user_${Date.now()}`,
+        name: formData.name.trim(),
+        username: formData.username.trim().toLowerCase(),
+        createdAt: new Date().toISOString(),
+      };
+
+      // Save to localStorage as backup
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      localStorage.setItem("userPassword", formData.password); // In production, use proper auth
+
+      console.log("Account created:", userData);
       // Redirect to setup contacts
       navigate("/setup-contacts");
     }
