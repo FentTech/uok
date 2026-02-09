@@ -327,10 +327,80 @@ export default function SetupContacts() {
                   <br />
                   4. Or manually share the bond code for them to enter in the app
                   <br />
-                  5. Once bonded, you receive their check-in alerts and
+                  5. Optionally send the bond code via email
+                  <br />
+                  6. Once bonded, you receive their check-in alerts and
                   notifications
                 </p>
               </div>
+
+              {/* Email Modal */}
+              {emailModalContactId && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                  <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Send Bond Code via Email
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setEmailModalContactId(null);
+                          setEmailInput("");
+                        }}
+                        className="p-1 hover:bg-slate-100 rounded transition"
+                      >
+                        <X className="w-5 h-5 text-slate-600" />
+                      </button>
+                    </div>
+
+                    <p className="text-sm text-slate-600 mb-4">
+                      Send the bond code to{" "}
+                      <span className="font-semibold">
+                        {contacts.find(c => c.id === emailModalContactId)?.name}
+                      </span>
+                      's email address
+                    </p>
+
+                    <input
+                      type="email"
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      placeholder="their@email.com"
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition mb-4"
+                    />
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => {
+                          setEmailModalContactId(null);
+                          setEmailInput("");
+                        }}
+                        className="flex-1 py-2 border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:border-slate-400 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          const contact = contacts.find(
+                            c => c.id === emailModalContactId
+                          );
+                          if (contact) {
+                            handleSendBondCodeViaEmail(
+                              emailModalContactId,
+                              contact.bondCode
+                            );
+                          }
+                        }}
+                        disabled={sendingEmail}
+                        className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                      >
+                        <Send className="w-4 h-4" />
+                        {sendingEmail ? "Sending..." : "Send"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
