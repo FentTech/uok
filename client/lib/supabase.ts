@@ -551,6 +551,45 @@ export const supabaseNotificationService = {
 
 // Bond Relationship Service - Handles directional bonds between users
 export const supabaseBondService = {
+  // Check rate limit: Max 10 bonds per hour per user
+  checkRateLimit: async (userEmail: string): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        console.log("Supabase not configured, rate limit check skipped");
+        return true; // Allow if Supabase unavailable
+      }
+
+      // Count bonds created in last hour
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+      const { data, error } = await supabase
+        .from("bond_relationships")
+        .select("id", { count: "exact", head: true })
+        .eq("bonding_user_email", userEmail)
+        .gt("created_at", oneHourAgo);
+
+      if (error) {
+        console.warn("⚠️ Rate limit check failed:", error.message);
+        return true; // Allow if check fails (fail-open)
+      }
+
+      const count = data?.length || 0;
+      const canCreate = count < 10;
+
+      if (!canCreate) {
+        console.warn(
+          `⚠️ Rate limit exceeded: ${userEmail} has ${count} bonds in last hour`,
+        );
+      }
+
+      return canCreate;
+    } catch (error) {
+      console.warn("⚠️ Rate limit check error:", error);
+      return true; // Allow if check fails (fail-open)
+    }
+  },
+
   // Create a bond relationship (User A bonds with User B)
   createBond: async (
     bondingUserName: string,
@@ -563,6 +602,17 @@ export const supabaseBondService = {
       const supabase = getSupabaseClient();
       if (!supabase) {
         console.log("Supabase not configured, bond saved to localStorage only");
+        return false;
+      }
+
+      // Check rate limit before creating
+      const withinLimit = await supabaseBondService.checkRateLimit(
+        bondingUserEmail,
+      );
+      if (!withinLimit) {
+        console.warn(
+          "⚠️ Rate limit exceeded: Cannot create more bonds this hour",
+        );
         return false;
       }
 
@@ -579,7 +629,16 @@ export const supabaseBondService = {
         },
       ]);
 
-      if (error) throw error;
+      if (error) {
+        // Handle RLS violations
+        if (error.code === "42501") {
+          console.warn(
+            "⚠️ Access denied: You do not have permission to create this bond",
+          );
+          return false;
+        }
+        throw error;
+      }
 
       console.log(
         `✅ Bond created in Supabase: ${bondingUserName} -> ${contactName}`,
