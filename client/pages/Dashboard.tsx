@@ -1323,6 +1323,7 @@ export default function Dashboard() {
                   date,
                   mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
                   visibility: "personal",
+                  uploadedAt: new Date().toISOString(), // Track for 24-hour limit
                 });
 
                 // Update local state
