@@ -2053,16 +2053,16 @@ export default function Dashboard() {
 
           {/* Sidebar */}
           <div className="space-y-8">
-            {/* Today's Check-ins */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
-              <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-blue-600" />
-                Today's Check-ins
-              </h3>
+            {/* Today's Check-ins - Only show if there are check-ins */}
+            {checkIns.length > 0 && (
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
+                <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                  Your Today's Check-ins
+                </h3>
 
-              <div className="space-y-3">
-                {checkIns.length > 0 ? (
-                  checkIns.map((checkIn) => (
+                <div className="space-y-3">
+                  {checkIns.map((checkIn) => (
                     <div
                       key={checkIn.id}
                       className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-blue-50 transition"
@@ -2075,14 +2075,10 @@ export default function Dashboard() {
                         <p className="text-xs text-gray-500">{checkIn.time}</p>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-gray-600 text-sm">
-                    No check-ins yet today
-                  </p>
-                )}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Bonded Family Check-ins */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
