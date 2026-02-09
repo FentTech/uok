@@ -940,10 +940,15 @@ export default function Dashboard() {
     };
 
     // Save check-in to persistent storage and Firebase
-    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    let currentUser = {};
+    try {
+      currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    } catch (error) {
+      console.warn("⚠️ Could not parse currentUser, using defaults:", error);
+    }
     const userEmail =
       localStorage.getItem("userEmail") || currentUser.username || "user";
-    const userName = currentUser.name || userEmail.split("@")[0];
+    const userName = (currentUser as any).name || userEmail.split("@")[0];
 
     const checkInRecord = await checkInStorage.add({
       userEmail,
