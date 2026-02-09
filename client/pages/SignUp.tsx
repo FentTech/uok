@@ -116,24 +116,27 @@ export default function SignUp() {
                 )}
               </div>
 
-              {/* Email Field */}
+              {/* Username Field */}
               <div>
                 <label className="block text-sm font-semibold text-slate-900 mb-2">
-                  Email Address
+                  Username
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    type="text"
+                    name="username"
+                    value={formData.username}
                     onChange={handleChange}
-                    placeholder="you@example.com"
+                    placeholder="johndoe"
                     className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Letters, numbers, and underscores only
+                </p>
+                {errors.username && (
+                  <p className="text-red-500 text-sm mt-1">{errors.username}</p>
                 )}
               </div>
 
