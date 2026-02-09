@@ -122,7 +122,11 @@ export default function Index() {
               ? Object.entries(moodSongs)
                   .slice(0, 6)
                   .map(([moodName, songs]) => {
-                    if (!moodName || !Array.isArray(songs) || songs.length === 0) {
+                    if (
+                      !moodName ||
+                      !Array.isArray(songs) ||
+                      songs.length === 0
+                    ) {
                       return null;
                     }
                     const firstSong = songs[0];
@@ -140,7 +144,8 @@ export default function Index() {
                           </div>
                         </div>
                         <p className="text-sm text-slate-600 line-clamp-2">
-                          {firstSong?.title || "Curated music to match your mood"}
+                          {firstSong?.title ||
+                            "Curated music to match your mood"}
                         </p>
                       </div>
                     );
@@ -166,7 +171,8 @@ export default function Index() {
                 Stay Connected
               </h3>
               <p className="text-slate-600">
-                Check in multiple times daily to let loved ones know you're doing okay
+                Check in multiple times daily to let loved ones know you're
+                doing okay
               </p>
             </div>
             <div className="text-center">
@@ -177,7 +183,8 @@ export default function Index() {
                 Track Wellness
               </h3>
               <p className="text-slate-600">
-                Monitor your daily mood and wellness patterns with beautiful visualizations
+                Monitor your daily mood and wellness patterns with beautiful
+                visualizations
               </p>
             </div>
             <div className="text-center">
@@ -188,7 +195,8 @@ export default function Index() {
                 Emergency Alerts
               </h3>
               <p className="text-slate-600">
-                Instant notifications for your emergency contacts when you need help
+                Instant notifications for your emergency contacts when you need
+                help
               </p>
             </div>
             <div className="text-center">
@@ -210,7 +218,8 @@ export default function Index() {
                 Share Moments
               </h3>
               <p className="text-slate-600">
-                Upload photos and videos to share your wellness journey with family
+                Upload photos and videos to share your wellness journey with
+                family
               </p>
             </div>
             <div className="text-center">
@@ -238,7 +247,9 @@ export default function Index() {
             Join Our YouTube Community
           </h2>
           <p className="text-xl text-slate-700 mb-8 leading-relaxed">
-            Subscribe to our YouTube channel to watch tutorials, wellness tips, success stories, and more. Be part of our growing community of people committed to staying connected and healthy!
+            Subscribe to our YouTube channel to watch tutorials, wellness tips,
+            success stories, and more. Be part of our growing community of
+            people committed to staying connected and healthy!
           </p>
           <a
             href="https://www.youtube.com/@YOUOK-FIT"
@@ -250,7 +261,8 @@ export default function Index() {
             Subscribe on YouTube
           </a>
           <p className="text-sm text-slate-600 mt-6">
-            Watch our latest videos, learn wellness strategies, and join thousands of UOK users
+            Watch our latest videos, learn wellness strategies, and join
+            thousands of UOK users
           </p>
         </div>
       </div>
