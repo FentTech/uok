@@ -118,27 +118,31 @@ export default function Index() {
             🎵 Music for Every Mood
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.entries(moodSongs).slice(0, 6).map(([moodName, songs]) => {
-              const firstSong = songs && songs[0];
-              return (
-                <div
-                  key={moodName}
-                  className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="text-4xl">😊</div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900">
-                        {moodName}
-                      </h3>
+            {Object.entries(moodSongs)
+              .slice(0, 6)
+              .map(([moodName, songs]) => {
+                const firstSong = songs && songs[0];
+                return (
+                  <div
+                    key={moodName}
+                    className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition"
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="text-4xl">😊</div>
+                      <div>
+                        <h3 className="font-semibold text-slate-900">
+                          {moodName}
+                        </h3>
+                      </div>
                     </div>
+                    <p className="text-sm text-slate-600 line-clamp-2">
+                      {firstSong
+                        ? firstSong.title
+                        : "Curated music to match your mood"}
+                    </p>
                   </div>
-                  <p className="text-sm text-slate-600 line-clamp-2">
-                    {firstSong ? firstSong.title : "Curated music to match your mood"}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
       </div>
