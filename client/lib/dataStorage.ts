@@ -221,6 +221,35 @@ export const mediaStorage = {
     }
     return false;
   },
+
+  // Check how many videos uploaded in last 24 hours
+  getVideoUploadsLast24Hours: (): StoredMedia[] => {
+    const allMedia = mediaStorage.getActive();
+    const now = new Date();
+    const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
+
+    return allMedia.filter((media) => {
+      if (media.type !== "video") return false;
+      if (!media.uploadedAt) return false;
+
+      const uploadedDate = new Date(media.uploadedAt);
+      const ageInMs = now.getTime() - uploadedDate.getTime();
+
+      return ageInMs <= twentyFourHoursInMs;
+    });
+  },
+
+  // Check if user can upload video (max 5 per 24 hours)
+  canUploadVideo: (): boolean => {
+    const videoUploads = mediaStorage.getVideoUploadsLast24Hours();
+    return videoUploads.length < 5;
+  },
+
+  // Get remaining video uploads for today
+  getRemainingVideoUploads: (): number => {
+    const videoUploads = mediaStorage.getVideoUploadsLast24Hours();
+    return Math.max(0, 5 - videoUploads.length);
+  },
 };
 
 // ===== NOTIFICATION STORAGE =====
