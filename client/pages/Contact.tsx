@@ -34,8 +34,8 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      // Submit form to our backend API
-      const response = await fetch("/api/contact/submit", {
+      // Submit form to FormSubmit service which sends email to afenteng@gmail.com
+      const response = await fetch("https://formsubmit.co/afenteng@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,18 +44,17 @@ export default function Contact() {
           name: formData.name.trim(),
           email: formData.email.trim(),
           message: formData.message.trim(),
+          _subject: `New Contact Form Submission from ${formData.name}`,
+          _captcha: "false",
         }),
       });
 
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        alert(result.message);
+      if (response.ok) {
+        alert("Thank you for your message! We'll get back to you soon.");
         setFormData({ name: "", email: "", message: "" });
       } else {
         alert(
-          result.error ||
-            "There was an issue sending your message. Please try again.",
+          "There was an issue sending your message. Please try again.",
         );
       }
     } catch (error) {
