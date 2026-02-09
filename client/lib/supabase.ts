@@ -606,9 +606,8 @@ export const supabaseBondService = {
       }
 
       // Check rate limit before creating
-      const withinLimit = await supabaseBondService.checkRateLimit(
-        bondingUserEmail,
-      );
+      const withinLimit =
+        await supabaseBondService.checkRateLimit(bondingUserEmail);
       if (!withinLimit) {
         console.warn(
           "⚠️ Rate limit exceeded: Cannot create more bonds this hour",
