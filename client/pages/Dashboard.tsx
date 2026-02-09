@@ -919,29 +919,45 @@ export default function Dashboard() {
       timeSlot: selectedTimeSlot,
     });
 
-    // SEND NOTIFICATIONS TO BONDED CONTACTS
+    // SEND NOTIFICATIONS TO BONDED CONTACTS via Supabase or shared storage
     try {
       const bondedContactsStr = localStorage.getItem("bondedContacts");
       if (bondedContactsStr) {
         const bondedContacts = JSON.parse(bondedContactsStr);
 
-        bondedContacts.forEach((contact: any) => {
-          // Create a notification that this contact received
-          notificationStorage.add({
-            id: `checkin-${contact.id}-${Date.now()}`,
-            type: "checkin",
-            message: `${userName} checked in as ${mood} ${emoji}`,
-            timestamp: timestamp,
-            date: date,
-            fromContact: contact.name,
-            read: false,
-          });
+        // Store check-in in a shared location that bonded contacts can access
+        const sharedCheckInKey = "uok_shared_checkins";
+        const sharedCheckIns = JSON.parse(localStorage.getItem(sharedCheckInKey) || "[]");
 
-          console.log(`📢 Check-in notification sent to: ${contact.name}`);
+        sharedCheckIns.unshift({
+          id: `checkin-${Date.now()}`,
+          fromUser: userEmail,
+          fromUserName: userName,
+          emoji: emoji,
+          mood: mood,
+          timestamp: timestamp,
+          date: date,
+          bondedWith: bondedContacts.map((c: any) => c.id),
+          createdAt: new Date().toISOString(),
         });
+
+        // Keep only last 100 shared check-ins
+        localStorage.setItem(sharedCheckInKey, JSON.stringify(sharedCheckIns.slice(0, 100)));
+
+        // Create local notifications for this user that check-in was sent
+        notificationStorage.add({
+          id: `checkin-sent-${Date.now()}`,
+          type: "checkin",
+          message: `✅ Your ${mood} check-in shared with ${bondedContacts.length} contact${bondedContacts.length !== 1 ? "s" : ""}`,
+          timestamp: timestamp,
+          date: date,
+          read: false,
+        });
+
+        console.log(`📢 Check-in shared with ${bondedContacts.length} bonded contact(s)`);
       }
     } catch (error) {
-      console.warn("⚠️ Failed to send check-in notifications:", error);
+      console.warn("⚠️ Failed to share check-in with bonded contacts:", error);
     }
 
     // Sync check-ins to Supabase (fire and forget)
