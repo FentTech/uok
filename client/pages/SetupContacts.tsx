@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, Plus, X, Copy, Check } from "lucide-react";
+import { Heart, Plus, X, Copy, Check, QrCode } from "lucide-react";
 
 interface BondedContact {
   id: string;
   name: string;
-  email: string;
   bondCode: string;
+  qrCode: string;
   status: "pending" | "bonded";
   bondedAt?: string;
 }
@@ -15,10 +15,10 @@ export default function SetupContacts() {
   const [contacts, setContacts] = useState<BondedContact[]>([]);
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [expandedContactId, setExpandedContactId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -26,12 +26,6 @@ export default function SetupContacts() {
 
     if (!formData.name.trim()) {
       newErrors.name = "Contact name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email address is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
     }
 
     setErrors(newErrors);
@@ -56,18 +50,27 @@ export default function SetupContacts() {
     return `BOND-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   };
 
+  // Simple QR code generation using data URL
+  const generateQRCode = (text: string): string => {
+    // This creates a basic QR code using a free QR code service
+    // In production, use qrcode.react or similar library
+    const encodedText = encodeURIComponent(text);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedText}`;
+  };
+
   const handleAddContact = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm() && contacts.length < 3) {
+    if (validateForm() && contacts.length < 10) {
+      const bondCode = generateBondCode();
       const newContact: BondedContact = {
         id: Date.now().toString(),
-        name: formData.name,
-        email: formData.email,
-        bondCode: generateBondCode(),
+        name: formData.name.trim(),
+        bondCode: bondCode,
+        qrCode: generateQRCode(bondCode),
         status: "pending",
       };
       setContacts([...contacts, newContact]);
-      setFormData({ name: "", email: "" });
+      setFormData({ name: "" });
       setErrors({});
     }
   };
@@ -89,7 +92,7 @@ export default function SetupContacts() {
       status: "pending" as const,
     }));
     localStorage.setItem("bondedContacts", JSON.stringify(bondedContacts));
-    console.log("Bond codes generated:", bondedContacts);
+    console.log("Emergency contacts created:", bondedContacts);
     navigate("/dashboard");
   };
 
@@ -117,8 +120,8 @@ export default function SetupContacts() {
             <div className="bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-12 text-white">
               <h1 className="text-3xl font-bold mb-2">Emergency Contacts</h1>
               <p className="text-cyan-50">
-                Generate bond codes to connect with trusted family and friends.
-                They can use these codes to bond with you in the app.
+                Generate QR codes to bond with trusted family and emergency
+                contacts. They can scan the code to connect with you instantly.
               </p>
             </div>
 
@@ -128,25 +131,37 @@ export default function SetupContacts() {
               {contacts.length > 0 && (
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 mb-4">
-                    Your Bond Codes ({contacts.length}/3)
+                    Your Bonded Contacts ({contacts.length}/10)
                   </h2>
                   <div className="space-y-3">
                     {contacts.map((contact) => (
                       <div
                         key={contact.id}
-                        className="flex items-center justify-between p-4 bg-cyan-50 rounded-lg border border-cyan-200"
+                        className="bg-cyan-50 rounded-lg border border-cyan-200 overflow-hidden"
                       >
-                        <div className="flex-1">
-                          <p className="font-semibold text-slate-900">
-                            {contact.name}
-                          </p>
-                          <p className="text-sm text-slate-600 mt-1">
-                            {contact.email}
-                          </p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <code className="px-3 py-1 bg-white rounded border border-cyan-300 text-sm font-mono text-cyan-700">
+                        <div className="flex items-center justify-between p-4">
+                          <div className="flex-1">
+                            <p className="font-semibold text-slate-900">
+                              {contact.name}
+                            </p>
+                            <p className="text-sm text-slate-600 mt-1 font-mono">
                               {contact.bondCode}
-                            </code>
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() =>
+                                setExpandedContactId(
+                                  expandedContactId === contact.id
+                                    ? null
+                                    : contact.id
+                                )
+                              }
+                              className="p-2 hover:bg-cyan-100 rounded transition text-cyan-600"
+                              title="View QR code"
+                            >
+                              <QrCode className="w-5 h-5" />
+                            </button>
                             <button
                               onClick={() =>
                                 handleCopyBondCode(contact.bondCode, contact.id)
@@ -160,17 +175,29 @@ export default function SetupContacts() {
                                 <Copy className="w-4 h-4" />
                               )}
                             </button>
+                            <button
+                              onClick={() => handleRemoveContact(contact.id)}
+                              className="p-2 hover:bg-red-50 rounded-lg transition text-red-500 hover:text-red-600"
+                            >
+                              <X className="w-5 h-5" />
+                            </button>
                           </div>
-                          <p className="text-xs text-slate-500 mt-2">
-                            Share this code with {contact.name} to bond
-                          </p>
                         </div>
-                        <button
-                          onClick={() => handleRemoveContact(contact.id)}
-                          className="p-2 hover:bg-red-50 rounded-lg transition text-red-500 hover:text-red-600"
-                        >
-                          <X className="w-5 h-5" />
-                        </button>
+
+                        {/* Expanded QR Code */}
+                        {expandedContactId === contact.id && (
+                          <div className="bg-white border-t border-cyan-200 p-6 flex flex-col items-center gap-4">
+                            <img
+                              src={contact.qrCode}
+                              alt={`QR code for ${contact.name}`}
+                              className="w-64 h-64 border-2 border-cyan-300 rounded-lg p-2 bg-white"
+                            />
+                            <p className="text-sm text-slate-600 text-center max-w-sm">
+                              Let {contact.name} scan this QR code with their
+                              phone camera to bond with you instantly
+                            </p>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -178,11 +205,11 @@ export default function SetupContacts() {
               )}
 
               {/* Add Contact Form */}
-              {contacts.length < 3 && (
+              {contacts.length < 10 && (
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 mb-4">
                     {contacts.length === 0
-                      ? "Add Your First Contact"
+                      ? "Add Your First Emergency Contact"
                       : "Add Another Contact"}
                   </h2>
                   <form onSubmit={handleAddContact} className="space-y-4">
@@ -196,32 +223,15 @@ export default function SetupContacts() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="e.g., Mom, Brother, Best Friend"
+                        placeholder="e.g., Mom, Brother, Doctor"
                         className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
                       />
+                      <p className="text-xs text-slate-500 mt-1">
+                        No email address needed - share the QR code directly
+                      </p>
                       {errors.name && (
                         <p className="text-red-500 text-sm mt-1">
                           {errors.name}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Email Field */}
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-900 mb-2">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="e.g., mom@example.com"
-                        className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
-                      />
-                      {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.email}
                         </p>
                       )}
                     </div>
@@ -241,15 +251,18 @@ export default function SetupContacts() {
               {/* Info Box */}
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                 <p className="text-sm text-slate-700">
-                  <span className="font-semibold">How it works:</span>
+                  <span className="font-semibold">How bonding works:</span>
                   <br />
-                  1. Generate a bond code for each contact
+                  1. Enter the contact name (no email needed)
                   <br />
-                  2. Share the code with them (copy & paste, text, email)
+                  2. A unique QR code is generated for that contact
                   <br />
-                  3. They enter the code in their UOK app to bond with you
+                  3. Share the QR code - they scan it with their phone camera
                   <br />
-                  4. Once bonded, you'll see their check-in status and alerts
+                  4. Or manually share the bond code for them to enter in the app
+                  <br />
+                  5. Once bonded, you receive their check-in alerts and
+                  notifications
                 </p>
               </div>
             </div>
