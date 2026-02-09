@@ -666,9 +666,7 @@ export const supabaseBondService = {
         .on("INSERT", (payload) => {
           // When someone checks in, see if they're bonded with this user
           const senderName = payload.new.user_name;
-          console.log(
-            `🔔 Real-time check-in received from: ${senderName}`,
-          );
+          console.log(`🔔 Real-time check-in received from: ${senderName}`);
           onCheckIn(payload.new);
         })
         .subscribe();

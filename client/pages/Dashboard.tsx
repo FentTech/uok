@@ -282,9 +282,7 @@ export default function Dashboard() {
           JSON.stringify(existingNotifications.slice(0, 50)),
         );
 
-        console.log(
-          `✅ Check-in notification stored for ${contact.name}`,
-        );
+        console.log(`✅ Check-in notification stored for ${contact.name}`);
 
         // Also send to Supabase for cross-device sync if contact has email
         if (contact.email) {
@@ -335,11 +333,14 @@ export default function Dashboard() {
       }
 
       const userEmail = localStorage.getItem("userEmail") || "user";
-      const userName = (currentUser as any).name || (currentUser as any).username || "User";
+      const userName =
+        (currentUser as any).name || (currentUser as any).username || "User";
       console.log("🔄 Loading user data for:", userEmail);
 
       try {
-        const { supabaseUserSyncService, supabaseBondService } = await import("../lib/supabase");
+        const { supabaseUserSyncService, supabaseBondService } = await import(
+          "../lib/supabase"
+        );
 
         // Load bonds from Supabase (outgoing bonds - people this user bonded with)
         console.log("📥 Loading bonds from Supabase...");
@@ -367,10 +368,7 @@ export default function Dashboard() {
               status: "bonded" as const,
             })),
             ...localBonds.filter(
-              (lb) =>
-                !supabaseBonds.some(
-                  (sb) => sb.contact_name === lb.name,
-                ),
+              (lb) => !supabaseBonds.some((sb) => sb.contact_name === lb.name),
             ),
           ];
 
@@ -380,14 +378,12 @@ export default function Dashboard() {
 
         // Load incoming bonds (people who bonded with this user)
         console.log("📥 Checking for incoming bonds...");
-        const incomingBonds = await supabaseBondService.getIncomingBonds(userName);
+        const incomingBonds =
+          await supabaseBondService.getIncomingBonds(userName);
         if (incomingBonds.length > 0) {
           console.log("✅ Found incoming bonds:", incomingBonds.length);
           // Store incoming bonds for display
-          localStorage.setItem(
-            "incomingBonds",
-            JSON.stringify(incomingBonds),
-          );
+          localStorage.setItem("incomingBonds", JSON.stringify(incomingBonds));
         }
 
         // Load bonded contacts
@@ -620,7 +616,8 @@ export default function Dashboard() {
       if (!userEmail) return;
 
       try {
-        const { supabaseNotificationService, supabaseBondService } = await import("../lib/supabase");
+        const { supabaseNotificationService, supabaseBondService } =
+          await import("../lib/supabase");
         const supabaseNotifications =
           await supabaseNotificationService.getNotifications(userEmail, 50);
 
@@ -653,46 +650,49 @@ export default function Dashboard() {
         }
 
         // Set up realtime listener for new notifications
-        const notificationSubscription = supabaseBondService.subscribeToNotifications(
-          userEmail,
-          (notification: any) => {
-            console.log("🔔 Real-time notification received:", notification);
+        const notificationSubscription =
+          supabaseBondService.subscribeToNotifications(
+            userEmail,
+            (notification: any) => {
+              console.log("🔔 Real-time notification received:", notification);
 
-            // Add to notifications immediately
-            const convertedNotif = {
-              id: notification.id,
-              type: notification.notification_type,
-              message: notification.message,
-              timestamp: new Date(notification.created_at).toLocaleTimeString(
-                "en-US",
-                { hour: "2-digit", minute: "2-digit" },
-              ),
-              fromContact: notification.sender_email,
-            };
+              // Add to notifications immediately
+              const convertedNotif = {
+                id: notification.id,
+                type: notification.notification_type,
+                message: notification.message,
+                timestamp: new Date(notification.created_at).toLocaleTimeString(
+                  "en-US",
+                  { hour: "2-digit", minute: "2-digit" },
+                ),
+                fromContact: notification.sender_email,
+              };
 
-            setNotifications((prev) => {
-              const isDuplicate = prev.some((p) => p.id === convertedNotif.id);
-              if (isDuplicate) return prev;
-              return [convertedNotif, ...prev];
-            });
-
-            // Play notification sound
-            if (notification.notification_type === "checkin") {
-              playNotificationSound();
-            }
-
-            // Browser notification
-            if (
-              "Notification" in window &&
-              Notification.permission === "granted"
-            ) {
-              new Notification("UOK Alert", {
-                body: notification.message,
-                icon: "/favicon.ico",
+              setNotifications((prev) => {
+                const isDuplicate = prev.some(
+                  (p) => p.id === convertedNotif.id,
+                );
+                if (isDuplicate) return prev;
+                return [convertedNotif, ...prev];
               });
-            }
-          },
-        );
+
+              // Play notification sound
+              if (notification.notification_type === "checkin") {
+                playNotificationSound();
+              }
+
+              // Browser notification
+              if (
+                "Notification" in window &&
+                Notification.permission === "granted"
+              ) {
+                new Notification("UOK Alert", {
+                  body: notification.message,
+                  icon: "/favicon.ico",
+                });
+              }
+            },
+          );
 
         return () => {
           if (notificationSubscription) {
@@ -872,7 +872,9 @@ export default function Dashboard() {
           const incomingBondsStr = localStorage.getItem("incomingBonds");
           if (incomingBondsStr) {
             const incomingBonds = JSON.parse(incomingBondsStr);
-            console.log(`📥 Checking for incoming bonds: ${incomingBonds.length}`);
+            console.log(
+              `📥 Checking for incoming bonds: ${incomingBonds.length}`,
+            );
 
             // For each incoming bond, load their check-ins
             for (const bond of incomingBonds) {
@@ -892,7 +894,8 @@ export default function Dashboard() {
                     userName: senderName,
                     emoji: n.emoji,
                     mood: n.mood,
-                    timestamp: n.timestamp.split("T")[1]?.slice(0, 5) || "00:00",
+                    timestamp:
+                      n.timestamp.split("T")[1]?.slice(0, 5) || "00:00",
                     date: new Date(n.timestamp).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",

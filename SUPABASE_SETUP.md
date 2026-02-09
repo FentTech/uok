@@ -44,22 +44,26 @@ The following tables should already exist in your Supabase setup:
 ## How Bond Syncing Works
 
 ### 1. User Creates Bonds (SetupContacts.tsx)
+
 - User adds emergency contacts locally
 - Bonds are saved to `bond_relationships` table via `supabaseBondService.createBond()`
 - Each bond is directional: User A → Contact B
 
 ### 2. User Logs In on Another Device (Dashboard.tsx)
+
 - App loads bonds from Supabase via `supabaseBondService.getUserBonds(userEmail)`
 - App also loads "incoming bonds" via `supabaseBondService.getIncomingBonds(userName)`
 - Incoming bonds are people who have bonded with this user
 
 ### 3. User Checks In (Dashboard.tsx handleCheckIn)
+
 - Check-in is stored locally and in Supabase
 - Notification is sent to each bonded contact via:
   - Local storage (for same-device access)
   - Supabase notifications table (for cross-device access)
 
 ### 4. Real-Time Notifications (Dashboard.tsx)
+
 - App subscribes to notifications via `supabaseBondService.subscribeToNotifications()`
 - When a check-in notification arrives, it's immediately displayed
 - Browser notification is shown if permission granted
@@ -78,11 +82,12 @@ The following tables should already exist in your Supabase setup:
 ✅ **Multi-Device Bond Synchronization**: Bonds created on Device 1 appear on Device 2  
 ✅ **Cross-Device Notifications**: Check-ins from Device 1 trigger alerts on Device 2  
 ✅ **Real-Time Updates**: New check-ins appear instantly via Supabase Realtime  
-✅ **Incoming Bonds**: Users can see check-ins from people who bonded with them  
+✅ **Incoming Bonds**: Users can see check-ins from people who bonded with them
 
 ## Testing the Implementation
 
 ### Test Scenario 1: Same Device, Different Login
+
 1. Sign up as User A, add Mom as emergency contact
 2. Switch user, sign up as User B with username "Mom"
 3. Sign back in as User A
@@ -90,6 +95,7 @@ The following tables should already exist in your Supabase setup:
 5. Check in - verify notification stored for Mom
 
 ### Test Scenario 2: Different Devices
+
 1. Open UOK in Browser 1, sign in as User A
 2. Add "Brother" as emergency contact
 3. Open UOK in Browser 2 (incognito)
@@ -98,6 +104,7 @@ The following tables should already exist in your Supabase setup:
 6. Check in on Browser 1 - should appear on Browser 2
 
 ### Test Scenario 3: Real-Time Notifications
+
 1. Have Device 1 (User A) and Device 2 (User B / Mom)
 2. Sign in as User A on Device 1, bond with Mom
 3. Sign in as Mom on Device 2
@@ -110,13 +117,15 @@ The following tables should already exist in your Supabase setup:
 A: Check that `.getUserBonds()` is being called with the correct email. Verify the email matches what was used during signup.
 
 **Q: Notifications not appearing**
-A: 
+A:
+
 - Check browser console for errors
 - Verify contact has an email address (for Supabase notifications)
 - Ensure Supabase credentials are correctly set in `.env`
 
 **Q: Realtime not working**
 A:
+
 - Verify Supabase Realtime is enabled in your project settings
 - Check that the notifications table exists
 - Look for errors in browser DevTools Network tab
@@ -124,6 +133,7 @@ A:
 ## Environment Variables Required
 
 Make sure your `.env` file contains:
+
 ```
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
