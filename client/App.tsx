@@ -38,15 +38,24 @@ const queryClient = new QueryClient();
 export default function App() {
   // Initialize demo advertiser, visitor tracking, and clean up expired media
   useEffect(() => {
-    advertiserAuthService.initializeDemoAdvertiser();
-
-    // Initialize visitor tracking with proper error handling
-    visitorTracking.initialize().catch((error) => {
+    try {
+      advertiserAuthService.initializeDemoAdvertiser();
+    } catch (error) {
       console.warn(
-        "⚠️ Visitor tracking failed to initialize (non-critical):",
+        "⚠️ Demo advertiser initialization failed (non-critical):",
         error,
       );
-    });
+    }
+
+    // Initialize visitor tracking with proper error handling
+    if (visitorTracking && typeof visitorTracking.initialize === 'function') {
+      visitorTracking.initialize().catch((error) => {
+        console.warn(
+          "⚠️ Visitor tracking failed to initialize (non-critical):",
+          error,
+        );
+      });
+    }
 
     // Check for expiring media and notify users
     const checkExpiringMedia = () => {
