@@ -147,7 +147,7 @@ export default function App() {
       filename?: string,
     ): boolean => {
       const msg = (message + (filename || "")).toLowerCase();
-      // Suppress Builder.io platform-level errors
+      // Suppress Builder.io platform-level errors and network errors from non-critical services
       return (
         msg.includes("builder.io") ||
         msg.includes("fullstory") ||
@@ -170,7 +170,13 @@ export default function App() {
         msg.includes("sandboxed document") ||
         msg.includes("could not get cookie") ||
         msg.includes("could not set cookie") ||
-        msg.includes("scroll-linked positioning")
+        msg.includes("scroll-linked positioning") ||
+        msg.includes("networkerror") ||
+        msg.includes("network error") ||
+        msg.includes("fetch resource") ||
+        msg.includes("supabase") ||
+        msg.includes("attempt to fetch") ||
+        msg.includes("visitor tracking")
       );
     };
 
