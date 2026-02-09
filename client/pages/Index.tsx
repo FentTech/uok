@@ -118,21 +118,21 @@ export default function Index() {
             🎵 Music for Every Mood
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {moodSongs.slice(0, 6).map((mood, index) => (
+            {Object.entries(moodSongs).slice(0, 6).map(([moodName, songs], index) => (
               <div
                 key={index}
                 className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="text-4xl">{mood.mood}</div>
+                  <div className="text-4xl">{songs[0]?.vibe?.charAt(0) || "😊"}</div>
                   <div>
                     <h3 className="font-semibold text-slate-900">
-                      {mood.moodName}
+                      {moodName}
                     </h3>
                   </div>
                 </div>
                 <p className="text-sm text-slate-600 line-clamp-2">
-                  {mood.recommendation || "Curated music to match your mood"}
+                  {songs[0]?.title || "Curated music to match your mood"}
                 </p>
               </div>
             ))}
