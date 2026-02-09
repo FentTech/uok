@@ -874,34 +874,43 @@ export default function Dashboard() {
       if (todayCheckInCount < 3) {
         // Set timer for missed check-in alert (30 seconds = 30000 ms)
         const timer = setTimeout(() => {
-          // Get bonded contacts
-          const bondedContactsStr = localStorage.getItem("bondedContacts");
-          const bondedContacts = bondedContactsStr
-            ? JSON.parse(bondedContactsStr)
-            : [];
+          try {
+            // Get bonded contacts
+            const bondedContactsStr = localStorage.getItem("bondedContacts");
+            let bondedContacts = [];
+            try {
+              bondedContacts = bondedContactsStr
+                ? JSON.parse(bondedContactsStr)
+                : [];
+            } catch (error) {
+              console.warn("⚠️ Could not parse bonded contacts:", error);
+            }
 
-          const notification: Notification = {
-            id: Date.now().toString(),
-            type: "missed",
-            message: `⚠ ALERT: You missed your 3rd check-in! Alert sent to ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}.`,
-            timestamp: new Date().toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          };
+            const notification: Notification = {
+              id: Date.now().toString(),
+              type: "missed",
+              message: `⚠ ALERT: You missed your 3rd check-in! Alert sent to ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}.`,
+              timestamp: new Date().toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
 
-          setNotifications((prev) => [notification, ...prev]);
+            setNotifications((prev) => [notification, ...prev]);
 
-          // Send alerts to bonded contacts
-          bondedContacts.forEach((contact: any) => {
-            console.log("🚨 MISSED CHECK-IN ALERT sent to bonded contact:", {
-              recipient: contact.name,
-              bondCode: contact.bondCode,
-              timestamp: new Date().toISOString(),
-              message:
-                "Your bonded family member missed their 30-second check-in window!",
+            // Send alerts to bonded contacts
+            bondedContacts.forEach((contact: any) => {
+              console.log("🚨 MISSED CHECK-IN ALERT sent to bonded contact:", {
+                recipient: contact.name,
+                bondCode: contact.bondCode,
+                timestamp: new Date().toISOString(),
+                message:
+                  "Your bonded family member missed their 30-second check-in window!",
+              });
             });
-          });
+          } catch (error) {
+            console.warn("⚠️ Error in missed check-in timer:", error);
+          }
         }, 30000); // 30 seconds
 
         missedCheckInTimerRef.current = timer;
