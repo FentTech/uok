@@ -502,6 +502,22 @@ export default function Dashboard() {
     loadAllUserData();
   }, []);
 
+  // Load local notifications from notificationStorage
+  useEffect(() => {
+    try {
+      const localNotifications = notificationStorage.getAll();
+      if (localNotifications.length > 0) {
+        console.log(
+          "✅ Loaded notifications from local storage:",
+          localNotifications.length,
+        );
+        setNotifications(localNotifications as any);
+      }
+    } catch (error) {
+      console.warn("⚠️ Failed to load local notifications:", error);
+    }
+  }, []);
+
   // Load notifications from Supabase (completely free, real-time)
   useEffect(() => {
     const loadNotificationsFromSupabase = async () => {
