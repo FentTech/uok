@@ -1098,46 +1098,59 @@ export default function Dashboard() {
       }
 
       // Update media in storage with sharing info
-      const contactEmails = selectedContactsToShare
-        .map((id) => bondedContacts.find((c) => c.id === id)?.email)
+      const contactNames = selectedContactsToShare
+        .map((id) => bondedContacts.find((c) => c.id === id)?.name)
         .filter(Boolean);
 
       mediaStorage.update(item.id, {
-        sharedWith: contactEmails,
+        sharedWith: contactNames,
         visibility: "bonded-contacts",
       });
 
-      // Send real-time notifications to selected contacts via Supabase (completely free)
-      const userEmail = localStorage.getItem("userEmail") || "User";
-      const userName = userEmail === "user" ? "User" : userEmail.split("@")[0];
+      // Get user's name
+      let currentUser = {};
+      try {
+        currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      } catch (error) {
+        console.warn("⚠️ Could not parse currentUser:", error);
+      }
+      const userName = (currentUser as any).name || (currentUser as any).username || "User";
 
+      // Send notifications to selected contacts via shared localStorage
       selectedContactsToShare.forEach((contactId) => {
         const contact = bondedContacts.find((c) => c.id === contactId);
-        if (contact && contact.email) {
-          // Save notification to Supabase database - completely free, real-time
-          import("../lib/supabase")
-            .then(({ supabaseNotificationService }) => {
-              return supabaseNotificationService.sendMediaSharedNotification(
-                contact.email,
-                userEmail,
-                userName,
-                item.type as "photo" | "video",
-              );
-            })
-            .then((success) => {
-              if (success) {
-                console.log(
-                  "✅ Real-time media notification saved for:",
-                  contact.name,
-                );
-              }
-            })
-            .catch((error) => {
-              console.warn(
-                "⚠️ Could not save media notification to Supabase:",
-                error,
-              );
-            });
+        if (contact) {
+          const notificationKey = `uok_bonded_notifications_${contact.name.toLowerCase().replace(/\s+/g, "_")}`;
+          try {
+            const existingNotifications = JSON.parse(
+              localStorage.getItem(notificationKey) || "[]",
+            );
+
+            const newNotification = {
+              id: `media-${Date.now()}-${Math.random()}`,
+              type: "media",
+              fromUser: userName,
+              mediaType: item.type,
+              message: `${userName} shared a ${item.type === "video" ? "video" : "photo"}${item.mood ? ` (${item.mood})` : ""}`,
+              timestamp: new Date().toISOString(),
+              read: false,
+            };
+
+            existingNotifications.unshift(newNotification);
+            localStorage.setItem(
+              notificationKey,
+              JSON.stringify(existingNotifications.slice(0, 50)),
+            );
+
+            console.log(
+              `✅ Media notification stored for ${contact.name}`,
+            );
+          } catch (error) {
+            console.warn(
+              `⚠️ Failed to store media notification for ${contact.name}:`,
+              error,
+            );
+          }
         }
       });
 
