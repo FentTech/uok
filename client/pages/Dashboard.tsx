@@ -251,7 +251,8 @@ export default function Dashboard() {
     } catch (error) {
       console.warn("⚠️ Could not parse currentUser:", error);
     }
-    const userName = (currentUser as any).name || (currentUser as any).username || "User";
+    const userName =
+      (currentUser as any).name || (currentUser as any).username || "User";
 
     // Store notifications for each bonded contact in a shared location
     // Each bonded contact's name becomes a key where notifications are stored
@@ -1153,7 +1154,8 @@ export default function Dashboard() {
       } catch (error) {
         console.warn("⚠️ Could not parse currentUser:", error);
       }
-      const userName = (currentUser as any).name || (currentUser as any).username || "User";
+      const userName =
+        (currentUser as any).name || (currentUser as any).username || "User";
 
       // Send notifications to selected contacts via shared localStorage
       selectedContactsToShare.forEach((contactId) => {
@@ -1181,9 +1183,7 @@ export default function Dashboard() {
               JSON.stringify(existingNotifications.slice(0, 50)),
             );
 
-            console.log(
-              `✅ Media notification stored for ${contact.name}`,
-            );
+            console.log(`✅ Media notification stored for ${contact.name}`);
           } catch (error) {
             console.warn(
               `⚠️ Failed to store media notification for ${contact.name}:`,
@@ -1567,7 +1567,11 @@ export default function Dashboard() {
                     const currentUser = JSON.parse(
                       localStorage.getItem("currentUser") || "{}",
                     );
-                    const displayName = (currentUser.name || currentUser.username || "User").toUpperCase();
+                    const displayName = (
+                      currentUser.name ||
+                      currentUser.username ||
+                      "User"
+                    ).toUpperCase();
                     return `${displayName} Online`;
                   } catch (error) {
                     console.warn("⚠️ Could not parse currentUser:", error);
@@ -2258,7 +2262,9 @@ export default function Dashboard() {
                     // Get the current name from bonded contacts, fallback to stored name
                     // Try matching by email first (for email-bonded contacts), then by name (for QR-bonded)
                     const currentContact = bondedContacts.find(
-                      (c) => c.email === checkIn.userEmail || c.name === checkIn.userName,
+                      (c) =>
+                        c.email === checkIn.userEmail ||
+                        c.name === checkIn.userName,
                     );
                     const displayName =
                       currentContact?.name || checkIn.userName;
