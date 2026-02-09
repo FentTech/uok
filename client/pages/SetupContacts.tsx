@@ -60,10 +60,12 @@ export default function SetupContacts() {
 
   // Simple QR code generation using data URL
   const generateQRCode = (text: string): string => {
-    // This creates a basic QR code using a free QR code service
-    // In production, use qrcode.react or similar library
+    // This creates a QR code using a free QR code service
+    // The API is: https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=TEXT
     const encodedText = encodeURIComponent(text);
-    return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedText}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedText}`;
+    console.log("✅ Generated QR code URL:", qrUrl);
+    return qrUrl;
   };
 
   const handleAddContact = (e: React.FormEvent) => {
