@@ -20,6 +20,9 @@ export default function SetupContacts() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [expandedContactId, setExpandedContactId] = useState<string | null>(null);
+  const [emailModalContactId, setEmailModalContactId] = useState<string | null>(null);
+  const [emailInput, setEmailInput] = useState("");
+  const [sendingEmail, setSendingEmail] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
