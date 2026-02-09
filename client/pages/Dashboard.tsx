@@ -314,10 +314,60 @@ export default function Dashboard() {
       }
 
       const userEmail = localStorage.getItem("userEmail") || "user";
+      const userName = (currentUser as any).name || (currentUser as any).username || "User";
       console.log("🔄 Loading user data for:", userEmail);
 
       try {
-        const { supabaseUserSyncService } = await import("../lib/supabase");
+        const { supabaseUserSyncService, supabaseBondService } = await import("../lib/supabase");
+
+        // Load bonds from Supabase (outgoing bonds - people this user bonded with)
+        console.log("📥 Loading bonds from Supabase...");
+        const supabaseBonds = await supabaseBondService.getUserBonds(userEmail);
+        if (supabaseBonds.length > 0) {
+          console.log("✅ Loaded bonds from Supabase:", supabaseBonds.length);
+          // Merge with local bonds
+          let localBonds = [];
+          const localBondsStr = localStorage.getItem("bondedContacts");
+          if (localBondsStr) {
+            try {
+              localBonds = JSON.parse(localBondsStr);
+            } catch (e) {
+              console.warn("Failed to parse local bonds");
+            }
+          }
+
+          // Merge bonds (Supabase takes precedence)
+          const mergedBonds = [
+            ...supabaseBonds.map((b) => ({
+              id: b.bond_code,
+              name: b.contact_name,
+              bondCode: b.bond_code,
+              email: b.contact_email,
+              status: "bonded" as const,
+            })),
+            ...localBonds.filter(
+              (lb) =>
+                !supabaseBonds.some(
+                  (sb) => sb.contact_name === lb.name,
+                ),
+            ),
+          ];
+
+          setBondedContacts(mergedBonds);
+          localStorage.setItem("bondedContacts", JSON.stringify(mergedBonds));
+        }
+
+        // Load incoming bonds (people who bonded with this user)
+        console.log("📥 Checking for incoming bonds...");
+        const incomingBonds = await supabaseBondService.getIncomingBonds(userName);
+        if (incomingBonds.length > 0) {
+          console.log("✅ Found incoming bonds:", incomingBonds.length);
+          // Store incoming bonds for display
+          localStorage.setItem(
+            "incomingBonds",
+            JSON.stringify(incomingBonds),
+          );
+        }
 
         // Load bonded contacts
         let bondedContactsStr = localStorage.getItem("bondedContacts");
