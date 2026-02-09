@@ -157,6 +157,74 @@ export default function Index() {
           <h2 className="text-4xl font-bold text-center mb-16 text-black">
             Why Choose UOK?
           </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">💬</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Stay Connected
+              </h3>
+              <p className="text-slate-600">
+                Check in multiple times daily to let loved ones know you're doing okay
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">📊</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Track Wellness
+              </h3>
+              <p className="text-slate-600">
+                Monitor your daily mood and wellness patterns with beautiful visualizations
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🚨</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Emergency Alerts
+              </h3>
+              <p className="text-slate-600">
+                Instant notifications for your emergency contacts when you need help
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🎵</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Music Recommendations
+              </h3>
+              <p className="text-slate-600">
+                Get personalized music suggestions that match your current mood
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">📷</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Share Moments
+              </h3>
+              <p className="text-slate-600">
+                Upload photos and videos to share your wellness journey with family
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🔒</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Privacy First
+              </h3>
+              <p className="text-slate-600">
+                Your data is encrypted and only shared with people you trust
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
