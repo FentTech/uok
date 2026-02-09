@@ -488,12 +488,12 @@ export default function Dashboard() {
           console.log(
             "ℹ️ No bonded contacts set up yet. Waiting for user to add emergency contacts.",
           );
-          loadDemoBondedContacts(setBondedContacts);
+          loadBondedContacts(setBondedContacts);
         }
       } catch (error) {
         console.error("Error loading user data from Supabase:", error);
         // Fall back to using what's in localStorage
-        loadDemoBondedContacts(setBondedContacts);
+        loadBondedContacts(setBondedContacts);
       } finally {
         setIsLoading(false);
       }
