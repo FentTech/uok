@@ -1411,6 +1411,20 @@ export default function Dashboard() {
           </Link>
 
           <div className="flex items-center gap-3">
+            {/* User Status Display */}
+            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-semibold text-blue-900">
+                {(() => {
+                  const currentUser = JSON.parse(
+                    localStorage.getItem("currentUser") || "{}"
+                  );
+                  return currentUser.name || currentUser.username || "User";
+                })()}
+              </span>
+              <span className="text-xs text-green-600">Online</span>
+            </div>
+
             {/* Notifications Dropdown */}
             <div className="relative">
               <button
