@@ -614,11 +614,10 @@ export default function Dashboard() {
             bondedContacts.length,
           );
         } else {
-          // If no bonded contacts found anywhere, initialize demo data for testing
+          // If no bonded contacts found, load what's available
           console.log(
-            "ℹ️ No bonded contacts found. Initializing demo data for testing...",
+            "ℹ️ No bonded contacts set up yet. Waiting for user to add emergency contacts.",
           );
-          initializeDemoData();
           loadDemoBondedContacts(setBondedContacts);
         }
       } catch (error) {
