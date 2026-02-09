@@ -665,7 +665,16 @@ export const supabaseBondService = {
         .eq("bonding_user_email", userEmail)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        // Handle RLS violations
+        if (error.code === "42501") {
+          console.warn(
+            "⚠️ Access denied: Cannot view bonds for this user (RLS policy)",
+          );
+          return [];
+        }
+        throw error;
+      }
 
       console.log(
         `📥 Fetched ${data?.length || 0} bonds for user ${userEmail}`,
@@ -694,7 +703,19 @@ export const supabaseBondService = {
         .eq("status", "active")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        // Handle RLS violations (expected if user doesn't have access)
+        if (error.code === "42501") {
+          console.warn(
+            "⚠️ Note: Incoming bonds require contact to have verified email",
+          );
+          return [];
+        }
+        // Non-RLS errors should still be logged
+        if (!error.code?.includes("PGRST")) {
+          throw error;
+        }
+      }
 
       console.log(
         `📥 Found ${data?.length || 0} incoming bonds for ${userName}`,
