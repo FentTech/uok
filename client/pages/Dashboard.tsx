@@ -2143,37 +2143,44 @@ export default function Dashboard() {
             {/* Bonded Emergency Contacts */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
               <h3 className="text-lg font-bold text-blue-900 mb-4">
-                Bonded Emergency Contacts
+                Emergency Contacts
               </h3>
 
               <div className="space-y-3">
                 {bondedContacts && bondedContacts.length > 0 ? (
-                  bondedContacts.map((contact: any, i: number) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-blue-50 transition cursor-pointer group"
-                    >
-                      <div className="relative">
-                        <span className="text-2xl">
-                          {contact.emoji || "👤"}
-                        </span>
-                        <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-400"></span>
+                  <>
+                    <p className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200 mb-3">
+                      ✅ Your check-ins are automatically shared with these emergency contacts
+                    </p>
+                    {bondedContacts.map((contact: any, i: number) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-blue-50 transition cursor-pointer group"
+                      >
+                        <div className="relative">
+                          <span className="text-2xl">👤</span>
+                          <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-400"></span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-blue-900 text-sm">
+                            {contact.name}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            ● Ready to receive alerts
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-blue-900 text-sm">
-                          {contact.name}
-                        </p>
-                        <p className="text-xs text-green-600">
-                          ● Bonded & Active
-                        </p>
-                      </div>
-                    </div>
-                  ))
+                    ))}
+                  </>
                 ) : (
-                  <p className="text-gray-600 text-sm p-3 bg-gray-50 rounded-lg border border-gray-200 text-center">
-                    No bonded contacts yet. Tap the button below to add family
-                    members.
-                  </p>
+                  <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p className="text-sm text-yellow-900 font-semibold mb-2">
+                      ⚠️ No emergency contacts set up yet
+                    </p>
+                    <p className="text-xs text-yellow-800">
+                      Add emergency contacts to share your check-ins and receive alerts from them.
+                    </p>
+                  </div>
                 )}
               </div>
 
