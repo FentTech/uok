@@ -599,8 +599,7 @@ export default function Dashboard() {
           bondedContacts,
         );
 
-        const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean); // Filter out undefined emails
-
+        const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean);
         const bondNames = bondedContacts.map((c) => c.name).filter(Boolean);
 
         console.log("📥 Bonded emails:", bondedEmails);
@@ -671,7 +670,7 @@ export default function Dashboard() {
           allCheckIns.push(...localCheckIns);
         }
 
-        // Also load shared check-ins sent by bonded contacts
+        // Load check-ins that were shared via shared storage (for all bonded contacts)
         try {
           const sharedCheckInsStr = localStorage.getItem("uok_shared_checkins");
           if (sharedCheckInsStr) {
@@ -706,6 +705,46 @@ export default function Dashboard() {
         } catch (error) {
           console.warn("⚠️ Failed to load shared check-ins:", error);
         }
+
+        // Load notifications that were stored for each bonded contact by name
+        // This allows bonded contacts to receive real notifications
+        bondNames.forEach((contactName: string) => {
+          const notificationKey = `uok_bonded_notifications_${contactName.toLowerCase().replace(/\s+/g, "_")}`;
+          try {
+            const contactNotifications = JSON.parse(
+              localStorage.getItem(notificationKey) || "[]",
+            );
+
+            // Convert stored notifications to check-in format for display
+            const checkInNotifications = contactNotifications
+              .filter((n: any) => n.type === "checkin")
+              .map((n: any) => ({
+                id: n.id,
+                userEmail: n.fromUser,
+                userName: n.fromUser,
+                emoji: n.emoji,
+                mood: n.mood,
+                timestamp: n.timestamp.split("T")[1]?.slice(0, 5) || "00:00",
+                date: new Date(n.timestamp).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                }),
+                createdAt: n.timestamp,
+              }));
+
+            if (checkInNotifications.length > 0) {
+              console.log(
+                `✅ Loaded ${checkInNotifications.length} check-in notifications for ${contactName}`,
+              );
+              allCheckIns.push(...checkInNotifications);
+            }
+          } catch (error) {
+            console.warn(
+              `⚠️ Failed to load notifications for ${contactName}:`,
+              error,
+            );
+          }
+        });
 
         // Remove duplicates (in case same check-in is in both Supabase and local)
         const uniqueCheckIns = Array.from(
