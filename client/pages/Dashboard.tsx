@@ -214,7 +214,7 @@ export default function Dashboard() {
     }
   };
 
-  // Send check-in notifications to bonded contacts (via shared localStorage)
+  // Send check-in notifications to bonded contacts (via shared localStorage + Supabase)
   const sendCheckInNotification = (mood: string, emoji: string) => {
     // Get bonded contacts from localStorage
     const bondedContactsStr = localStorage.getItem("bondedContacts");
@@ -244,7 +244,7 @@ export default function Dashboard() {
 
     setNotifications((prev) => [notification as any, ...prev]);
 
-    // Get user's name
+    // Get user's name and email
     let currentUser = {};
     try {
       currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
@@ -253,6 +253,7 @@ export default function Dashboard() {
     }
     const userName =
       (currentUser as any).name || (currentUser as any).username || "User";
+    const userEmail = localStorage.getItem("userEmail") || "user";
 
     // Store notifications for each bonded contact in a shared location
     // Each bonded contact's name becomes a key where notifications are stored
@@ -282,8 +283,28 @@ export default function Dashboard() {
         );
 
         console.log(
-          `✅ Check-in notification stored for ${contact.name} at ${notificationKey}`,
+          `✅ Check-in notification stored for ${contact.name}`,
         );
+
+        // Also send to Supabase for cross-device sync if contact has email
+        if (contact.email) {
+          import("../lib/supabase")
+            .then(({ supabaseNotificationService }) => {
+              return supabaseNotificationService.sendCheckInNotification(
+                contact.email,
+                userEmail,
+                userName,
+                mood,
+                emoji,
+              );
+            })
+            .catch((error) => {
+              console.warn(
+                `⚠️ Failed to send Supabase notification to ${contact.name}:`,
+                error,
+              );
+            });
+        }
       } catch (error) {
         console.warn(
           `⚠️ Failed to store notification for ${contact.name}:`,
