@@ -1251,7 +1251,16 @@ export default function Dashboard() {
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      // Check storage limit (maximum 5 media items)
+      // Check 24-hour video upload limit (maximum 5 videos per 24 hours)
+      if (!mediaStorage.canUploadVideo()) {
+        const remaining = mediaStorage.getRemainingVideoUploads();
+        alert(
+          `Video upload limit reached! You can upload ${remaining} more video${remaining !== 1 ? "s" : ""} in the next 24 hours.`,
+        );
+        return;
+      }
+
+      // Check total storage limit (maximum 5 media items)
       const activeMedia = mediaStorage.getActive();
       if (activeMedia.length >= 5) {
         alert(
