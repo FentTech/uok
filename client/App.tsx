@@ -48,7 +48,7 @@ export default function App() {
     }
 
     // Initialize visitor tracking with proper error handling
-    if (visitorTracking && typeof visitorTracking.initialize === 'function') {
+    if (visitorTracking && typeof visitorTracking.initialize === "function") {
       visitorTracking.initialize().catch((error) => {
         console.warn(
           "⚠️ Visitor tracking failed to initialize (non-critical):",
@@ -60,7 +60,7 @@ export default function App() {
     // Check for expiring media and notify users
     const checkExpiringMedia = () => {
       try {
-        if (!mediaStorage || typeof mediaStorage.getAll !== 'function') {
+        if (!mediaStorage || typeof mediaStorage.getAll !== "function") {
           return;
         }
 
@@ -127,7 +127,10 @@ export default function App() {
       () => {
         try {
           checkExpiringMedia();
-          if (mediaStorage && typeof mediaStorage.cleanupExpiredMedia === 'function') {
+          if (
+            mediaStorage &&
+            typeof mediaStorage.cleanupExpiredMedia === "function"
+          ) {
             mediaStorage.cleanupExpiredMedia();
           }
         } catch (error) {
