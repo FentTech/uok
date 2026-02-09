@@ -846,6 +846,57 @@ export default function Dashboard() {
           }
         });
 
+        // Also load check-ins from people who have bonded with this user (incoming bonds)
+        try {
+          const incomingBondsStr = localStorage.getItem("incomingBonds");
+          if (incomingBondsStr) {
+            const incomingBonds = JSON.parse(incomingBondsStr);
+            console.log(`📥 Checking for incoming bonds: ${incomingBonds.length}`);
+
+            // For each incoming bond, load their check-ins
+            for (const bond of incomingBonds) {
+              const senderName = bond.bonding_user_name;
+              const notificationKey = `uok_bonded_notifications_${senderName.toLowerCase().replace(/\s+/g, "_")}`;
+
+              try {
+                const senderNotifications = JSON.parse(
+                  localStorage.getItem(notificationKey) || "[]",
+                );
+
+                const senderCheckIns = senderNotifications
+                  .filter((n: any) => n.type === "checkin")
+                  .map((n: any) => ({
+                    id: n.id,
+                    userEmail: n.fromUser,
+                    userName: senderName,
+                    emoji: n.emoji,
+                    mood: n.mood,
+                    timestamp: n.timestamp.split("T")[1]?.slice(0, 5) || "00:00",
+                    date: new Date(n.timestamp).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    }),
+                    createdAt: n.timestamp,
+                  }));
+
+                if (senderCheckIns.length > 0) {
+                  console.log(
+                    `✅ Loaded ${senderCheckIns.length} check-ins from ${senderName}`,
+                  );
+                  allCheckIns.push(...senderCheckIns);
+                }
+              } catch (error) {
+                console.warn(
+                  `⚠️ Failed to load check-ins from ${senderName}:`,
+                  error,
+                );
+              }
+            }
+          }
+        } catch (error) {
+          console.warn("⚠️ Failed to process incoming bonds:", error);
+        }
+
         // Remove duplicates (in case same check-in is in both Supabase and local)
         const uniqueCheckIns = Array.from(
           new Map(allCheckIns.map((c) => [c.id, c])).values(),
