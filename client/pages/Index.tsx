@@ -162,7 +162,8 @@ export default function Index() {
                 <span className="text-lg font-bold text-white">UOK</span>
               </div>
               <p className="text-sm text-slate-400">
-                Your daily wellness companion for staying connected with loved ones
+                Your daily wellness companion for staying connected with loved
+                ones
               </p>
             </div>
 
@@ -170,10 +171,26 @@ export default function Index() {
             <div>
               <h4 className="font-semibold text-white mb-4">How It Works</h4>
               <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link to="/features" className="hover:text-white transition">Daily Check-ins</Link></li>
-                <li><Link to="/features" className="hover:text-white transition">Stay Connected</Link></li>
-                <li><Link to="/features" className="hover:text-white transition">Track Wellness</Link></li>
-                <li><Link to="/features" className="hover:text-white transition">Emergency Alerts</Link></li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Daily Check-ins
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Stay Connected
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Track Wellness
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Emergency Alerts
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -181,10 +198,26 @@ export default function Index() {
             <div>
               <h4 className="font-semibold text-white mb-4">Products</h4>
               <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link to="/features" className="hover:text-white transition">UOK Dashboard</Link></li>
-                <li><Link to="/pricing" className="hover:text-white transition">Premium Plans</Link></li>
-                <li><Link to="/features" className="hover:text-white transition">Health Tracking</Link></li>
-                <li><Link to="/features" className="hover:text-white transition">Community Sharing</Link></li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    UOK Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/pricing" className="hover:text-white transition">
+                    Premium Plans
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Health Tracking
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Community Sharing
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -192,17 +225,44 @@ export default function Index() {
             <div>
               <h4 className="font-semibold text-white mb-4">Contact & Legal</h4>
               <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link to="/contact" className="hover:text-white transition">Contact Us</Link></li>
-                <li><Link to="/privacy" className="hover:text-white transition">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="hover:text-white transition">Terms of Service</Link></li>
-                <li><a href="mailto:support@youok.fit" className="hover:text-white transition">Email Support</a></li>
+                <li>
+                  <Link to="/contact" className="hover:text-white transition">
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/privacy" className="hover:text-white transition">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms" className="hover:text-white transition">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="mailto:support@youok.fit"
+                    className="hover:text-white transition"
+                  >
+                    Email Support
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-slate-700 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center text-sm text-slate-400">
               <p>&copy; 2024 UOK. All rights reserved</p>
-              <p>Support: <a href="mailto:support@youok.fit" className="text-cyan-400 hover:text-cyan-300">support@youok.fit</a></p>
+              <p>
+                Support:{" "}
+                <a
+                  href="mailto:support@youok.fit"
+                  className="text-cyan-400 hover:text-cyan-300"
+                >
+                  support@youok.fit
+                </a>
+              </p>
             </div>
           </div>
         </div>

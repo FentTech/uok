@@ -53,9 +53,7 @@ export default function Contact() {
         alert("Thank you for your message! We'll get back to you soon.");
         setFormData({ name: "", email: "", message: "" });
       } else {
-        alert(
-          "There was an issue sending your message. Please try again.",
-        );
+        alert("There was an issue sending your message. Please try again.");
       }
     } catch (error) {
       console.error("Error sending contact form:", error);

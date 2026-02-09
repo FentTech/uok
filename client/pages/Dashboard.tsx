@@ -2488,7 +2488,9 @@ export default function Dashboard() {
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               {/* How It Works */}
               <div>
-                <h4 className="font-semibold text-blue-900 mb-4">How It Works</h4>
+                <h4 className="font-semibold text-blue-900 mb-4">
+                  How It Works
+                </h4>
                 <ul className="space-y-2 text-sm text-gray-600">
                   <li>Check in 2-3 times daily</li>
                   <li>Share mood and wellness status</li>
@@ -2501,10 +2503,38 @@ export default function Dashboard() {
               <div>
                 <h4 className="font-semibold text-blue-900 mb-4">Products</h4>
                 <ul className="space-y-2 text-sm text-gray-600">
-                  <li><Link to="/features" className="text-blue-600 hover:text-blue-700">Daily Check-ins</Link></li>
-                  <li><Link to="/features" className="text-blue-600 hover:text-blue-700">Health Tracking</Link></li>
-                  <li><Link to="/features" className="text-blue-600 hover:text-blue-700">Emergency Alerts</Link></li>
-                  <li><Link to="/features" className="text-blue-600 hover:text-blue-700">Community Sharing</Link></li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Daily Check-ins
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Health Tracking
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Emergency Alerts
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Community Sharing
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
@@ -2512,10 +2542,38 @@ export default function Dashboard() {
               <div>
                 <h4 className="font-semibold text-blue-900 mb-4">Support</h4>
                 <ul className="space-y-2 text-sm text-gray-600">
-                  <li><Link to="/contact" className="text-blue-600 hover:text-blue-700">Contact Us</Link></li>
-                  <li><a href="mailto:support@youok.fit" className="text-blue-600 hover:text-blue-700">Email Support</a></li>
-                  <li><Link to="/features" className="text-blue-600 hover:text-blue-700">FAQ</Link></li>
-                  <li><Link to="/features" className="text-blue-600 hover:text-blue-700">Help Center</Link></li>
+                  <li>
+                    <Link
+                      to="/contact"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Contact Us
+                    </Link>
+                  </li>
+                  <li>
+                    <a
+                      href="mailto:support@youok.fit"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Email Support
+                    </a>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      FAQ
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Help Center
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
@@ -2523,15 +2581,51 @@ export default function Dashboard() {
               <div>
                 <h4 className="font-semibold text-blue-900 mb-4">Legal</h4>
                 <ul className="space-y-2 text-sm text-gray-600">
-                  <li><Link to="/terms" className="text-blue-600 hover:text-blue-700">Terms of Service</Link></li>
-                  <li><Link to="/privacy" className="text-blue-600 hover:text-blue-700">Privacy Policy</Link></li>
-                  <li><Link to="/about" className="text-blue-600 hover:text-blue-700">About Us</Link></li>
-                  <li><Link to="/pricing" className="text-blue-600 hover:text-blue-700">Pricing</Link></li>
+                  <li>
+                    <Link
+                      to="/terms"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Terms of Service
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/privacy"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/about"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/pricing"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Pricing
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>
             <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-600">
-              <p>&copy; 2024 UOK. All rights reserved | <a href="mailto:support@youok.fit" className="text-blue-600 hover:text-blue-700 font-semibold">support@youok.fit</a></p>
+              <p>
+                &copy; 2024 UOK. All rights reserved |{" "}
+                <a
+                  href="mailto:support@youok.fit"
+                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                >
+                  support@youok.fit
+                </a>
+              </p>
             </div>
           </div>
         </div>
