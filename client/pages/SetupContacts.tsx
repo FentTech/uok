@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, Plus, X, Copy, Check, QrCode } from "lucide-react";
+import { Heart, Plus, X, Copy, Check, QrCode, Mail, Send } from "lucide-react";
 
 interface BondedContact {
   id: string;
@@ -9,6 +9,7 @@ interface BondedContact {
   qrCode: string;
   status: "pending" | "bonded";
   bondedAt?: string;
+  email?: string;
 }
 
 export default function SetupContacts() {
