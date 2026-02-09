@@ -599,7 +599,7 @@ export default function Dashboard() {
       if (!userEmail) return;
 
       try {
-        const { supabaseNotificationService } = await import("../lib/supabase");
+        const { supabaseNotificationService, supabaseBondService } = await import("../lib/supabase");
         const supabaseNotifications =
           await supabaseNotificationService.getNotifications(userEmail, 50);
 
@@ -630,13 +630,61 @@ export default function Dashboard() {
             return [...newNotifs, ...prev];
           });
         }
+
+        // Set up realtime listener for new notifications
+        const notificationSubscription = supabaseBondService.subscribeToNotifications(
+          userEmail,
+          (notification: any) => {
+            console.log("🔔 Real-time notification received:", notification);
+
+            // Add to notifications immediately
+            const convertedNotif = {
+              id: notification.id,
+              type: notification.notification_type,
+              message: notification.message,
+              timestamp: new Date(notification.created_at).toLocaleTimeString(
+                "en-US",
+                { hour: "2-digit", minute: "2-digit" },
+              ),
+              fromContact: notification.sender_email,
+            };
+
+            setNotifications((prev) => {
+              const isDuplicate = prev.some((p) => p.id === convertedNotif.id);
+              if (isDuplicate) return prev;
+              return [convertedNotif, ...prev];
+            });
+
+            // Play notification sound
+            if (notification.notification_type === "checkin") {
+              playNotificationSound();
+            }
+
+            // Browser notification
+            if (
+              "Notification" in window &&
+              Notification.permission === "granted"
+            ) {
+              new Notification("UOK Alert", {
+                body: notification.message,
+                icon: "/favicon.ico",
+              });
+            }
+          },
+        );
+
+        return () => {
+          if (notificationSubscription) {
+            notificationSubscription.unsubscribe();
+          }
+        };
       } catch (error) {
         console.warn("⚠️ Failed to load notifications from Supabase:", error);
       }
     };
 
     loadNotificationsFromSupabase();
-    // Poll for new notifications every 5 seconds
+    // Poll for new notifications every 5 seconds as backup
     const interval = setInterval(loadNotificationsFromSupabase, 5000);
     return () => clearInterval(interval);
   }, []);
