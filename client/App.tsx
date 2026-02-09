@@ -179,7 +179,10 @@ export default function App() {
         msg.includes("fetch resource") ||
         msg.includes("supabase") ||
         msg.includes("attempt to fetch") ||
-        msg.includes("visitor tracking")
+        msg.includes("visitor tracking") ||
+        msg.includes("json") ||
+        msg.includes("parse") ||
+        msg.includes("syntaxerror")
       );
     };
 
