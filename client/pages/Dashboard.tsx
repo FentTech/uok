@@ -285,8 +285,8 @@ export default function Dashboard() {
 
       if (!currentUser) {
         console.log("⚠️ No user found, please login");
-        // Load only real bonded contacts, no demo data
-        loadDemoBondedContacts(setBondedContacts);
+        // Load only real bonded contacts
+        loadBondedContacts(setBondedContacts);
         return;
       }
 
