@@ -11,6 +11,7 @@ export interface StoredMedia {
   visibility?: "personal" | "bonded-contacts" | "community";
   createdAt: string; // ISO timestamp for 3-day auto-deletion tracking
   deletedAt?: string | null; // null if not deleted
+  uploadedAt?: string; // ISO timestamp for 24-hour video upload limit
 }
 
 export interface StoredNotification {
