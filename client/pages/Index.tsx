@@ -66,14 +66,42 @@ export default function Index() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl blur-3xl opacity-10"></div>
               <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-blue-100">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
+                  {/* Morning Check-In */}
+                  <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
                     <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-xl">
-                      😊
+                      🌅
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <p className="font-semibold text-black">
                         Morning Check-In
                       </p>
+                      <p className="text-xs text-gray-600">8:00 AM</p>
+                    </div>
+                  </div>
+
+                  {/* Afternoon Check-In */}
+                  <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg hover:bg-green-100 transition">
+                    <div className="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center text-xl">
+                      ☀️
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-black">
+                        Afternoon Check-In
+                      </p>
+                      <p className="text-xs text-gray-600">2:00 PM</p>
+                    </div>
+                  </div>
+
+                  {/* Evening Check-In */}
+                  <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+                    <div className="w-12 h-12 bg-purple-400 rounded-full flex items-center justify-center text-xl">
+                      🌙
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-black">
+                        Evening Check-In
+                      </p>
+                      <p className="text-xs text-gray-600">8:00 PM</p>
                     </div>
                   </div>
                 </div>
