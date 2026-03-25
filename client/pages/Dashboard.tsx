@@ -1744,12 +1744,18 @@ export default function Dashboard() {
                     const displayName = (
                       currentUser.name ||
                       currentUser.username ||
-                      "User"
+                      localStorage.getItem("username") ||
+                      "Guest"
                     ).toUpperCase();
                     return `${displayName} Online`;
                   } catch (error) {
                     console.warn("⚠️ Could not parse currentUser:", error);
-                    return "USER ONLINE";
+                    const fallbackName = (
+                      localStorage.getItem("username") ||
+                      localStorage.getItem("name") ||
+                      "Guest"
+                    ).toUpperCase();
+                    return `${fallbackName} Online`;
                   }
                 })()}
               </span>
