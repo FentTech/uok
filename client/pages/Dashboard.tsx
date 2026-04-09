@@ -178,6 +178,7 @@ export default function Dashboard() {
   const [bondedCheckIns, setBondedCheckIns] = useState<StoredCheckIn[]>([]);
   const [moodSuggestions, setMoodSuggestions] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [displayName, setDisplayName] = useState<string>("User");
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -335,7 +336,10 @@ export default function Dashboard() {
       const userEmail = localStorage.getItem("userEmail") || "user";
       const userName =
         (currentUser as any).name || (currentUser as any).username || "User";
-      console.log("🔄 Loading user data for:", userEmail);
+
+      // Set the display name state
+      setDisplayName(userName.toUpperCase());
+      console.log("🔄 Loading user data for:", userEmail, "as", userName);
 
       try {
         const { supabaseUserSyncService, supabaseBondService } = await import(
@@ -1736,28 +1740,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-200">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm font-semibold text-blue-900">
-                {(() => {
-                  try {
-                    const currentUser = JSON.parse(
-                      localStorage.getItem("currentUser") || "{}",
-                    );
-                    const displayName = (
-                      currentUser.name ||
-                      currentUser.username ||
-                      localStorage.getItem("username") ||
-                      "Guest"
-                    ).toUpperCase();
-                    return `${displayName} Online`;
-                  } catch (error) {
-                    console.warn("⚠️ Could not parse currentUser:", error);
-                    const fallbackName = (
-                      localStorage.getItem("username") ||
-                      localStorage.getItem("name") ||
-                      "Guest"
-                    ).toUpperCase();
-                    return `${fallbackName} Online`;
-                  }
-                })()}
+                {displayName} Online
               </span>
             </div>
 
