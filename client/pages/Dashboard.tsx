@@ -356,22 +356,29 @@ export default function Dashboard() {
   // Load all user data on mount (bonded contacts, check-ins, media, shared moments)
   useEffect(() => {
     const loadAllUserData = async () => {
-      const currentUser = localStorage.getItem("currentUser");
+      const currentUserStr = localStorage.getItem("currentUser");
 
-      if (!currentUser) {
+      if (!currentUserStr) {
         console.log("⚠️ No user found, please login");
         // Load only real bonded contacts
         loadBondedContacts(setBondedContacts);
         return;
       }
 
+      let currentUser;
+      try {
+        currentUser = JSON.parse(currentUserStr);
+      } catch (e) {
+        console.warn("Failed to parse currentUser:", e);
+        return;
+      }
+
       const userEmail = localStorage.getItem("userEmail") || "user";
-      const userName =
-        (currentUser as any).name || (currentUser as any).username || "User";
+      const userName = currentUser.name || currentUser.username || "User";
 
       // Set the display name state
       setDisplayName(userName.toUpperCase());
-      console.log("🔄 Loading user data for:", userEmail, "as", userName);
+      console.log("🔄 Loading user data for:", userEmail, "as", userName, "with display name:", userName.toUpperCase());
 
       try {
         const { supabaseUserSyncService, supabaseBondService, supabaseMediaService } = await import(
