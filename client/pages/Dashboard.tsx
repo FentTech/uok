@@ -179,16 +179,36 @@ export default function Dashboard() {
   const [moodSuggestions, setMoodSuggestions] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [displayName, setDisplayName] = useState<string>(() => {
-    // Initialize from localStorage
+    // Initialize from localStorage - try to get username/name
     try {
-      const currentUser = localStorage.getItem("currentUser");
-      if (currentUser) {
-        const user = JSON.parse(currentUser);
-        return (user.name || user.username || "User").toUpperCase();
+      // First try currentUser object
+      const currentUserStr = localStorage.getItem("currentUser");
+      if (currentUserStr) {
+        const user = JSON.parse(currentUserStr);
+        const name = user.name || user.username;
+        if (name) {
+          console.log("✅ Initialized displayName from currentUser:", name);
+          return name.toUpperCase();
+        }
+      }
+
+      // Fallback: try individual username/name keys
+      const username = localStorage.getItem("username");
+      if (username) {
+        console.log("✅ Initialized displayName from username key:", username);
+        return username.toUpperCase();
+      }
+
+      const name = localStorage.getItem("name");
+      if (name) {
+        console.log("✅ Initialized displayName from name key:", name);
+        return name.toUpperCase();
       }
     } catch (error) {
       console.warn("Error reading displayName from localStorage:", error);
     }
+
+    console.log("⚠️ No username found in localStorage, using default");
     return "User";
   });
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
