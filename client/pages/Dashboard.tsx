@@ -178,7 +178,19 @@ export default function Dashboard() {
   const [bondedCheckIns, setBondedCheckIns] = useState<StoredCheckIn[]>([]);
   const [moodSuggestions, setMoodSuggestions] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [displayName, setDisplayName] = useState<string>("User");
+  const [displayName, setDisplayName] = useState<string>(() => {
+    // Initialize from localStorage
+    try {
+      const currentUser = localStorage.getItem("currentUser");
+      if (currentUser) {
+        const user = JSON.parse(currentUser);
+        return (user.name || user.username || "User").toUpperCase();
+      }
+    } catch (error) {
+      console.warn("Error reading displayName from localStorage:", error);
+    }
+    return "User";
+  });
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -342,42 +354,49 @@ export default function Dashboard() {
       console.log("🔄 Loading user data for:", userEmail, "as", userName);
 
       try {
-        const { supabaseUserSyncService, supabaseBondService } = await import(
+        const { supabaseUserSyncService, supabaseBondService, supabaseMediaService } = await import(
           "../lib/supabase"
         );
 
         // Load bonds from Supabase (outgoing bonds - people this user bonded with)
         console.log("📥 Loading bonds from Supabase...");
         const supabaseBonds = await supabaseBondService.getUserBonds(userEmail);
-        if (supabaseBonds.length > 0) {
-          console.log("✅ Loaded bonds from Supabase:", supabaseBonds.length);
-          // Merge with local bonds
-          let localBonds = [];
-          const localBondsStr = localStorage.getItem("bondedContacts");
-          if (localBondsStr) {
-            try {
-              localBonds = JSON.parse(localBondsStr);
-            } catch (e) {
-              console.warn("Failed to parse local bonds");
-            }
+
+        // Load local bonds as backup
+        let localBonds = [];
+        const localBondsStr = localStorage.getItem("bondedContacts");
+        if (localBondsStr) {
+          try {
+            localBonds = JSON.parse(localBondsStr);
+          } catch (e) {
+            console.warn("Failed to parse local bonds");
           }
+        }
 
-          // Merge bonds (Supabase takes precedence)
-          const mergedBonds = [
-            ...supabaseBonds.map((b) => ({
-              id: b.bond_code,
-              name: b.contact_name,
-              bondCode: b.bond_code,
-              email: b.contact_email,
-              status: "bonded" as const,
-            })),
-            ...localBonds.filter(
-              (lb) => !supabaseBonds.some((sb) => sb.contact_name === lb.name),
-            ),
-          ];
+        // Merge bonds (Supabase takes precedence, but include local bonds if they're not in Supabase)
+        const mergedBonds = [
+          ...supabaseBonds.map((b) => ({
+            id: b.bond_code,
+            name: b.contact_name,
+            bondCode: b.bond_code,
+            qrCode: b.qr_code || `UOK_QR_${b.bond_code}`,
+            email: b.contact_email,
+            status: "bonded" as const,
+            bondedAt: b.created_at,
+          })),
+          ...localBonds.filter(
+            (lb) => !supabaseBonds.some((sb) => sb.contact_name === lb.name),
+          ),
+        ];
 
+        if (mergedBonds.length > 0) {
+          console.log("✅ Loaded bonded contacts:", mergedBonds.length);
           setBondedContacts(mergedBonds);
           localStorage.setItem("bondedContacts", JSON.stringify(mergedBonds));
+        } else if (localBonds.length > 0) {
+          // If no Supabase bonds, use local bonds
+          console.log("✅ Using local bonded contacts:", localBonds.length);
+          setBondedContacts(localBonds);
         }
 
         // Load incoming bonds (people who bonded with this user)
@@ -482,40 +501,38 @@ export default function Dashboard() {
           }
         }
 
-        // Load media
+        // Load media from Supabase first (permanent storage), then fallback to localStorage
+        console.log("📥 Loading media from Supabase...");
         let mediaData = [];
-        let mediaStr = localStorage.getItem("uok_media");
 
-        if (mediaStr) {
-          try {
-            mediaData = JSON.parse(mediaStr);
-            if (!Array.isArray(mediaData)) {
-              console.warn("⚠️ Media is not an array, clearing...");
+        // Try to fetch from Supabase (primary source for persistence)
+        const supabaseMedia = await supabaseMediaService.fetchMedia(userEmail);
+        if (supabaseMedia.length > 0) {
+          console.log("✅ Loaded media from Supabase:", supabaseMedia.length);
+          mediaData = supabaseMedia;
+          // Update localStorage as cache
+          localStorage.setItem("uok_media", JSON.stringify(mediaData));
+        } else {
+          // Fallback to localStorage if Supabase is empty
+          let mediaStr = localStorage.getItem("uok_media");
+          if (mediaStr) {
+            try {
+              mediaData = JSON.parse(mediaStr);
+              if (!Array.isArray(mediaData)) {
+                console.warn("⚠️ Media is not an array, clearing...");
+                localStorage.removeItem("uok_media");
+                mediaData = [];
+              } else {
+                console.log(
+                  "✅ Loaded media from localStorage:",
+                  mediaData.length,
+                );
+              }
+            } catch (e) {
+              console.warn("⚠️ Error parsing media, clearing corrupted data:", e);
               localStorage.removeItem("uok_media");
               mediaData = [];
-            } else {
-              console.log(
-                "✅ Loaded media from localStorage:",
-                mediaData.length,
-              );
             }
-          } catch (e) {
-            console.warn("⚠️ Error parsing media, clearing corrupted data:", e);
-            localStorage.removeItem("uok_media");
-            mediaData = [];
-          }
-        }
-
-        // If not found locally, try Supabase
-        if (mediaData.length === 0) {
-          console.log("📥 Fetching media from Supabase...");
-          const supabaseMedia =
-            await supabaseUserSyncService.fetchMedia(userEmail);
-
-          if (supabaseMedia.length > 0) {
-            console.log("✅ Loaded media from Supabase:", supabaseMedia.length);
-            localStorage.setItem("uok_media", JSON.stringify(supabaseMedia));
-            mediaData = supabaseMedia;
           }
         }
 
@@ -1462,9 +1479,9 @@ export default function Dashboard() {
               const userEmail = localStorage.getItem("userEmail");
               if (userEmail && userEmail !== "user") {
                 import("../lib/supabase")
-                  .then(({ supabaseUserSyncService }) => {
+                  .then(({ supabaseMediaService }) => {
                     const allMedia = mediaStorage.getActive();
-                    return supabaseUserSyncService.syncMedia(
+                    return supabaseMediaService.syncMedia(
                       userEmail,
                       allMedia,
                     );
@@ -1574,9 +1591,9 @@ export default function Dashboard() {
                 const userEmail = localStorage.getItem("userEmail");
                 if (userEmail && userEmail !== "user") {
                   import("../lib/supabase")
-                    .then(({ supabaseUserSyncService }) => {
+                    .then(({ supabaseMediaService }) => {
                       const allMedia = mediaStorage.getActive();
-                      return supabaseUserSyncService.syncMedia(
+                      return supabaseMediaService.syncMedia(
                         userEmail,
                         allMedia,
                       );
@@ -1610,6 +1627,19 @@ export default function Dashboard() {
     mediaStorage.delete(id);
     // Update local state
     setMediaItems(mediaItems.filter((item) => item.id !== id));
+
+    // Sync deletion to Supabase
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail && userEmail !== "user") {
+      import("../lib/supabase")
+        .then(({ supabaseMediaService }) => {
+          return supabaseMediaService.deleteMedia(userEmail, id);
+        })
+        .then(() => console.log("✅ Media deletion synced to Supabase"))
+        .catch((error) =>
+          console.log("⚠️ Could not sync media deletion to Supabase:", error),
+        );
+    }
   };
 
   const refreshBondedCheckIns = async () => {

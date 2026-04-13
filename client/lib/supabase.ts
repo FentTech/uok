@@ -794,5 +794,112 @@ export const supabaseBondService = {
   },
 };
 
+// Media Sync Service - Store and sync media metadata to Supabase
+export const supabaseMediaService = {
+  // Sync media to Supabase database for persistence
+  syncMedia: async (userEmail: string, media: any[]): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        console.warn("⚠️ Supabase not configured, falling back to localStorage");
+        return false;
+      }
+
+      // Store media metadata in database
+      const { error } = await supabase.from("user_media").upsert(
+        {
+          user_email: userEmail,
+          media_data: media, // Store as JSONB
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_email" },
+      );
+
+      if (error) {
+        console.warn("⚠️ Failed to sync media to Supabase:", error.message);
+        return false;
+      }
+
+      console.log("✅ Media synced to Supabase for user:", userEmail);
+      return true;
+    } catch (error) {
+      console.warn(
+        "⚠️ Error syncing media:",
+        error instanceof Error ? error.message : String(error),
+      );
+      return false;
+    }
+  },
+
+  // Fetch media from Supabase
+  fetchMedia: async (userEmail: string): Promise<any[]> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        console.warn("⚠️ Supabase not configured, using localStorage only");
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from("user_media")
+        .select("media_data")
+        .eq("user_email", userEmail)
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        // PGRST116 = no rows found, which is ok
+        console.warn("⚠️ Failed to fetch media from Supabase:", error.message);
+        return [];
+      }
+
+      const media = data?.media_data || [];
+      console.log("✅ Loaded media from Supabase:", media.length, "items");
+      return media;
+    } catch (error) {
+      console.warn(
+        "⚠️ Error fetching media:",
+        error instanceof Error ? error.message : String(error),
+      );
+      return [];
+    }
+  },
+
+  // Delete media record
+  deleteMedia: async (userEmail: string, mediaId: string): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return false;
+
+      // Get current media
+      const media = await supabaseMediaService.fetchMedia(userEmail);
+      const updated = media.filter((m) => m.id !== mediaId);
+
+      // Update database
+      const { error } = await supabase.from("user_media").upsert(
+        {
+          user_email: userEmail,
+          media_data: updated,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_email" },
+      );
+
+      if (error) {
+        console.warn("⚠️ Failed to delete media from Supabase:", error.message);
+        return false;
+      }
+
+      console.log("✅ Media deleted from Supabase:", mediaId);
+      return true;
+    } catch (error) {
+      console.warn(
+        "⚠️ Error deleting media:",
+        error instanceof Error ? error.message : String(error),
+      );
+      return false;
+    }
+  },
+};
+
 // Export the Supabase client for direct use if needed
 export const getSupabase = () => getSupabaseClient();
