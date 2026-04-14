@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart, Mail, Lock, Eye, EyeOff, Loader } from "lucide-react";
-import { useState } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
