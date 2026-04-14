@@ -69,9 +69,12 @@ export default function SignUp() {
 
       // Save to localStorage as backup
       localStorage.setItem("currentUser", JSON.stringify(userData));
+      localStorage.setItem("username", userData.username);
+      localStorage.setItem("name", userData.name);
       localStorage.setItem("userPassword", formData.password); // In production, use proper auth
 
-      console.log("Account created:", userData);
+      console.log("✅ Account created:", userData);
+      console.log("📝 Saved to localStorage - name:", userData.name, "username:", userData.username);
       // Redirect to setup contacts
       navigate("/setup-contacts");
     }

@@ -547,6 +547,19 @@ export const supabaseNotificationService = {
       return false;
     }
   },
+
+  // Search for users by email (for login)
+  searchUserByEmail: async (email: string): Promise<any[]> => {
+    try {
+      // For now, return empty as we're using localStorage for auth
+      // In production, this would query your users table
+      console.log("📧 Searching for user with email:", email);
+      return [];
+    } catch (error) {
+      console.warn("⚠️ Failed to search user by email:", error);
+      return [];
+    }
+  },
 };
 
 // Bond Relationship Service - Handles directional bonds between users

@@ -178,39 +178,7 @@ export default function Dashboard() {
   const [bondedCheckIns, setBondedCheckIns] = useState<StoredCheckIn[]>([]);
   const [moodSuggestions, setMoodSuggestions] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [displayName, setDisplayName] = useState<string>(() => {
-    // Initialize from localStorage - try to get username/name
-    try {
-      // First try currentUser object
-      const currentUserStr = localStorage.getItem("currentUser");
-      if (currentUserStr) {
-        const user = JSON.parse(currentUserStr);
-        const name = user.name || user.username;
-        if (name) {
-          console.log("✅ Initialized displayName from currentUser:", name);
-          return name.toUpperCase();
-        }
-      }
-
-      // Fallback: try individual username/name keys
-      const username = localStorage.getItem("username");
-      if (username) {
-        console.log("✅ Initialized displayName from username key:", username);
-        return username.toUpperCase();
-      }
-
-      const name = localStorage.getItem("name");
-      if (name) {
-        console.log("✅ Initialized displayName from name key:", name);
-        return name.toUpperCase();
-      }
-    } catch (error) {
-      console.warn("Error reading displayName from localStorage:", error);
-    }
-
-    console.log("⚠️ No username found in localStorage, using default");
-    return "User";
-  });
+  const [displayName, setDisplayName] = useState<string>("User");
   const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -360,6 +328,11 @@ export default function Dashboard() {
 
       if (!currentUserStr) {
         console.log("⚠️ No user found, please login");
+        // Try to get any stored username
+        const storedUsername = localStorage.getItem("username") || localStorage.getItem("name");
+        if (storedUsername) {
+          setDisplayName(storedUsername.toUpperCase());
+        }
         // Load only real bonded contacts
         loadBondedContacts(setBondedContacts);
         return;
@@ -370,15 +343,17 @@ export default function Dashboard() {
         currentUser = JSON.parse(currentUserStr);
       } catch (e) {
         console.warn("Failed to parse currentUser:", e);
+        setDisplayName("User");
         return;
       }
 
       const userEmail = localStorage.getItem("userEmail") || "user";
       const userName = currentUser.name || currentUser.username || "User";
 
-      // Set the display name state
+      // Set the display name state - THIS IS THE KEY LINE
+      console.log("📝 Setting displayName to:", userName.toUpperCase());
       setDisplayName(userName.toUpperCase());
-      console.log("🔄 Loading user data for:", userEmail, "as", userName, "with display name:", userName.toUpperCase());
+      console.log("🔄 Loading user data for:", userEmail, "as", userName);
 
       try {
         const { supabaseUserSyncService, supabaseBondService, supabaseMediaService } = await import(
