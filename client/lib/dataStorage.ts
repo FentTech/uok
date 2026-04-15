@@ -165,43 +165,12 @@ export const mediaStorage = {
     return mediaStorage.getAll().filter((m) => !m.deletedAt);
   },
 
-  // Auto-delete media older than 3 days
+  // Keep all media permanently - DO NOT auto-delete
+  // User requested: "pictures and videos should stay on the system forever"
   cleanupExpiredMedia: (): void => {
-    const allMedia = mediaStorage.getAll();
-    const now = new Date();
-    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
-    let deletedCount = 0;
-
-    const updatedMedia = allMedia.map((media) => {
-      // Skip already deleted media
-      if (media.deletedAt) {
-        return media;
-      }
-
-      // Check if media is older than 3 days
-      const createdDate = new Date(media.createdAt);
-      const ageInMs = now.getTime() - createdDate.getTime();
-
-      if (ageInMs > threeDaysInMs) {
-        // Mark as deleted after 3 days
-        deletedCount++;
-        console.log(
-          `🗑️ Auto-deleting expired media (${Math.floor(ageInMs / (24 * 60 * 60 * 1000))} days old): ${media.id}`,
-        );
-        return {
-          ...media,
-          deletedAt: new Date().toISOString(),
-        };
-      }
-
-      return media;
-    });
-
-    // Only save if something was deleted
-    if (deletedCount > 0) {
-      safeLocalStorage.setItem("uok_media", JSON.stringify(updatedMedia));
-      console.log(`✅ Cleaned up ${deletedCount} expired media items`);
-    }
+    // DISABLED: No longer auto-deletes media after 3 days
+    // All pictures, videos, and memories are kept permanently
+    console.log("ℹ️ Media auto-deletion disabled - all media is permanent");
   },
 
   // Share media with bonded contacts

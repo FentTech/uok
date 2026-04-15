@@ -996,16 +996,13 @@ export default function Dashboard() {
         try {
           const { getMediaUrl } = await import("../lib/indexedDBStorage");
           const savedMedia = mediaStorage.getActive();
-          // Filter to show only today's media
-          const today = new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
-          const todayMedia = savedMedia.filter((m) => m.date === today);
+          // FIXED: Show ALL media, not just today's
+          // Users need to see all their pictures and videos
+          console.log("📸 Loading ALL media items:", savedMedia.length);
 
           // Retrieve blob URLs from IndexedDB for each media item
           const mediaWithUrls = await Promise.all(
-            todayMedia.map(async (item) => {
+            savedMedia.map(async (item) => {
               try {
                 const blobUrl = await getMediaUrl(item.url); // item.url contains mediaId
                 return { ...item, url: blobUrl || item.url };
@@ -1020,15 +1017,13 @@ export default function Dashboard() {
           );
 
           setMediaItems(mediaWithUrls as any[]);
+          console.log("✅ Loaded all media items:", mediaWithUrls.length);
         } catch (error) {
           console.error("Error loading media:", error);
           const savedMedia = mediaStorage.getActive();
-          const today = new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
-          const todayMedia = savedMedia.filter((m) => m.date === today);
-          setMediaItems(todayMedia as any[]);
+          // Show ALL media, not just today's
+          console.log("📸 Fallback: Loading all media items:", savedMedia.length);
+          setMediaItems(savedMedia as any[]);
         }
       };
 
@@ -2274,7 +2269,7 @@ export default function Dashboard() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold text-blue-900">
-                      Today's Memories ({mediaItems.length})
+                      My Memories ({mediaItems.length})
                     </h3>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
