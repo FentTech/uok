@@ -1914,9 +1914,15 @@ export default function Dashboard() {
 
             <button
               onClick={() => {
-                // Clear user session and data
-                localStorage.clear();
+                // Clear ONLY session data, NOT user's persistent data
+                // Keep: media, memories, bonded contacts, check-ins (all stored on Supabase)
+                // Remove: currentUser and userEmail (session auth tokens)
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("userEmail");
+                localStorage.removeItem("userPassword");
                 sessionStorage.clear();
+
+                console.log("✅ Session cleared - All user data (media, memories, bonded contacts) preserved");
                 // Redirect to login
                 navigate("/login");
               }}
