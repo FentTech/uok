@@ -58,6 +58,13 @@ export default function SignUp() {
     if (validateForm()) {
       // Here you would normally send data to backend
       console.log("Sign up:", formData);
+
+      // Increment subscriber count
+      const currentSubscribers = localStorage.getItem("uok_subscribers") || "0";
+      const newSubscriberCount = (parseInt(currentSubscribers) + 1).toString();
+      localStorage.setItem("uok_subscribers", newSubscriberCount);
+      console.log("New subscriber count:", newSubscriberCount);
+
       // Redirect to setup contacts
       navigate("/setup-contacts");
     }

@@ -1,8 +1,25 @@
 import { Link } from "react-router-dom";
 import { Heart, Users, Clock, Camera, Shield, TrendingUp, Music } from "lucide-react";
 import { moodSongs } from "../data/songs";
+import { useState, useEffect } from "react";
 
 export default function Index() {
+  const [visitorCount, setVisitorCount] = useState<number>(0);
+  const [subscriberCount, setSubscriberCount] = useState<number>(0);
+
+  useEffect(() => {
+    // Load visitor and subscriber counts from localStorage
+    const savedVisitors = localStorage.getItem("uok_visitors") || "0";
+    const savedSubscribers = localStorage.getItem("uok_subscribers") || "0";
+
+    setVisitorCount(parseInt(savedVisitors));
+    setSubscriberCount(parseInt(savedSubscribers));
+
+    // Increment visitor count
+    const newVisitorCount = parseInt(savedVisitors) + 1;
+    localStorage.setItem("uok_visitors", newVisitorCount.toString());
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-cyan-50 to-purple-50">
       {/* Navigation */}
@@ -67,7 +84,7 @@ export default function Index() {
               <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-cyan-100">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 p-4 bg-cyan-50 rounded-lg">
-                    <div className="w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center text-xl">
+                    <div className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center text-sm">
                       😊
                     </div>
                     <div>
@@ -76,7 +93,7 @@ export default function Index() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg">
-                    <div className="w-12 h-12 bg-purple-400 rounded-full flex items-center justify-center text-xl">
+                    <div className="w-6 h-6 bg-purple-400 rounded-full flex items-center justify-center text-sm">
                       🎉
                     </div>
                     <div>
@@ -85,7 +102,7 @@ export default function Index() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-4 bg-cyan-50 rounded-lg">
-                    <div className="w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center text-xl">
+                    <div className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center text-sm">
                       😴
                     </div>
                     <div>
@@ -95,6 +112,28 @@ export default function Index() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Visitor & Subscriber Stats Section */}
+      <div className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-cyan-50 via-purple-50 to-cyan-50 border-y border-cyan-100">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="text-center p-8 bg-white rounded-2xl border border-cyan-200 shadow-md">
+              <div className="text-5xl font-bold bg-gradient-to-r from-cyan-600 to-cyan-700 bg-clip-text text-transparent mb-2">
+                {visitorCount.toLocaleString()}
+              </div>
+              <p className="text-lg font-semibold text-slate-700 mb-1">Total Visitors</p>
+              <p className="text-sm text-slate-600">People who've visited UOK</p>
+            </div>
+            <div className="text-center p-8 bg-white rounded-2xl border border-purple-200 shadow-md">
+              <div className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent mb-2">
+                {subscriberCount.toLocaleString()}
+              </div>
+              <p className="text-lg font-semibold text-slate-700 mb-1">Active Users</p>
+              <p className="text-sm text-slate-600">Users who've signed up</p>
             </div>
           </div>
         </div>
