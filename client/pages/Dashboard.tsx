@@ -2039,7 +2039,7 @@ export default function Dashboard() {
                 <p className="text-blue-900 font-semibold mb-2 sm:mb-3 text-xs sm:text-sm">
                   Select check-in time:
                 </p>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full">
                   {CHECK_IN_TIMES.map((timeSlot) => (
                     <button
                       key={timeSlot.slot}
@@ -2049,7 +2049,7 @@ export default function Dashboard() {
                         )
                       }
                       disabled={todayCheckInCount >= 3}
-                      className={`py-2 px-2 sm:px-3 rounded-lg font-semibold text-xs sm:text-sm transition ${
+                      className={`w-full py-2 px-2 sm:px-3 rounded-lg font-semibold text-xs sm:text-sm transition ${
                         selectedTimeSlot === timeSlot.slot
                           ? "bg-blue-600 text-white"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
@@ -2065,13 +2065,14 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-7 sm:grid-cols-8 gap-1 mb-4 sm:mb-6">
+              <div className="grid grid-cols-7 sm:grid-cols-8 gap-1 mb-4 sm:mb-6 w-full">
                 {MOOD_EMOJIS.map((item) => (
                   <button
                     key={item.emoji}
                     onClick={() => handleCheckIn(item.emoji, item.mood)}
                     disabled={todayCheckInCount >= 3}
-                    className={`w-12 h-12 flex flex-col items-center justify-center rounded-lg transition transform ${
+                    title={item.mood}
+                    className={`w-full aspect-square flex flex-col items-center justify-center rounded-lg transition transform ${
                       selectedMood === item.emoji
                         ? "bg-blue-600 shadow-lg scale-105"
                         : "bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
@@ -2079,7 +2080,7 @@ export default function Dashboard() {
                   >
                     <span className="text-lg sm:text-xl">{item.emoji}</span>
                     <span
-                      className={`text-xs font-medium mt-0.5 leading-none ${
+                      className={`text-xs leading-tight truncate px-0.5 max-w-full ${
                         selectedMood === item.emoji
                           ? "text-white"
                           : "text-gray-700"
