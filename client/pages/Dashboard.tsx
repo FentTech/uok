@@ -92,6 +92,7 @@ const MOOD_EMOJIS = [
   { emoji: "🚶", mood: "On My Way" },
   { emoji: "🏠", mood: "At Home" },
   { emoji: "💻", mood: "At Work" },
+  { emoji: "🎉", mood: "Celebrating" },
 ];
 
 // NOTE: Demo data initialization removed - running in production mode
