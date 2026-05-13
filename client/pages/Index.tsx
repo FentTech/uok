@@ -1,48 +1,29 @@
 import { Link } from "react-router-dom";
-import { Heart, Users, Clock, Camera, Shield, TrendingUp, Music } from "lucide-react";
+import { Heart } from "lucide-react";
 import { moodSongs } from "../data/songs";
-import { useState, useEffect } from "react";
 
 export default function Index() {
-  const [visitorCount, setVisitorCount] = useState<number>(0);
-  const [subscriberCount, setSubscriberCount] = useState<number>(0);
-
-  useEffect(() => {
-    // Load visitor and subscriber counts from localStorage
-    const savedVisitors = localStorage.getItem("uok_visitors") || "0";
-    const savedSubscribers = localStorage.getItem("uok_subscribers") || "0";
-
-    setVisitorCount(parseInt(savedVisitors));
-    setSubscriberCount(parseInt(savedSubscribers));
-
-    // Increment visitor count
-    const newVisitorCount = parseInt(savedVisitors) + 1;
-    localStorage.setItem("uok_visitors", newVisitorCount.toString());
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-cyan-50 to-purple-50">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-cyan-100">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
-              UOK
-            </span>
+            <span className="text-xl font-bold text-blue-600">UOK</span>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
             <Link
               to="/login"
-              className="px-6 py-2 text-cyan-600 hover:text-cyan-700 font-medium transition"
+              className="px-6 py-2 text-blue-600 hover:text-blue-700 font-medium transition hidden sm:block"
             >
               Login
             </Link>
             <Link
               to="/signup"
-              className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:shadow-lg hover:shadow-cyan-200 transition font-medium"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
             >
               Sign Up
             </Link>
@@ -56,58 +37,71 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
-                  Check In,
-                </span>
+                <span className="text-blue-600">Check In,</span>
                 <br />
-                <span className="text-slate-900">Stay Connected</span>
+                <span className="text-black">Stay Connected</span>
               </h1>
-              <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                UOK is your daily wellness companion. Check in 2-3 times a day to let your loved ones know you're okay. Express how you're feeling with emojis and stay connected with those who matter most.
+              <p className="text-xl text-slate-700 mb-8 leading-relaxed">
+                UOK is your daily wellness companion. Check in 2-3 times a day
+                to let your loved ones know you're okay.
               </p>
               <div className="flex gap-4">
                 <Link
                   to="/signup"
-                  className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:shadow-xl hover:shadow-cyan-200 transition font-semibold"
+                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
                 >
                   Get Started
                 </Link>
-                <button className="px-8 py-3 border-2 border-slate-300 text-slate-700 rounded-lg hover:border-cyan-400 hover:text-cyan-600 transition font-semibold">
+                <Link
+                  to="/features"
+                  className="px-8 py-3 border-2 border-slate-300 text-black rounded-lg hover:border-blue-600 hover:text-blue-600 transition font-semibold inline-block"
+                >
                   Learn More
-                </button>
+                </Link>
               </div>
             </div>
 
             {/* Hero Visual */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-2xl blur-3xl opacity-20"></div>
-              <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-cyan-100">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl blur-3xl opacity-10"></div>
+              <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-blue-100">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-cyan-50 rounded-lg">
-                    <div className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center text-sm">
-                      😊
+                  {/* Morning Check-In */}
+                  <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                    <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-xl">
+                      🌅
                     </div>
-                    <div>
-                      <p className="font-semibold text-slate-900">Morning Check-in</p>
-                      <p className="text-sm text-slate-600">Feeling great today!</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg">
-                    <div className="w-6 h-6 bg-purple-400 rounded-full flex items-center justify-center text-sm">
-                      🎉
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-900">Afternoon Check-in</p>
-                      <p className="text-sm text-slate-600">All is well!</p>
+                    <div className="flex-1">
+                      <p className="font-semibold text-black">
+                        Morning Check-In
+                      </p>
+                      <p className="text-xs text-gray-600">8:00 AM</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-4 bg-cyan-50 rounded-lg">
-                    <div className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center text-sm">
-                      😴
+
+                  {/* Afternoon Check-In */}
+                  <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg hover:bg-green-100 transition">
+                    <div className="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center text-xl">
+                      ☀️
                     </div>
-                    <div>
-                      <p className="font-semibold text-slate-900">Evening Check-in</p>
-                      <p className="text-sm text-slate-600">Ready for bed</p>
+                    <div className="flex-1">
+                      <p className="font-semibold text-black">
+                        Afternoon Check-In
+                      </p>
+                      <p className="text-xs text-gray-600">2:00 PM</p>
+                    </div>
+                  </div>
+
+                  {/* Evening Check-In */}
+                  <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+                    <div className="w-12 h-12 bg-purple-400 rounded-full flex items-center justify-center text-xl">
+                      🌙
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-black">
+                        Evening Check-In
+                      </p>
+                      <p className="text-xs text-gray-600">8:00 PM</p>
                     </div>
                   </div>
                 </div>
@@ -117,233 +111,159 @@ export default function Index() {
         </div>
       </div>
 
-      {/* Visitor & Subscriber Stats Section */}
-      <div className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-cyan-50 via-purple-50 to-cyan-50 border-y border-cyan-100">
+      {/* Music for Moods Section */}
+      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="text-center p-8 bg-white rounded-2xl border border-cyan-200 shadow-md">
-              <div className="text-5xl font-bold bg-gradient-to-r from-cyan-600 to-cyan-700 bg-clip-text text-transparent mb-2">
-                {visitorCount.toLocaleString()}
-              </div>
-              <p className="text-lg font-semibold text-slate-700 mb-1">Total Visitors</p>
-              <p className="text-sm text-slate-600">People who've visited UOK</p>
-            </div>
-            <div className="text-center p-8 bg-white rounded-2xl border border-purple-200 shadow-md">
-              <div className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent mb-2">
-                {subscriberCount.toLocaleString()}
-              </div>
-              <p className="text-lg font-semibold text-slate-700 mb-1">Active Users</p>
-              <p className="text-sm text-slate-600">Users who've signed up</p>
-            </div>
+          <h2 className="text-4xl font-bold text-center mb-16 text-black">
+            🎵 Music for Every Mood
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {moodSongs && Object.entries(moodSongs).length > 0
+              ? Object.entries(moodSongs)
+                  .slice(0, 6)
+                  .map(([moodName, songs]) => {
+                    if (
+                      !moodName ||
+                      !Array.isArray(songs) ||
+                      songs.length === 0
+                    ) {
+                      return null;
+                    }
+                    const firstSong = songs[0];
+                    return (
+                      <div
+                        key={moodName}
+                        className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition"
+                      >
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="text-4xl">😊</div>
+                          <div>
+                            <h3 className="font-semibold text-slate-900">
+                              {moodName}
+                            </h3>
+                          </div>
+                        </div>
+                        <p className="text-sm text-slate-600 line-clamp-2">
+                          {firstSong?.title ||
+                            "Curated music to match your mood"}
+                        </p>
+                      </div>
+                    );
+                  })
+                  .filter(Boolean)
+              : null}
           </div>
         </div>
       </div>
 
       {/* Features Section */}
-      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 border-y border-cyan-100">
+      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-200">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16">
-            Why Choose{" "}
-            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
-              UOK?
-            </span>
+          <h2 className="text-4xl font-bold text-center mb-16 text-black">
+            Why Choose UOK?
           </h2>
-
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl border border-cyan-200 hover:shadow-lg transition">
-              <Clock className="w-10 h-10 text-cyan-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
-                Daily Check-ins
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">💬</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Stay Connected
               </h3>
-              <p className="text-slate-700">
-                Check in 2-3 times a day to confirm you're okay. Consistent wellness tracking with minimum effort.
+              <p className="text-slate-600">
+                Check in multiple times daily to let loved ones know you're
+                doing okay
               </p>
             </div>
-
-            <div className="p-8 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl border border-purple-200 hover:shadow-lg transition">
-              <Users className="w-10 h-10 text-purple-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
-                Emergency Contacts
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">📊</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Track Wellness
               </h3>
-              <p className="text-slate-700">
-                Add up to 3 trusted family or friends. They'll be notified if something seems off.
+              <p className="text-slate-600">
+                Monitor your daily mood and wellness patterns with beautiful
+                visualizations
               </p>
             </div>
-
-            <div className="p-8 bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl border border-cyan-200 hover:shadow-lg transition">
-              <Heart className="w-10 h-10 text-cyan-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
-                Express Yourself
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🚨</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Emergency Alerts
               </h3>
-              <p className="text-slate-700">
-                Use emojis to share your mood and feeling with every check-in. More expressive, more personal.
+              <p className="text-slate-600">
+                Instant notifications for your emergency contacts when you need
+                help
               </p>
             </div>
-
-            <div className="p-8 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl border border-purple-200 hover:shadow-lg transition">
-              <Shield className="w-10 h-10 text-purple-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
-                Instant Alerts
+            <div className="text-center">
+              <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🎵</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Music Recommendations
               </h3>
-              <p className="text-slate-700">
-                Emergency contacts are notified immediately when you check in, and if you miss a check-in.
+              <p className="text-slate-600">
+                Get personalized music suggestions that match your current mood
               </p>
             </div>
-
-            <div className="p-8 bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl border border-cyan-200 hover:shadow-lg transition">
-              <Camera className="w-10 h-10 text-cyan-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
-                Share Memories
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">📷</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Share Moments
               </h3>
-              <p className="text-slate-700">
-                Upload daily photos and videos to share your life. A visual diary of your wellness journey.
+              <p className="text-slate-600">
+                Upload photos and videos to share your wellness journey with
+                family
               </p>
             </div>
-
-            <div className="p-8 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl border border-purple-200 hover:shadow-lg transition">
-              <TrendingUp className="w-10 h-10 text-purple-600 mb-4" />
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
-                Wellness Insights
+            <div className="text-center">
+              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🔒</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-black">
+                Privacy First
               </h3>
-              <p className="text-slate-700">
-                Track patterns and trends in your wellness journey. See how you're really doing over time.
+              <p className="text-slate-600">
+                Your data is encrypted and only shared with people you trust
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* How It Works */}
-      <div className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16">
-            How It{" "}
-            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
-              Works
-            </span>
-          </h2>
-
-          <div className="space-y-8">
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                1
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2 text-slate-900">
-                  Sign Up
-                </h3>
-                <p className="text-slate-700">
-                  Create your UOK account in seconds with your email and basic info.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                2
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2 text-slate-900">
-                  Add Contacts
-                </h3>
-                <p className="text-slate-700">
-                  Add up to 3 emergency contacts with their phone or WhatsApp numbers.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                3
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2 text-slate-900">
-                  Check In Daily
-                </h3>
-                <p className="text-slate-700">
-                  Check in 2-3 times a day with an emoji expressing your mood. Your contacts are instantly notified.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                4
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2 text-slate-900">
-                  Share & Connect
-                </h3>
-                <p className="text-slate-700">
-                  Upload photos and videos to share your moments. Stay truly connected with loved ones.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Inspiration Songs Section */}
-      <div className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16">
-            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
-              Music for Every Mood
-            </span>
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {[
-              { mood: "Great", color: "from-yellow-400 to-orange-400", gradient: "from-yellow-50 to-orange-50" },
-              { mood: "Good", color: "from-green-400 to-emerald-400", gradient: "from-green-50 to-emerald-50" },
-              { mood: "Okay", color: "from-blue-400 to-cyan-400", gradient: "from-blue-50 to-cyan-50" },
-              { mood: "Happy", color: "from-pink-400 to-rose-400", gradient: "from-pink-50 to-rose-50" },
-            ].map((moodCategory) => (
-              <div
-                key={moodCategory.mood}
-                className={`bg-gradient-to-br ${moodCategory.gradient} rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition`}
-              >
-                <h3 className="text-xl font-bold text-slate-900 mb-4">{moodCategory.mood} Vibes</h3>
-                <div className="space-y-3">
-                  {moodSongs[moodCategory.mood]?.slice(0, 2).map((song, idx) => (
-                    <div key={idx} className="bg-white rounded-lg p-3">
-                      <p className="font-medium text-slate-900 text-sm">{song.title}</p>
-                      <p className="text-xs text-slate-600">{song.artist}</p>
-                      <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-gradient-to-r from-purple-50 to-cyan-50 rounded-2xl border border-purple-200 p-8 text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Music className="w-6 h-6 text-purple-600" />
-              <h3 className="text-xl font-bold text-slate-900">Personalized Playlists</h3>
-            </div>
-            <p className="text-slate-700 max-w-2xl mx-auto">
-              Every mood is valid, and music can help. When you check in with your mood, we'll suggest inspiring songs tailored to how you're feeling. Use music as a tool for wellness and self-expression.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-cyan-500 via-cyan-400 to-purple-500">
+      {/* YouTube Community Section */}
+      <div className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-50 to-pink-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Start Your Wellness Journey Today
+          <div className="mb-8">
+            <span className="text-6xl">📺</span>
+          </div>
+          <h2 className="text-4xl font-bold mb-6 text-black">
+            Join Our YouTube Community
           </h2>
-          <p className="text-xl text-cyan-50 mb-8">
-            Join thousands of people staying connected and keeping their loved ones assured.
+          <p className="text-xl text-slate-700 mb-8 leading-relaxed">
+            Subscribe to our YouTube channel to watch tutorials, wellness tips,
+            success stories, and more. Be part of our growing community of
+            people committed to staying connected and healthy!
           </p>
-          <Link
-            to="/signup"
-            className="inline-block px-10 py-4 bg-white text-cyan-600 font-bold rounded-lg hover:shadow-2xl hover:scale-105 transition"
+          <a
+            href="https://www.youtube.com/@YOUOK-FIT"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold text-lg"
           >
-            Create Your Free Account
-          </Link>
+            <span>▶</span>
+            Subscribe on YouTube
+          </a>
+          <p className="text-sm text-slate-600 mt-6">
+            Watch our latest videos, learn wellness strategies, and join
+            thousands of UOK users
+          </p>
         </div>
       </div>
 
@@ -351,6 +271,7 @@ export default function Index() {
       <footer className="bg-slate-900 text-slate-300 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
+            {/* About */}
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center">
@@ -359,57 +280,118 @@ export default function Index() {
                 <span className="text-lg font-bold text-white">UOK</span>
               </div>
               <p className="text-sm text-slate-400">
-                Your daily wellness companion
+                Your daily wellness companion for staying connected with loved
+                ones
               </p>
             </div>
+
+            {/* How It Works */}
             <div>
-              <h4 className="font-semibold text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-semibold text-white mb-4">How It Works</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
-                    Features
-                  </a>
+                  <Link to="/features" className="hover:text-white transition">
+                    Daily Check-ins
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
-                    Pricing
-                  </a>
+                  <Link to="/features" className="hover:text-white transition">
+                    Stay Connected
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Track Wellness
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Emergency Alerts
+                  </Link>
                 </li>
               </ul>
             </div>
+
+            {/* Products & Services */}
             <div>
-              <h4 className="font-semibold text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-semibold text-white mb-4">Products</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
-                    About
-                  </a>
+                  <Link to="/features" className="hover:text-white transition">
+                    UOK Dashboard
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
-                    Contact
-                  </a>
+                  <Link to="/pricing" className="hover:text-white transition">
+                    Premium Plans
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Health Tracking
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="hover:text-white transition">
+                    Community Sharing
+                  </Link>
                 </li>
               </ul>
             </div>
+
+            {/* Contact & Legal */}
             <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-semibold text-white mb-4">Contact & Legal</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
-                    Privacy
+                  <Link to="/contact" className="hover:text-white transition">
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/privacy" className="hover:text-white transition">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms" className="hover:text-white transition">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="https://www.youtube.com/@YOUOK-FIT"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    YouTube Channel
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-cyan-400 transition">
-                    Terms
+                  <a
+                    href="mailto:support@youok.fit"
+                    className="hover:text-white transition"
+                  >
+                    Email Support
                   </a>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-700 pt-8 text-center text-sm text-slate-400">
-            <p>&copy; 2024 UOK. All rights reserved.</p>
+          <div className="border-t border-slate-700 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center text-sm text-slate-400">
+              <p>&copy; 2024 UOK. All rights reserved</p>
+              <p>
+                Support:{" "}
+                <a
+                  href="mailto:support@youok.fit"
+                  className="text-cyan-400 hover:text-cyan-300"
+                >
+                  support@youok.fit
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </footer>

@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Heart, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart, Mail, Lock, Eye, EyeOff, Loader } from "lucide-react";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -40,13 +42,48 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Here you would normally authenticate with backend
-      console.log("Login:", formData);
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    try {
+      // Try to fetch user from Supabase by email
+      const { supabaseUserSyncService } = await import("../lib/supabase");
+      const users = await supabaseUserSyncService.searchUserByEmail(formData.email);
+
+      if (users && users.length > 0) {
+        const user = users[0];
+        // Save user to localStorage for session
+        localStorage.setItem("currentUser", JSON.stringify({
+          id: user.id || `user_${Date.now()}`,
+          name: user.name || user.username || "User",
+          username: user.username || user.name?.toLowerCase().replace(/\s+/g, "_") || "user",
+          email: formData.email,
+          createdAt: user.created_at || new Date().toISOString(),
+        }));
+        localStorage.setItem("userEmail", formData.email);
+        console.log("✅ User logged in:", user.name || user.username);
+        navigate("/dashboard");
+      } else {
+        setErrors({ email: "User not found. Please sign up first." });
+      }
+    } catch (error) {
+      console.warn("Supabase lookup failed, allowing demo login:", error);
+      // Fall back to demo login with entered email
+      const username = formData.email.split("@")[0];
+      localStorage.setItem("currentUser", JSON.stringify({
+        id: `user_${Date.now()}`,
+        name: username,
+        username: username,
+        email: formData.email,
+        createdAt: new Date().toISOString(),
+      }));
+      localStorage.setItem("userEmail", formData.email);
+      console.log("✅ Demo login successful");
+      navigate("/dashboard");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -156,9 +193,17 @@ export default function Login() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-200 transition"
+                disabled={isLoading}
+                className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-200 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Sign In
+                {isLoading ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </button>
             </form>
 

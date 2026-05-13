@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Heart,
   LogOut,
@@ -12,8 +12,34 @@ import {
   CheckCircle,
   Music,
   Trash2,
+  Play,
+  BarChart3,
+  Share2,
+  Send,
+  X,
+  Bell,
+  Zap,
+  Lock,
 } from "lucide-react";
 import { moodSongs } from "../data/songs";
+import RotatingAds from "../components/RotatingAds";
+import MediaPreRollAd from "../components/MediaPreRollAd";
+import { analyticsService } from "../lib/analytics";
+import { moodSuggestionsService } from "../lib/moodSuggestions";
+import { audioUtils } from "../lib/audioUtils";
+import {
+  mediaStorage,
+  notificationStorage,
+  notificationHelpers,
+  checkInStorage,
+  type StoredMedia,
+  type StoredCheckIn,
+} from "../lib/dataStorage";
+
+// Run cleanup on app load
+if (typeof window !== "undefined") {
+  checkInStorage.cleanupOldCheckIns();
+}
 
 interface CheckIn {
   id: string;
@@ -21,6 +47,7 @@ interface CheckIn {
   mood: string;
   time: string;
   date: string;
+  timeSlot?: "morning" | "afternoon" | "evening"; // 8am, 2pm, 8pm
 }
 
 interface MediaItem {
@@ -28,67 +55,1343 @@ interface MediaItem {
   type: "photo" | "video";
   url: string;
   timestamp: string;
+  mood?: string;
 }
 
-const MOOD_EMOJIS = [
-  { emoji: "😊", mood: "Great" },
-  { emoji: "🙂", mood: "Good" },
-  { emoji: "😐", mood: "Okay" },
-  { emoji: "😔", mood: "Not Great" },
-  { emoji: "😴", mood: "Tired" },
-  { emoji: "🎉", mood: "Excited" },
-  { emoji: "😰", mood: "Anxious" },
-  { emoji: "😍", mood: "Happy" },
+interface Notification {
+  id: string;
+  type: "checkin" | "missed";
+  message: string;
+  timestamp: string;
+}
+
+const CHECK_IN_TIMES = [
+  { slot: "morning", label: "Morning (8 AM)", icon: "🌅" },
+  { slot: "afternoon", label: "Afternoon (2 PM)", icon: "☀️" },
+  { slot: "evening", label: "Evening (8 PM)", icon: "🌙" },
 ];
+
+const MOOD_EMOJIS = [
+  { emoji: "😄", mood: "Great" },
+  { emoji: "🙂", mood: "Good" },
+  { emoji: "😑", mood: "Okay" },
+  { emoji: "☹️", mood: "Not Great" },
+  { emoji: "😴", mood: "Sleep" },
+  { emoji: "🤩", mood: "Excited" },
+  { emoji: "😟", mood: "Anxious" },
+  { emoji: "😆", mood: "Happy" },
+  { emoji: "😌", mood: "Calm" },
+  { emoji: "🥹", mood: "Grateful" },
+  { emoji: "😠", mood: "Frustrated" },
+  { emoji: "😘", mood: "Loved" },
+  { emoji: "😎", mood: "Confident" },
+  { emoji: "🤔", mood: "Thoughtful" },
+  { emoji: "✨", mood: "Inspired" },
+  { emoji: "🌅", mood: "Wake Up" },
+  { emoji: "📚", mood: "In Class" },
+  { emoji: "🚶", mood: "On My Way" },
+  { emoji: "🏠", mood: "At Home" },
+  { emoji: "💻", mood: "At Work" },
+];
+
+// NOTE: Demo data initialization removed - running in production mode
+// No demo contacts (Mom, Brother, Sister) or fake check-ins
+
+// Load real bonded contacts from localStorage
+const loadBondedContacts = (setBondedContacts: any) => {
+  try {
+    const demoBondedContactsStr = localStorage.getItem("bondedContacts");
+    if (!demoBondedContactsStr) {
+      console.log("ℹ️ No bonded contacts in localStorage");
+      return [];
+    }
+
+    // Validate that it's a valid JSON string
+    if (typeof demoBondedContactsStr !== "string") {
+      console.warn("⚠️ bonded contacts data is not a string, clearing...");
+      localStorage.removeItem("bondedContacts");
+      return [];
+    }
+
+    const parsed = JSON.parse(demoBondedContactsStr);
+
+    // Validate it's an array
+    if (!Array.isArray(parsed)) {
+      console.warn("⚠️ bonded contacts data is not an array, clearing...");
+      localStorage.removeItem("bondedContacts");
+      return [];
+    }
+
+    if (parsed.length > 0) {
+      setBondedContacts(parsed);
+      console.log(
+        "✅ Demo bonded contacts loaded and set to state:",
+        parsed.length,
+      );
+    }
+    return parsed;
+  } catch (error) {
+    console.warn(
+      "⚠️ Failed to load bonded contacts from localStorage, clearing corrupted data:",
+      error,
+    );
+    try {
+      localStorage.removeItem("bondedContacts");
+    } catch (clearError) {
+      console.error("Could not clear localStorage:", clearError);
+    }
+    return [];
+  }
+};
 
 export default function Dashboard() {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
-  const [checkIns, setCheckIns] = useState<CheckIn[]>([
-    {
-      id: "1",
-      emoji: "😊",
-      mood: "Great",
-      time: "08:30 AM",
-      date: "Today",
-    },
-    {
-      id: "2",
-      emoji: "🎉",
-      mood: "Excited",
-      time: "02:15 PM",
-      date: "Today",
-    },
-  ]);
-  const [todayCheckInCount, setTodayCheckInCount] = useState(2);
+  const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
+  const [todayCheckInCount, setTodayCheckInCount] = useState(0);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<
+    "morning" | "afternoon" | "evening" | null
+  >(null);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [shareModalOpen, setShareModalOpen] = useState<string | null>(null);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] =
+    useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [bondedContacts, setBondedContacts] = useState<any[]>([]);
+  const [mediaShareModalOpen, setMediaShareModalOpen] = useState<string | null>(
+    null,
+  );
+  const [showPreRollAd, setShowPreRollAd] = useState(false);
+  const [fullscreenMedia, setFullscreenMedia] = useState<MediaItem | null>(
+    null,
+  );
+  const [shareVisibility, setShareVisibility] = useState<
+    "personal" | "bonded-contacts" | "community"
+  >("community");
+  const [selectedContactsToShare, setSelectedContactsToShare] = useState<
+    string[]
+  >([]);
+  const [bondedCheckIns, setBondedCheckIns] = useState<StoredCheckIn[]>([]);
+  const [moodSuggestions, setMoodSuggestions] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [displayName, setDisplayName] = useState<string>("User");
+  const missedCheckInTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasInitializedRef = useRef(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
 
-  const handleCheckIn = (emoji: string, mood: string) => {
+  // Play a simple notification beep/tone
+  const playNotificationSound = () => {
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext ||
+          (window as any).webkitAudioContext)();
+      }
+      const ctx = audioContextRef.current;
+
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
+
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.value = 800; // Frequency in Hz
+      oscillator.type = "sine";
+
+      gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.3);
+    } catch (error) {
+      console.log("Audio playback not available");
+    }
+  };
+
+  // Send check-in notifications to bonded contacts (via shared localStorage + Supabase)
+  const sendCheckInNotification = (mood: string, emoji: string) => {
+    // Get bonded contacts from localStorage
+    const bondedContactsStr = localStorage.getItem("bondedContacts");
+    let bondedContacts = [];
+    try {
+      bondedContacts = bondedContactsStr ? JSON.parse(bondedContactsStr) : [];
+    } catch (error) {
+      console.warn("⚠️ Could not parse bonded contacts:", error);
+      bondedContacts = [];
+    }
+
+    const contactCount = bondedContacts.length;
+
+    // Create notification for current user
+    const notification = notificationStorage.add({
+      type: "checkin",
+      message: `✓ Check-in sent to ${contactCount} bonded contact${contactCount !== 1 ? "s" : ""} - You're feeling ${mood}`,
+      timestamp: new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+    });
+
+    setNotifications((prev) => [notification as any, ...prev]);
+
+    // Get user's name and email
+    let currentUser = {};
+    try {
+      currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    } catch (error) {
+      console.warn("⚠️ Could not parse currentUser:", error);
+    }
+    const userName =
+      (currentUser as any).name || (currentUser as any).username || "User";
+    const userEmail = localStorage.getItem("userEmail") || "user";
+
+    // Store notifications for each bonded contact in a shared location
+    // Each bonded contact's name becomes a key where notifications are stored
+    bondedContacts.forEach((contact: any) => {
+      const notificationKey = `uok_bonded_notifications_${contact.name.toLowerCase().replace(/\s+/g, "_")}`;
+      try {
+        const existingNotifications = JSON.parse(
+          localStorage.getItem(notificationKey) || "[]",
+        );
+
+        const newNotification = {
+          id: `checkin-${Date.now()}`,
+          type: "checkin",
+          fromUser: userName,
+          mood: mood,
+          emoji: emoji,
+          message: `${userName} checked in and is feeling ${mood}`,
+          timestamp: new Date().toISOString(),
+          read: false,
+        };
+
+        existingNotifications.unshift(newNotification);
+        // Keep only last 50 notifications
+        localStorage.setItem(
+          notificationKey,
+          JSON.stringify(existingNotifications.slice(0, 50)),
+        );
+
+        console.log(`✅ Check-in notification stored for ${contact.name}`);
+
+        // Also send to Supabase for cross-device sync if contact has email
+        if (contact.email) {
+          import("../lib/supabase")
+            .then(({ supabaseNotificationService }) => {
+              return supabaseNotificationService.sendCheckInNotification(
+                contact.email,
+                userEmail,
+                userName,
+                mood,
+                emoji,
+              );
+            })
+            .catch((error) => {
+              console.warn(
+                `⚠️ Failed to send Supabase notification to ${contact.name}:`,
+                error,
+              );
+            });
+        }
+      } catch (error) {
+        console.warn(
+          `⚠️ Failed to store notification for ${contact.name}:`,
+          error,
+        );
+      }
+    });
+
+    // Browser notification
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("UOK Check-in Recorded", {
+        body: `Your check-in has been shared with ${contactCount} bonded contact${contactCount !== 1 ? "s" : ""}.`,
+        icon: "/favicon.ico",
+      });
+    }
+  };
+
+  // Load all user data on mount (bonded contacts, check-ins, media, shared moments)
+  useEffect(() => {
+    const loadAllUserData = async () => {
+      const currentUserStr = localStorage.getItem("currentUser");
+
+      if (!currentUserStr) {
+        console.log("⚠️ No user found, please login");
+        // Try to get any stored username
+        const storedUsername = localStorage.getItem("username") || localStorage.getItem("name");
+        if (storedUsername) {
+          setDisplayName(storedUsername.toUpperCase());
+        }
+        // Load only real bonded contacts
+        loadBondedContacts(setBondedContacts);
+        return;
+      }
+
+      let currentUser;
+      try {
+        currentUser = JSON.parse(currentUserStr);
+      } catch (e) {
+        console.warn("Failed to parse currentUser:", e);
+        setDisplayName("User");
+        return;
+      }
+
+      const userEmail = localStorage.getItem("userEmail") || "user";
+      const userName = currentUser.name || currentUser.username || "User";
+
+      // Set the display name state - THIS IS THE KEY LINE
+      console.log("📝 Setting displayName to:", userName.toUpperCase());
+      setDisplayName(userName.toUpperCase());
+      console.log("🔄 Loading user data for:", userEmail, "as", userName);
+
+      try {
+        const { supabaseUserSyncService, supabaseBondService, supabaseMediaService } = await import(
+          "../lib/supabase"
+        );
+
+        // Load bonds from Supabase (outgoing bonds - people this user bonded with)
+        console.log("📥 Loading bonds from Supabase...");
+        const supabaseBonds = await supabaseBondService.getUserBonds(userEmail);
+
+        // Load local bonds as backup
+        let localBonds = [];
+        const localBondsStr = localStorage.getItem("bondedContacts");
+        if (localBondsStr) {
+          try {
+            localBonds = JSON.parse(localBondsStr);
+          } catch (e) {
+            console.warn("Failed to parse local bonds");
+          }
+        }
+
+        // Merge bonds (Supabase takes precedence, but include local bonds if they're not in Supabase)
+        const mergedBonds = [
+          ...supabaseBonds.map((b) => ({
+            id: b.bond_code,
+            name: b.contact_name,
+            bondCode: b.bond_code,
+            qrCode: b.qr_code || `UOK_QR_${b.bond_code}`,
+            email: b.contact_email,
+            status: "bonded" as const,
+            bondedAt: b.created_at,
+          })),
+          ...localBonds.filter(
+            (lb) => !supabaseBonds.some((sb) => sb.contact_name === lb.name),
+          ),
+        ];
+
+        if (mergedBonds.length > 0) {
+          console.log("✅ Loaded bonded contacts:", mergedBonds.length);
+          setBondedContacts(mergedBonds);
+          localStorage.setItem("bondedContacts", JSON.stringify(mergedBonds));
+        } else if (localBonds.length > 0) {
+          // If no Supabase bonds, use local bonds
+          console.log("✅ Using local bonded contacts:", localBonds.length);
+          setBondedContacts(localBonds);
+        }
+
+        // Load incoming bonds (people who bonded with this user)
+        console.log("📥 Checking for incoming bonds...");
+        const incomingBonds =
+          await supabaseBondService.getIncomingBonds(userName);
+        if (incomingBonds.length > 0) {
+          console.log("✅ Found incoming bonds:", incomingBonds.length);
+          // Store incoming bonds for display
+          localStorage.setItem("incomingBonds", JSON.stringify(incomingBonds));
+        }
+
+        // Load bonded contacts
+        let bondedContactsStr = localStorage.getItem("bondedContacts");
+        let bondedContacts = [];
+
+        if (bondedContactsStr) {
+          try {
+            bondedContacts = JSON.parse(bondedContactsStr);
+            if (!Array.isArray(bondedContacts)) {
+              console.warn("⚠️ Bonded contacts is not an array, clearing...");
+              localStorage.removeItem("bondedContacts");
+              bondedContacts = [];
+            } else {
+              console.log(
+                "✅ Loaded bonded contacts from localStorage:",
+                bondedContacts.length,
+              );
+            }
+          } catch (e) {
+            console.warn(
+              "⚠️ Error parsing bonded contacts, clearing corrupted data:",
+              e,
+            );
+            localStorage.removeItem("bondedContacts");
+            bondedContacts = [];
+          }
+        }
+
+        // If not found locally, try Supabase
+        if (bondedContacts.length === 0) {
+          console.log("📥 Fetching bonded contacts from Supabase...");
+          const supabaseBondedContacts =
+            await supabaseUserSyncService.fetchBondedContacts(userEmail);
+
+          if (supabaseBondedContacts.length > 0) {
+            console.log(
+              "✅ Loaded bonded contacts from Supabase:",
+              supabaseBondedContacts.length,
+            );
+            localStorage.setItem(
+              "bondedContacts",
+              JSON.stringify(supabaseBondedContacts),
+            );
+            bondedContacts = supabaseBondedContacts;
+          }
+        }
+
+        // Load check-ins
+        let checkInsData = [];
+        let checkInsStr = localStorage.getItem("uok_checkins");
+
+        if (checkInsStr) {
+          try {
+            checkInsData = JSON.parse(checkInsStr);
+            if (!Array.isArray(checkInsData)) {
+              console.warn("⚠️ Check-ins is not an array, clearing...");
+              localStorage.removeItem("uok_checkins");
+              checkInsData = [];
+            } else {
+              console.log(
+                "✅ Loaded check-ins from localStorage:",
+                checkInsData.length,
+              );
+            }
+          } catch (e) {
+            console.warn(
+              "⚠️ Error parsing check-ins, clearing corrupted data:",
+              e,
+            );
+            localStorage.removeItem("uok_checkins");
+            checkInsData = [];
+          }
+        }
+
+        // If not found locally, try Supabase
+        if (checkInsData.length === 0) {
+          console.log("📥 Fetching check-ins from Supabase...");
+          const supabaseCheckIns =
+            await supabaseUserSyncService.fetchCheckIns(userEmail);
+
+          if (supabaseCheckIns.length > 0) {
+            console.log(
+              "✅ Loaded check-ins from Supabase:",
+              supabaseCheckIns.length,
+            );
+            localStorage.setItem(
+              "uok_checkins",
+              JSON.stringify(supabaseCheckIns),
+            );
+            checkInsData = supabaseCheckIns;
+          }
+        }
+
+        // Load media from Supabase first (permanent storage), then fallback to localStorage
+        console.log("📥 Loading media from Supabase...");
+        let mediaData = [];
+
+        // Try to fetch from Supabase (primary source for persistence)
+        const supabaseMedia = await supabaseMediaService.fetchMedia(userEmail);
+        if (supabaseMedia.length > 0) {
+          console.log("✅ Loaded media from Supabase:", supabaseMedia.length);
+          mediaData = supabaseMedia;
+          // Update localStorage as cache
+          localStorage.setItem("uok_media", JSON.stringify(mediaData));
+        } else {
+          // Fallback to localStorage if Supabase is empty
+          let mediaStr = localStorage.getItem("uok_media");
+          if (mediaStr) {
+            try {
+              mediaData = JSON.parse(mediaStr);
+              if (!Array.isArray(mediaData)) {
+                console.warn("⚠️ Media is not an array, clearing...");
+                localStorage.removeItem("uok_media");
+                mediaData = [];
+              } else {
+                console.log(
+                  "✅ Loaded media from localStorage:",
+                  mediaData.length,
+                );
+              }
+            } catch (e) {
+              console.warn("⚠️ Error parsing media, clearing corrupted data:", e);
+              localStorage.removeItem("uok_media");
+              mediaData = [];
+            }
+          }
+        }
+
+        // Load shared moments
+        let sharedMomentsData = [];
+        let sharedMomentsStr = localStorage.getItem("uok_shared_moments");
+
+        if (sharedMomentsStr) {
+          try {
+            sharedMomentsData = JSON.parse(sharedMomentsStr);
+            if (!Array.isArray(sharedMomentsData)) {
+              console.warn("⚠️ Shared moments is not an array, clearing...");
+              localStorage.removeItem("uok_shared_moments");
+              sharedMomentsData = [];
+            } else {
+              console.log(
+                "✅ Loaded shared moments from localStorage:",
+                sharedMomentsData.length,
+              );
+            }
+          } catch (e) {
+            console.warn(
+              "⚠️ Error parsing shared moments, clearing corrupted data:",
+              e,
+            );
+            localStorage.removeItem("uok_shared_moments");
+            sharedMomentsData = [];
+          }
+        }
+
+        // If not found locally, try Supabase
+        if (sharedMomentsData.length === 0) {
+          console.log("📥 Fetching shared moments from Supabase...");
+          const supabaseSharedMoments =
+            await supabaseUserSyncService.fetchSharedMoments(userEmail);
+
+          if (supabaseSharedMoments.length > 0) {
+            console.log(
+              "✅ Loaded shared moments from Supabase:",
+              supabaseSharedMoments.length,
+            );
+            localStorage.setItem(
+              "uok_shared_moments",
+              JSON.stringify(supabaseSharedMoments),
+            );
+            sharedMomentsData = supabaseSharedMoments;
+          }
+        }
+
+        // Set check-ins to state
+        if (checkInsData.length > 0) {
+          setCheckIns(checkInsData);
+          console.log("✅ Check-ins set to state:", checkInsData.length);
+        }
+
+        // Set bonded contacts to state
+        if (bondedContacts.length > 0) {
+          setBondedContacts(bondedContacts);
+          console.log(
+            "✅ Bonded contacts set to state:",
+            bondedContacts.length,
+          );
+        } else {
+          // If no bonded contacts found, load what's available
+          console.log(
+            "ℹ️ No bonded contacts set up yet. Waiting for user to add emergency contacts.",
+          );
+          loadBondedContacts(setBondedContacts);
+        }
+      } catch (error) {
+        console.error("Error loading user data from Supabase:", error);
+        // Fall back to using what's in localStorage
+        loadBondedContacts(setBondedContacts);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAllUserData();
+  }, []);
+
+  // Load local notifications from notificationStorage
+  useEffect(() => {
+    try {
+      const localNotifications = notificationStorage.getAll();
+      if (localNotifications.length > 0) {
+        console.log(
+          "✅ Loaded notifications from local storage:",
+          localNotifications.length,
+        );
+        setNotifications(localNotifications as any);
+      }
+    } catch (error) {
+      console.warn("⚠️ Failed to load local notifications:", error);
+    }
+  }, []);
+
+  // Load notifications from Supabase (completely free, real-time)
+  useEffect(() => {
+    const loadNotificationsFromSupabase = async () => {
+      const userEmail = localStorage.getItem("userEmail");
+      if (!userEmail) return;
+
+      try {
+        const { supabaseNotificationService, supabaseBondService } =
+          await import("../lib/supabase");
+        const supabaseNotifications =
+          await supabaseNotificationService.getNotifications(userEmail, 50);
+
+        if (supabaseNotifications.length > 0) {
+          console.log(
+            "✅ Loaded notifications from Supabase:",
+            supabaseNotifications.length,
+          );
+          // Convert Supabase notifications to local format and prepend to existing notifications
+          const convertedNotifications = supabaseNotifications.map(
+            (notif: any) => ({
+              id: notif.id,
+              type: notif.notification_type,
+              message: notif.message,
+              timestamp: new Date(notif.created_at).toLocaleTimeString(
+                "en-US",
+                { hour: "2-digit", minute: "2-digit" },
+              ),
+              fromContact: notif.sender_email,
+            }),
+          );
+
+          setNotifications((prev) => {
+            // Avoid duplicates by checking if notification already exists
+            const newNotifs = convertedNotifications.filter(
+              (newNotif: any) => !prev.some((p) => p.id === newNotif.id),
+            );
+            return [...newNotifs, ...prev];
+          });
+        }
+
+        // Set up realtime listener for new notifications
+        const notificationSubscription =
+          supabaseBondService.subscribeToNotifications(
+            userEmail,
+            (notification: any) => {
+              console.log("🔔 Real-time notification received:", notification);
+
+              // Add to notifications immediately
+              const convertedNotif = {
+                id: notification.id,
+                type: notification.notification_type,
+                message: notification.message,
+                timestamp: new Date(notification.created_at).toLocaleTimeString(
+                  "en-US",
+                  { hour: "2-digit", minute: "2-digit" },
+                ),
+                fromContact: notification.sender_email,
+              };
+
+              setNotifications((prev) => {
+                const isDuplicate = prev.some(
+                  (p) => p.id === convertedNotif.id,
+                );
+                if (isDuplicate) return prev;
+                return [convertedNotif, ...prev];
+              });
+
+              // Play notification sound
+              if (notification.notification_type === "checkin") {
+                playNotificationSound();
+              }
+
+              // Browser notification
+              if (
+                "Notification" in window &&
+                Notification.permission === "granted"
+              ) {
+                new Notification("UOK Alert", {
+                  body: notification.message,
+                  icon: "/favicon.ico",
+                });
+              }
+            },
+          );
+
+        return () => {
+          if (notificationSubscription) {
+            notificationSubscription.unsubscribe();
+          }
+        };
+      } catch (error) {
+        console.warn("⚠️ Failed to load notifications from Supabase:", error);
+      }
+    };
+
+    loadNotificationsFromSupabase();
+    // Poll for new notifications every 5 seconds as backup
+    const interval = setInterval(loadNotificationsFromSupabase, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Load bonded contacts' check-ins whenever bonded contacts change
+  useEffect(() => {
+    const loadBondedCheckIns = async () => {
+      if (bondedContacts.length > 0) {
+        console.log(
+          "📥 Bonded contacts loaded:",
+          bondedContacts.length,
+          bondedContacts,
+        );
+
+        const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean);
+        const bondNames = bondedContacts.map((c) => c.name).filter(Boolean);
+
+        console.log("📥 Bonded emails:", bondedEmails);
+        console.log("📥 Bonded names:", bondNames);
+
+        let allCheckIns: StoredCheckIn[] = [];
+
+        // First, try to get check-ins by email from Supabase
+        if (bondedEmails.length > 0) {
+          try {
+            const supabaseCheckIns =
+              await checkInStorage.fetchBondedCheckInsFromFirebase(
+                bondedEmails,
+              );
+
+            if (supabaseCheckIns.length > 0) {
+              console.log(
+                "📥 Loaded bonded check-ins from Supabase:",
+                supabaseCheckIns.length,
+              );
+              allCheckIns.push(...supabaseCheckIns);
+            }
+          } catch (error) {
+            console.log("Supabase fetch failed, continuing with local storage");
+          }
+        }
+
+        // Fall back to local storage - check by email AND by name
+        const allStoredCheckIns = checkInStorage.getAll();
+        const today = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+        const todayCheckIns = allStoredCheckIns.filter((c) => c.date === today);
+
+        console.log(
+          "📥 All stored check-ins:",
+          allStoredCheckIns.length,
+          "| Today's check-ins:",
+          todayCheckIns.length,
+        );
+        console.log("📥 Today's check-ins detail:", todayCheckIns);
+
+        const localCheckIns = todayCheckIns.filter((c) => {
+          // Match by email if email exists
+          if (bondedEmails.includes(c.userEmail)) {
+            console.log(`✅ Matched check-in by email: ${c.userEmail}`);
+            return true;
+          }
+
+          // Also match by userName for backwards compatibility
+          if (bondNames.includes(c.userName)) {
+            console.log(`✅ Matched check-in by userName: ${c.userName}`);
+            return true;
+          }
+
+          console.log(
+            `❌ Check-in ${c.id} not matched - userEmail: ${c.userEmail}, userName: ${c.userName}`,
+          );
+          return false;
+        });
+
+        if (localCheckIns.length > 0) {
+          console.log(
+            "📥 Loaded bonded check-ins from local storage:",
+            localCheckIns.length,
+          );
+          allCheckIns.push(...localCheckIns);
+        }
+
+        // Load check-ins that were shared via shared storage (for all bonded contacts)
+        try {
+          const sharedCheckInsStr = localStorage.getItem("uok_shared_checkins");
+          if (sharedCheckInsStr) {
+            const sharedCheckIns = JSON.parse(sharedCheckInsStr);
+            const bondedIds = new Set(bondedContacts.map((c: any) => c.id));
+
+            const relevantShared = sharedCheckIns.filter(
+              (c: any) =>
+                c.bondedWith &&
+                c.bondedWith.some((id: string) => bondedIds.has(id)),
+            );
+
+            if (relevantShared.length > 0) {
+              console.log(
+                "📥 Loaded bonded check-ins from shared storage:",
+                relevantShared.length,
+              );
+              allCheckIns.push(
+                ...relevantShared.map((c: any) => ({
+                  id: c.id,
+                  userEmail: c.fromUser,
+                  userName: c.fromUserName,
+                  emoji: c.emoji,
+                  mood: c.mood,
+                  timestamp: c.timestamp,
+                  date: c.date,
+                  createdAt: c.createdAt,
+                })),
+              );
+            }
+          }
+        } catch (error) {
+          console.warn("⚠️ Failed to load shared check-ins:", error);
+        }
+
+        // Load notifications that were stored for each bonded contact by name
+        // This allows bonded contacts to receive real notifications
+        bondNames.forEach((contactName: string) => {
+          const notificationKey = `uok_bonded_notifications_${contactName.toLowerCase().replace(/\s+/g, "_")}`;
+          try {
+            const contactNotifications = JSON.parse(
+              localStorage.getItem(notificationKey) || "[]",
+            );
+
+            // Convert stored notifications to check-in format for display
+            const checkInNotifications = contactNotifications
+              .filter((n: any) => n.type === "checkin")
+              .map((n: any) => ({
+                id: n.id,
+                userEmail: n.fromUser,
+                userName: n.fromUser,
+                emoji: n.emoji,
+                mood: n.mood,
+                timestamp: n.timestamp.split("T")[1]?.slice(0, 5) || "00:00",
+                date: new Date(n.timestamp).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                }),
+                createdAt: n.timestamp,
+              }));
+
+            if (checkInNotifications.length > 0) {
+              console.log(
+                `✅ Loaded ${checkInNotifications.length} check-in notifications for ${contactName}`,
+              );
+              allCheckIns.push(...checkInNotifications);
+            }
+          } catch (error) {
+            console.warn(
+              `⚠️ Failed to load notifications for ${contactName}:`,
+              error,
+            );
+          }
+        });
+
+        // Also load check-ins from people who have bonded with this user (incoming bonds)
+        try {
+          const incomingBondsStr = localStorage.getItem("incomingBonds");
+          if (incomingBondsStr) {
+            const incomingBonds = JSON.parse(incomingBondsStr);
+            console.log(
+              `📥 Checking for incoming bonds: ${incomingBonds.length}`,
+            );
+
+            // For each incoming bond, load their check-ins
+            for (const bond of incomingBonds) {
+              const senderName = bond.bonding_user_name;
+              const notificationKey = `uok_bonded_notifications_${senderName.toLowerCase().replace(/\s+/g, "_")}`;
+
+              try {
+                const senderNotifications = JSON.parse(
+                  localStorage.getItem(notificationKey) || "[]",
+                );
+
+                const senderCheckIns = senderNotifications
+                  .filter((n: any) => n.type === "checkin")
+                  .map((n: any) => ({
+                    id: n.id,
+                    userEmail: n.fromUser,
+                    userName: senderName,
+                    emoji: n.emoji,
+                    mood: n.mood,
+                    timestamp:
+                      n.timestamp.split("T")[1]?.slice(0, 5) || "00:00",
+                    date: new Date(n.timestamp).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    }),
+                    createdAt: n.timestamp,
+                  }));
+
+                if (senderCheckIns.length > 0) {
+                  console.log(
+                    `✅ Loaded ${senderCheckIns.length} check-ins from ${senderName}`,
+                  );
+                  allCheckIns.push(...senderCheckIns);
+                }
+              } catch (error) {
+                console.warn(
+                  `⚠️ Failed to load check-ins from ${senderName}:`,
+                  error,
+                );
+              }
+            }
+          }
+        } catch (error) {
+          console.warn("⚠️ Failed to process incoming bonds:", error);
+        }
+
+        // Remove duplicates (in case same check-in is in both Supabase and local)
+        const uniqueCheckIns = Array.from(
+          new Map(allCheckIns.map((c) => [c.id, c])).values(),
+        );
+
+        setBondedCheckIns(uniqueCheckIns);
+        console.log(
+          "📥 Total bonded check-ins to display:",
+          uniqueCheckIns.length,
+        );
+      } else {
+        setBondedCheckIns([]);
+      }
+    };
+
+    loadBondedCheckIns();
+  }, [bondedContacts]);
+
+  // Sync bonded contacts to Supabase whenever they change
+  useEffect(() => {
+    if (bondedContacts.length > 0) {
+      const userEmail = localStorage.getItem("userEmail");
+      if (userEmail && userEmail !== "user") {
+        import("../lib/supabase")
+          .then(({ supabaseUserSyncService }) => {
+            return supabaseUserSyncService.syncBondedContacts(
+              userEmail,
+              bondedContacts,
+            );
+          })
+          .then(() => console.log("✅ Bonded contacts synced to Firebase"))
+          .catch((error) =>
+            console.log(
+              "⚠️ Could not sync bonded contacts to Firebase:",
+              error,
+            ),
+          );
+      }
+    }
+  }, [bondedContacts]);
+
+  // Initialize static content once
+  useEffect(() => {
+    // Only initialize static content once
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+
+      // Load media from persistent storage
+      const loadMediaWithUrls = async () => {
+        try {
+          const { getMediaUrl } = await import("../lib/indexedDBStorage");
+          const savedMedia = mediaStorage.getActive();
+          // FIXED: Show ALL media, not just today's
+          // Users need to see all their pictures and videos
+          console.log("📸 Loading ALL media items:", savedMedia.length);
+
+          // Retrieve blob URLs from IndexedDB for each media item
+          const mediaWithUrls = await Promise.all(
+            savedMedia.map(async (item) => {
+              try {
+                const blobUrl = await getMediaUrl(item.url); // item.url contains mediaId
+                return { ...item, url: blobUrl || item.url };
+              } catch (error) {
+                console.warn(
+                  `Failed to load media URL for ${item.url}:`,
+                  error,
+                );
+                return item;
+              }
+            }),
+          );
+
+          setMediaItems(mediaWithUrls as any[]);
+          console.log("✅ Loaded all media items:", mediaWithUrls.length);
+        } catch (error) {
+          console.error("Error loading media:", error);
+          const savedMedia = mediaStorage.getActive();
+          // Show ALL media, not just today's
+          console.log("📸 Fallback: Loading all media items:", savedMedia.length);
+          setMediaItems(savedMedia as any[]);
+        }
+      };
+
+      loadMediaWithUrls();
+
+      // Load notifications from persistent storage
+      const savedNotifications = notificationStorage.getAll();
+      setNotifications(savedNotifications as any[]);
+
+      setCheckIns([
+        {
+          id: "1",
+          emoji: "😊",
+          mood: "Great",
+          time: "08:30 AM",
+          date: "Today",
+        },
+        {
+          id: "2",
+          emoji: "🎉",
+          mood: "Excited",
+          time: "02:15 PM",
+          date: "Today",
+        },
+      ]);
+      setTodayCheckInCount(2);
+    }
+  }, []);
+
+  // Auto-refresh bonded check-ins every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (bondedContacts.length === 0) return;
+
+      const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean);
+      const bondNames = bondedContacts.map((c) => c.name).filter(Boolean);
+
+      let allCheckIns: StoredCheckIn[] = [];
+
+      // Try Supabase first
+      if (bondedEmails.length > 0) {
+        try {
+          const supabaseCheckIns =
+            await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
+
+          if (supabaseCheckIns.length > 0) {
+            allCheckIns.push(...supabaseCheckIns);
+          }
+        } catch (error) {
+          console.log("Supabase auto-refresh failed");
+        }
+      }
+
+      // Fall back to local storage - check by email AND by name
+      const localCheckIns = checkInStorage.getAll().filter((c) => {
+        const today = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+        if (c.date !== today) return false;
+
+        // Match by email if email exists
+        if (bondedEmails.includes(c.userEmail)) return true;
+
+        // Also match by userName for backwards compatibility
+        if (bondNames.includes(c.userName)) return true;
+
+        return false;
+      });
+
+      if (localCheckIns.length > 0) {
+        allCheckIns.push(...localCheckIns);
+      }
+
+      // Remove duplicates
+      const uniqueCheckIns = Array.from(
+        new Map(allCheckIns.map((c) => [c.id, c])).values(),
+      );
+
+      setBondedCheckIns(uniqueCheckIns);
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [bondedContacts]);
+
+  // Setup missed check-in alerts (10 minutes) - Alert bonded contacts if 3rd check-in is missed
+  useEffect(() => {
+    if (todayCheckInCount >= 2 && hasInitializedRef.current) {
+      // Clear any existing timer
+      if (missedCheckInTimerRef.current) {
+        clearTimeout(missedCheckInTimerRef.current);
+        missedCheckInTimerRef.current = null;
+      }
+
+      // Only set timer if not already at 3
+      if (todayCheckInCount < 3) {
+        // Set timer for missed check-in alert (30 seconds = 30000 ms)
+        const timer = setTimeout(() => {
+          try {
+            // Get bonded contacts
+            const bondedContactsStr = localStorage.getItem("bondedContacts");
+            let bondedContacts = [];
+            try {
+              bondedContacts = bondedContactsStr
+                ? JSON.parse(bondedContactsStr)
+                : [];
+            } catch (error) {
+              console.warn("⚠️ Could not parse bonded contacts:", error);
+            }
+
+            const notification: Notification = {
+              id: Date.now().toString(),
+              type: "missed",
+              message: `⚠ ALERT: You missed your 3rd check-in! Alert sent to ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}.`,
+              timestamp: new Date().toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+
+            setNotifications((prev) => [notification, ...prev]);
+
+            // Send alerts to bonded contacts
+            bondedContacts.forEach((contact: any) => {
+              console.log("🚨 MISSED CHECK-IN ALERT sent to bonded contact:", {
+                recipient: contact.name,
+                bondCode: contact.bondCode,
+                timestamp: new Date().toISOString(),
+                message:
+                  "Your bonded family member missed their 30-second check-in window!",
+              });
+            });
+          } catch (error) {
+            console.warn("⚠️ Error in missed check-in timer:", error);
+          }
+        }, 30000); // 30 seconds
+
+        missedCheckInTimerRef.current = timer;
+      }
+
+      return () => {
+        if (missedCheckInTimerRef.current) {
+          clearTimeout(missedCheckInTimerRef.current);
+        }
+      };
+    }
+  }, [todayCheckInCount]);
+
+  const handleCheckIn = async (emoji: string, mood: string) => {
     if (todayCheckInCount >= 3) {
       alert("You've reached your maximum check-ins for today (3)");
       return;
     }
 
+    if (!selectedTimeSlot) {
+      alert("Please select a check-in time (Morning, Afternoon, or Evening)");
+      return;
+    }
+
     const now = new Date();
+    const timestamp = now.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const date = now.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+
     const newCheckIn: CheckIn = {
       id: Date.now().toString(),
       emoji,
       mood,
-      time: now.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      time: timestamp,
       date: "Today",
+      timeSlot: selectedTimeSlot,
     };
+
+    // Save check-in to persistent storage and Firebase
+    let currentUser = {};
+    try {
+      currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    } catch (error) {
+      console.warn("⚠️ Could not parse currentUser, using defaults:", error);
+    }
+    const userEmail =
+      localStorage.getItem("userEmail") || currentUser.username || "user";
+    const userName = (currentUser as any).name || userEmail.split("@")[0];
+
+    const checkInRecord = await checkInStorage.add({
+      userEmail,
+      userName,
+      emoji,
+      mood,
+      timestamp,
+      date,
+      timeSlot: selectedTimeSlot,
+    });
+
+    // SEND NOTIFICATIONS TO BONDED CONTACTS via Supabase or shared storage
+    try {
+      const bondedContactsStr = localStorage.getItem("bondedContacts");
+      if (bondedContactsStr) {
+        const bondedContacts = JSON.parse(bondedContactsStr);
+
+        // Store check-in in a shared location that bonded contacts can access
+        const sharedCheckInKey = "uok_shared_checkins";
+        const sharedCheckIns = JSON.parse(
+          localStorage.getItem(sharedCheckInKey) || "[]",
+        );
+
+        sharedCheckIns.unshift({
+          id: `checkin-${Date.now()}`,
+          fromUser: userEmail,
+          fromUserName: userName,
+          emoji: emoji,
+          mood: mood,
+          timestamp: timestamp,
+          date: date,
+          bondedWith: bondedContacts.map((c: any) => c.id),
+          createdAt: new Date().toISOString(),
+        });
+
+        // Keep only last 100 shared check-ins
+        localStorage.setItem(
+          sharedCheckInKey,
+          JSON.stringify(sharedCheckIns.slice(0, 100)),
+        );
+
+        // Create local notifications for this user that check-in was sent
+        notificationStorage.add({
+          id: `checkin-sent-${Date.now()}`,
+          type: "checkin",
+          message: `✅ Your ${mood} check-in shared with ${bondedContacts.length} contact${bondedContacts.length !== 1 ? "s" : ""}`,
+          timestamp: timestamp,
+          date: date,
+          read: false,
+        });
+
+        console.log(
+          `📢 Check-in shared with ${bondedContacts.length} bonded contact(s)`,
+        );
+      }
+    } catch (error) {
+      console.warn("⚠️ Failed to share check-in with bonded contacts:", error);
+    }
+
+    // Sync check-ins to Supabase (fire and forget)
+    const allCheckIns = checkInStorage.getAll();
+    if (userEmail && userEmail !== "user") {
+      import("../lib/supabase")
+        .then(({ supabaseUserSyncService }) => {
+          return supabaseUserSyncService.syncCheckIns(userEmail, allCheckIns);
+        })
+        .then(() => console.log("✅ Check-in synced to Firebase"))
+        .catch((error) =>
+          console.log("⚠️ Could not sync check-in to Firebase:", error),
+        );
+    }
 
     setCheckIns([newCheckIn, ...checkIns]);
     setTodayCheckInCount((prev) => Math.min(prev + 1, 3));
     setSelectedMood(emoji);
 
-    // Show confirmation
-    setTimeout(() => setSelectedMood(null), 2000);
+    // Play audio beep when mood is selected
+    audioUtils.playSuccess();
+
+    // Get and display mood suggestions
+    const suggestions = moodSuggestionsService.getSuggestionsForMood(emoji);
+    setMoodSuggestions(suggestions);
+
+    // Send check-in notification to bonded contacts
+    sendCheckInNotification(mood, emoji);
+
+    // Reset only the selected mood and time slot, but keep suggestions visible for user to read
+    setTimeout(() => {
+      setSelectedMood(null);
+      setSelectedTimeSlot(null);
+    }, 15000); // 15 second confirmation display, but suggestions stay
+  };
+
+  // Open share modal for media
+  const openMediaShareModal = (item: MediaItem) => {
+    setMediaShareModalOpen(item.id);
+    setShareVisibility("community");
+    setSelectedContactsToShare([]);
+  };
+
+  // Share media to community or bonded members
+  const handleShareMedia = (item: MediaItem) => {
+    if (shareVisibility === "community") {
+      // Share to community memories
+      navigate("/shared-memories", {
+        state: {
+          mediaUrl: item.url,
+          mediaType: item.type,
+          mood: item.mood,
+        },
+      });
+    } else if (shareVisibility === "bonded-contacts") {
+      if (selectedContactsToShare.length === 0) {
+        alert("Please select at least one bonded contact to share with");
+        return;
+      }
+
+      // Update media in storage with sharing info
+      const contactNames = selectedContactsToShare
+        .map((id) => bondedContacts.find((c) => c.id === id)?.name)
+        .filter(Boolean);
+
+      mediaStorage.update(item.id, {
+        sharedWith: contactNames,
+        visibility: "bonded-contacts",
+      });
+
+      // Get user's name
+      let currentUser = {};
+      try {
+        currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      } catch (error) {
+        console.warn("⚠️ Could not parse currentUser:", error);
+      }
+      const userName =
+        (currentUser as any).name || (currentUser as any).username || "User";
+
+      // Send notifications to selected contacts via shared localStorage
+      selectedContactsToShare.forEach((contactId) => {
+        const contact = bondedContacts.find((c) => c.id === contactId);
+        if (contact) {
+          const notificationKey = `uok_bonded_notifications_${contact.name.toLowerCase().replace(/\s+/g, "_")}`;
+          try {
+            const existingNotifications = JSON.parse(
+              localStorage.getItem(notificationKey) || "[]",
+            );
+
+            const newNotification = {
+              id: `media-${Date.now()}-${Math.random()}`,
+              type: "media",
+              fromUser: userName,
+              mediaType: item.type,
+              message: `${userName} shared a ${item.type === "video" ? "video" : "photo"}${item.mood ? ` (${item.mood})` : ""}`,
+              timestamp: new Date().toISOString(),
+              read: false,
+            };
+
+            existingNotifications.unshift(newNotification);
+            localStorage.setItem(
+              notificationKey,
+              JSON.stringify(existingNotifications.slice(0, 50)),
+            );
+
+            console.log(`✅ Media notification stored for ${contact.name}`);
+          } catch (error) {
+            console.warn(
+              `⚠️ Failed to store media notification for ${contact.name}:`,
+              error,
+            );
+          }
+        }
+      });
+
+      alert(
+        `✓ Media shared with ${selectedContactsToShare.length} bonded contact${selectedContactsToShare.length !== 1 ? "s" : ""}!`,
+      );
+    }
+
+    setMediaShareModalOpen(null);
+    setSelectedContactsToShare([]);
   };
 
   const checkInStatus = () => {
@@ -122,19 +1425,75 @@ export default function Dashboard() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
+      // Check storage limit (maximum 5 media items)
+      const activeMedia = mediaStorage.getActive();
+      if (activeMedia.length >= 5) {
+        alert(
+          "Storage limit reached! You can only store 5 photos/videos. Please delete some to add more.",
+        );
+        return;
+      }
+
       Array.from(files).forEach((file) => {
-        // Use createObjectURL for better performance and compatibility
-        const url = URL.createObjectURL(file);
-        const newMedia: MediaItem = {
-          id: Date.now().toString() + Math.random(),
-          type: "photo",
-          url: url,
-          timestamp: new Date().toLocaleTimeString("en-US", {
+        // Import IndexedDB storage for persistent media
+        import("../lib/indexedDBStorage").then(({ storeMedia }) => {
+          const timestamp = new Date().toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
-          }),
-        };
-        setMediaItems((prev) => [newMedia, ...prev]);
+          });
+          const date = new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+
+          const mediaId = Date.now().toString() + Math.random();
+
+          // Store media in IndexedDB (persistent across sessions)
+          storeMedia(file, {
+            id: mediaId,
+            type: "photo",
+            timestamp,
+            date,
+            mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+            visibility: "personal",
+          })
+            .then(({ url }) => {
+              // Save reference to persistent storage
+              const savedMedia = mediaStorage.add({
+                type: "photo",
+                url: mediaId, // Store ID instead of URL
+                timestamp,
+                date,
+                mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+                visibility: "personal",
+                uploadedAt: new Date().toISOString(),
+              });
+
+              // Update local state
+              setMediaItems((prev) => [{ ...savedMedia, url } as any, ...prev]);
+
+              // Sync to Supabase (fire and forget)
+              const userEmail = localStorage.getItem("userEmail");
+              if (userEmail && userEmail !== "user") {
+                import("../lib/supabase")
+                  .then(({ supabaseMediaService }) => {
+                    const allMedia = mediaStorage.getActive();
+                    return supabaseMediaService.syncMedia(
+                      userEmail,
+                      allMedia,
+                    );
+                  })
+                  .then(() => console.log("✅ Photo synced to Supabase"))
+                  .catch((error) =>
+                    console.log("⚠️ Could not sync photo to Supabase:", error),
+                  );
+              }
+            })
+            .catch((error) => {
+              console.error("Error storing photo:", error);
+              alert("Failed to store photo. Please try again.");
+            });
+        });
       });
     }
     // Reset input
@@ -144,19 +1503,116 @@ export default function Dashboard() {
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
+      // Check 24-hour video upload limit (maximum 5 videos per 24 hours)
+      if (!mediaStorage.canUploadVideo()) {
+        const remaining = mediaStorage.getRemainingVideoUploads();
+        alert(
+          `Video upload limit reached! You can upload ${remaining} more video${remaining !== 1 ? "s" : ""} in the next 24 hours.`,
+        );
+        return;
+      }
+
+      // Check total storage limit (maximum 5 media items)
+      const activeMedia = mediaStorage.getActive();
+      if (activeMedia.length >= 5) {
+        alert(
+          "Storage limit reached! You can only store 5 photos/videos. Please delete some to add more.",
+        );
+        return;
+      }
+
       Array.from(files).forEach((file) => {
-        // Use createObjectURL for video playback
-        const url = URL.createObjectURL(file);
-        const newMedia: MediaItem = {
-          id: Date.now().toString() + Math.random(),
-          type: "video",
-          url: url,
-          timestamp: new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        };
-        setMediaItems((prev) => [newMedia, ...prev]);
+        // Validate video file
+        if (!file.type.startsWith("video/")) {
+          console.error("File is not a valid video:", file.type);
+          alert("Please select a valid video file");
+          return;
+        }
+
+        // Check file size (max 100MB)
+        const maxSize = 100 * 1024 * 1024;
+        if (file.size > maxSize) {
+          console.error("Video file is too large:", file.size);
+          alert("Video file is too large. Maximum size is 100MB");
+          return;
+        }
+
+        try {
+          // Import IndexedDB storage for persistent media
+          import("../lib/indexedDBStorage").then(({ storeMedia }) => {
+            const timestamp = new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const date = new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+
+            const mediaId = Date.now().toString() + Math.random();
+
+            console.log("📹 Video file loading to IndexedDB:", {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+            });
+
+            // Store media in IndexedDB (persistent across sessions)
+            storeMedia(file, {
+              id: mediaId,
+              type: "video",
+              timestamp,
+              date,
+              mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+              visibility: "personal",
+            })
+              .then(({ url }) => {
+                // Save reference to persistent storage
+                const savedMedia = mediaStorage.add({
+                  type: "video",
+                  url: mediaId, // Store ID instead of URL
+                  timestamp,
+                  date,
+                  mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
+                  visibility: "personal",
+                  uploadedAt: new Date().toISOString(), // Track for 24-hour limit
+                });
+
+                // Update local state
+                setMediaItems((prev) => [
+                  { ...savedMedia, url } as any,
+                  ...prev,
+                ]);
+
+                // Sync to Supabase (fire and forget)
+                const userEmail = localStorage.getItem("userEmail");
+                if (userEmail && userEmail !== "user") {
+                  import("../lib/supabase")
+                    .then(({ supabaseMediaService }) => {
+                      const allMedia = mediaStorage.getActive();
+                      return supabaseMediaService.syncMedia(
+                        userEmail,
+                        allMedia,
+                      );
+                    })
+                    .then(() => console.log("✅ Video synced to Supabase"))
+                    .catch((error) =>
+                      console.log(
+                        "⚠️ Could not sync video to Supabase:",
+                        error,
+                      ),
+                    );
+                }
+              })
+              .catch((error) => {
+                console.error("Error storing video:", error);
+                alert("Failed to store video. Please try again.");
+              });
+          });
+        } catch (error) {
+          console.error("Error processing video file:", error);
+          alert("Error processing video file. Please try again.");
+        }
       });
     }
     // Reset input
@@ -164,71 +1620,407 @@ export default function Dashboard() {
   };
 
   const deleteMedia = (id: string) => {
+    // Mark as deleted in persistent storage instead of removing
+    mediaStorage.delete(id);
+    // Update local state
     setMediaItems(mediaItems.filter((item) => item.id !== id));
+
+    // Sync deletion to Supabase
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail && userEmail !== "user") {
+      import("../lib/supabase")
+        .then(({ supabaseMediaService }) => {
+          return supabaseMediaService.deleteMedia(userEmail, id);
+        })
+        .then(() => console.log("✅ Media deletion synced to Supabase"))
+        .catch((error) =>
+          console.log("⚠️ Could not sync media deletion to Supabase:", error),
+        );
+    }
+  };
+
+  const refreshBondedCheckIns = async () => {
+    if (bondedContacts.length === 0) {
+      setBondedCheckIns([]);
+      return;
+    }
+
+    const bondedEmails = bondedContacts.map((c) => c.email).filter(Boolean);
+    const bondNames = bondedContacts.map((c) => c.name).filter(Boolean);
+
+    let allCheckIns: StoredCheckIn[] = [];
+
+    // First, try to get check-ins by email from Supabase
+    if (bondedEmails.length > 0) {
+      try {
+        const supabaseCheckIns =
+          await checkInStorage.fetchBondedCheckInsFromFirebase(bondedEmails);
+
+        if (supabaseCheckIns.length > 0) {
+          console.log(
+            "📥 Refreshed bonded check-ins from Supabase:",
+            supabaseCheckIns.length,
+          );
+          allCheckIns.push(...supabaseCheckIns);
+        }
+      } catch (error) {
+        console.log("Supabase refresh failed, continuing with local storage");
+      }
+    }
+
+    // Fall back to local storage - check by email AND by name
+    const localCheckIns = checkInStorage.getAll().filter((c) => {
+      const today = new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      if (c.date !== today) return false;
+
+      // Match by email if email exists
+      if (bondedEmails.includes(c.userEmail)) return true;
+
+      // Also match by userName for backwards compatibility
+      if (bondNames.includes(c.userName)) return true;
+
+      return false;
+    });
+
+    if (localCheckIns.length > 0) {
+      console.log(
+        "📥 Refreshed bonded check-ins from local storage:",
+        localCheckIns.length,
+      );
+      allCheckIns.push(...localCheckIns);
+    }
+
+    // Remove duplicates
+    const uniqueCheckIns = Array.from(
+      new Map(allCheckIns.map((c) => [c.id, c])).values(),
+    );
+
+    setBondedCheckIns(uniqueCheckIns);
+    console.log(
+      "📥 Total bonded check-ins after refresh:",
+      uniqueCheckIns.length,
+    );
+  };
+
+  const addDemoBondedCheckIns = () => {
+    if (bondedContacts.length === 0) {
+      alert("Please add bonded contacts first!");
+      return;
+    }
+
+    const moodOptions = ["Great", "Good", "Okay", "Happy", "Excited"];
+    const emojiOptions = ["😊", "🙂", "😑", "😍", "🎉"];
+
+    // Add demo check-ins for each bonded contact
+    bondedContacts.forEach((contact: any, index: number) => {
+      const mood = moodOptions[index % moodOptions.length];
+      const emoji = emojiOptions[index % emojiOptions.length];
+      const now = new Date();
+      const time = new Date(now.getTime() - (index + 1) * 30 * 60000); // Stagger by 30 mins
+
+      checkInStorage.add({
+        userEmail: contact.email,
+        userName: contact.name,
+        emoji: emoji,
+        mood: mood,
+        timestamp: time.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        date: now.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+        timeSlot: index % 2 === 0 ? "morning" : "afternoon",
+      });
+    });
+
+    // Refresh the display
+    refreshBondedCheckIns();
+    alert(
+      `✓ Demo check-ins added for ${bondedContacts.length} bonded contact${bondedContacts.length !== 1 ? "s" : ""}!`,
+    );
   };
 
   const status = checkInStatus();
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-purple-50">
+    <div className="min-h-screen bg-white">
       {/* Top Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-cyan-100 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-2 sm:py-4 flex justify-between items-center gap-2">
+          <Link to="/" className="flex items-center gap-1 sm:gap-2 group">
+            <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/50 group-hover:shadow-blue-600/100 transition flex-shrink-0">
+              <Heart className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-xl sm:text-2xl font-bold text-blue-600">
               UOK
             </span>
           </Link>
 
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-slate-100 rounded-lg transition">
-              <Settings className="w-6 h-6 text-slate-700" />
+          <div className="flex items-center gap-3">
+            {/* User Status Display */}
+            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-semibold text-blue-900">
+                {displayName} Online
+              </span>
+            </div>
+
+            {/* Notifications Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() =>
+                  setNotificationDropdownOpen(!notificationDropdownOpen)
+                }
+                className="p-2 hover:bg-blue-50 rounded-lg transition text-blue-600 relative"
+              >
+                <Bell className="w-6 h-6" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                    {Math.min(notifications.length, 9)}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown Menu */}
+              {notificationDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-96 overflow-hidden flex flex-col">
+                  <div className="p-3 sm:p-4 border-b border-gray-200 flex-shrink-0">
+                    <h3 className="text-blue-900 font-bold text-sm sm:text-base">
+                      Notifications
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      📬 Your check-in alerts appear here and are shared with
+                      bonded contacts
+                    </p>
+                  </div>
+                  <div className="overflow-y-auto flex-1">
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 10).map((notif) => (
+                        <div
+                          key={notif.id}
+                          className="px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-100 hover:bg-blue-50 transition"
+                        >
+                          <p className="text-blue-900 text-xs sm:text-sm font-medium line-clamp-2">
+                            {notif.message}
+                          </p>
+                          <p className="text-gray-500 text-xs mt-1">
+                            {notif.timestamp}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-3 sm:px-4 py-6 text-center text-gray-400 text-sm">
+                        No notifications yet
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2 sm:p-3 border-t border-gray-200 flex-shrink-0">
+                    <Link
+                      to="/bond-notifications"
+                      className="block text-center text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium hover:bg-blue-50 py-2 rounded-lg transition"
+                    >
+                      View all
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Settings Button */}
+            <button
+              onClick={() => setSettingsOpen(!settingsOpen)}
+              className="p-2 hover:bg-blue-50 rounded-lg transition text-blue-600"
+            >
+              <Settings className="w-6 h-6" />
             </button>
-            <button className="p-2 hover:bg-red-50 rounded-lg transition text-red-600">
+
+            {/* Settings Modal */}
+            {settingsOpen && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm p-3 sm:p-4">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+                  <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4 sm:mb-6">
+                    Settings
+                  </h2>
+
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="border-b border-gray-200 pb-3 sm:pb-4">
+                      <h3 className="text-blue-900 font-semibold mb-2 text-sm sm:text-base">
+                        Notification Settings
+                      </h3>
+                      <label className="flex items-center gap-3 text-gray-700 text-sm">
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="w-4 h-4"
+                        />
+                        <span className="text-xs sm:text-sm">
+                          SMS/WhatsApp alerts for check-ins
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="border-b border-gray-200 pb-4">
+                      <h3 className="text-blue-900 font-semibold mb-2">
+                        Check-in Reminders
+                      </h3>
+                      <label className="flex items-center gap-3 text-gray-700">
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm">
+                          Daily check-in notifications
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="border-b border-gray-200 pb-4">
+                      <h3 className="text-blue-900 font-semibold mb-2">
+                        Account
+                      </h3>
+                      <Link
+                        to="/user-profile"
+                        onClick={() => setSettingsOpen(false)}
+                        className="block w-full px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 rounded-lg font-medium text-sm transition border border-blue-200 text-center"
+                      >
+                        👤 Manage Profile
+                      </Link>
+                    </div>
+
+                    <div className="pt-4 space-y-2">
+                      <button
+                        onClick={() => setSettingsOpen(false)}
+                        className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={() => {
+                // Clear ONLY session data, NOT user's persistent data
+                // Keep: media, memories, bonded contacts, check-ins (all stored on Supabase)
+                // Remove: currentUser and userEmail (session auth tokens)
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("userEmail");
+                localStorage.removeItem("userPassword");
+                sessionStorage.clear();
+
+                console.log("✅ Session cleared - All user data (media, memories, bonded contacts) preserved");
+                // Redirect to login
+                navigate("/login");
+              }}
+              className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400"
+              title="Logout"
+            >
               <LogOut className="w-6 h-6" />
             </button>
           </div>
         </div>
       </nav>
 
+      {/* Notifications Panel */}
+      {notifications.length > 0 && (
+        <div className="bg-gradient-to-r from-blue-600 to-blue-500 border-b border-blue-700 px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="max-w-7xl mx-auto">
+            {notifications.slice(0, 2).map((notif) => (
+              <div
+                key={notif.id}
+                className="flex items-start sm:items-center justify-between gap-2 bg-white rounded-lg p-3 sm:p-4 mb-2 border-2 border-white shadow-lg"
+              >
+                <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <Zap className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600 flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-blue-900 text-xs sm:text-sm font-bold line-clamp-2">
+                      {notif.message}
+                    </p>
+                    <p className="text-blue-600 text-xs font-medium">
+                      {notif.timestamp}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() =>
+                    setNotifications((prev) =>
+                      prev.filter((n) => n.id !== notif.id),
+                    )
+                  }
+                  className="text-blue-600 hover:text-blue-700 flex-shrink-0 font-bold"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Welcome Card */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">
+        <div className="mb-6 sm:mb-8 text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-600 mb-1 sm:mb-2">
             Welcome Back! 👋
           </h1>
-          <p className="text-slate-600">Check in with how you're feeling today</p>
+          <p className="text-gray-600 text-sm sm:text-base">
+            How are you feeling today? Let your contacts know you're okay.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Main Check-in Section */}
-          <div className="md:col-span-2 space-y-8">
-            {/* Status Card */}
-            <div
-              className={`${status.bg} border ${status.border} rounded-2xl p-6`}
+        {/* Data Retention Notice */}
+        <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-blue-500 border border-blue-700 rounded-lg sm:rounded-xl shadow-md">
+          <p className="text-white text-xs sm:text-sm font-medium">
+            <span className="font-bold text-lg">📊</span>{" "}
+            <span className="font-semibold">Data Retention:</span> All check-in
+            records are automatically deleted after 72 hours to save storage
+            space. Go to{" "}
+            <Link
+              to="/user-profile"
+              className="underline text-blue-100 hover:text-white transition font-semibold"
             >
-              <div className="flex items-center gap-3">
-                <StatusIcon className={`w-8 h-8 ${status.color}`} />
-                <div>
-                  <h3 className="font-semibold text-slate-900">
+              Profile Settings
+            </Link>{" "}
+            to learn more.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {/* Main Check-in Section */}
+          <div className="md:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
+            {/* Status Card */}
+            <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-md transition">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-2 sm:p-3 bg-blue-100 rounded-lg flex-shrink-0">
+                  <StatusIcon className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold text-blue-900 text-sm sm:text-base">
                     Daily Check-in Status
                   </h3>
-                  <p className={`text-sm ${status.color}`}>{status.text}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    {status.text}
+                  </p>
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className={`flex-1 h-2 rounded-full ${
+                    className={`flex-1 h-3 rounded-full ${
                       i < todayCheckInCount
-                        ? "bg-gradient-to-r from-cyan-500 to-purple-500"
-                        : "bg-slate-300"
+                        ? "bg-gradient-to-r from-blue-500 to-blue-600"
+                        : "bg-gray-200"
                     }`}
                   ></div>
                 ))}
@@ -236,29 +2028,60 @@ export default function Dashboard() {
             </div>
 
             {/* Check-in Section */}
-            <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">
+            <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-8 hover:shadow-md transition">
+              <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4 sm:mb-6">
                 How are you feeling?
               </h2>
 
-              <div className="grid grid-cols-4 gap-3 mb-6">
+              {/* Time Slot Selection */}
+              <div className="mb-4 sm:mb-6">
+                <p className="text-blue-900 font-semibold mb-2 sm:mb-3 text-xs sm:text-sm">
+                  Select check-in time:
+                </p>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  {CHECK_IN_TIMES.map((timeSlot) => (
+                    <button
+                      key={timeSlot.slot}
+                      onClick={() =>
+                        setSelectedTimeSlot(
+                          timeSlot.slot as "morning" | "afternoon" | "evening",
+                        )
+                      }
+                      disabled={todayCheckInCount >= 3}
+                      className={`py-2 px-2 sm:px-3 rounded-lg font-semibold text-xs sm:text-sm transition ${
+                        selectedTimeSlot === timeSlot.slot
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
+                      }`}
+                    >
+                      {timeSlot.icon}{" "}
+                      <span className="hidden sm:inline">
+                        {timeSlot.slot.charAt(0).toUpperCase() +
+                          timeSlot.slot.slice(1)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 {MOOD_EMOJIS.map((item) => (
                   <button
                     key={item.emoji}
                     onClick={() => handleCheckIn(item.emoji, item.mood)}
                     disabled={todayCheckInCount >= 3}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-2xl transition ${
+                    className={`aspect-square flex flex-col items-center justify-center rounded-lg sm:rounded-xl transition transform ${
                       selectedMood === item.emoji
-                        ? "bg-gradient-to-br from-cyan-400 to-cyan-500 shadow-lg scale-110"
-                        : "bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        ? "bg-blue-600 shadow-lg scale-105 sm:scale-110"
+                        : "bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
                     }`}
                   >
-                    <span className="text-3xl">{item.emoji}</span>
+                    <span className="text-2xl sm:text-3xl">{item.emoji}</span>
                     <span
-                      className={`text-xs font-medium mt-1 ${
+                      className={`text-xs font-medium mt-0.5 sm:mt-1 ${
                         selectedMood === item.emoji
                           ? "text-white"
-                          : "text-slate-700"
+                          : "text-gray-700"
                       }`}
                     >
                       {item.mood}
@@ -268,25 +2091,115 @@ export default function Dashboard() {
               </div>
 
               {selectedMood && (
-                <div className="bg-gradient-to-r from-green-50 to-cyan-50 border border-green-200 rounded-lg p-6">
-                  <p className="text-green-700 font-semibold mb-4 text-center">
-                    ✓ Check-in recorded! Your contacts have been notified.
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-6">
+                  <p className="text-green-800 font-semibold mb-3 sm:mb-4 text-center text-xs sm:text-sm">
+                    ✓ Check-in recorded! Alert sent to your emergency contacts.
                   </p>
+
+                  {/* Mood-Based Suggestions */}
+                  {moodSuggestions && (
+                    <div className="mt-4 pt-4 border-t border-green-200 animate-in fade-in slide-in-from-top-2 duration-300">
+                      {/* Header with Close Button */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-blue-900 mb-3">
+                            💡 Personalized for You
+                          </h3>
+                          <p className="font-semibold text-blue-900 text-base bg-gradient-to-r from-blue-100 to-blue-50 border-l-4 border-blue-600 p-3 rounded italic">
+                            "{moodSuggestions.affirmation}"
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => setMoodSuggestions(null)}
+                          className="flex-shrink-0 ml-4 p-2 hover:bg-blue-100 text-blue-600 rounded-full transition hover:text-blue-800"
+                          title="Close suggestions"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Actionable Suggestions */}
+                      <div className="mb-4">
+                        <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2">
+                          What you can do now:
+                        </p>
+                        <div className="space-y-2">
+                          {moodSuggestions.suggestions.map(
+                            (suggestion: string, idx: number) => (
+                              <div
+                                key={idx}
+                                className="bg-gradient-to-r from-blue-50 to-blue-25 border-l-4 border-blue-500 rounded-lg p-3 text-sm text-blue-900 hover:shadow-md transition"
+                              >
+                                <p className="flex items-start gap-3">
+                                  <span className="flex-shrink-0 font-bold text-blue-600 w-5">
+                                    {idx + 1}.
+                                  </span>
+                                  <span>{suggestion}</span>
+                                </p>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Activity Tags */}
+                      <div>
+                        <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2">
+                          Quick actions:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {moodSuggestions.activities.map(
+                            (activity: string, idx: number) => (
+                              <span
+                                key={idx}
+                                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 transition cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105"
+                              >
+                                {activity}
+                              </span>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Inspiration Songs */}
                   <div className="mt-4 pt-4 border-t border-green-200">
                     <div className="flex items-center gap-2 mb-3">
-                      <Music className="w-5 h-5 text-purple-600" />
-                      <p className="font-semibold text-slate-900">Inspiration Playlist</p>
+                      <Music className="w-5 h-5 text-blue-600" />
+                      <p className="font-semibold text-blue-900">
+                        Inspiration Playlist
+                      </p>
                     </div>
                     <div className="space-y-2">
                       {moodSongs[
-                        MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood || ""
+                        MOOD_EMOJIS.find((m) => m.emoji === selectedMood)
+                          ?.mood || ""
                       ]?.map((song, idx) => (
-                        <div key={idx} className="bg-white rounded-lg p-3">
-                          <p className="font-medium text-slate-900 text-sm">{song.title}</p>
-                          <p className="text-xs text-slate-600">{song.artist}</p>
-                          <p className="text-xs text-purple-600 mt-1">{song.vibe}</p>
+                        <div
+                          key={idx}
+                          className="bg-white rounded-lg p-3 hover:shadow-md transition border border-gray-200"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-medium text-blue-900 text-sm">
+                                {song.title}
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                {song.artist}
+                              </p>
+                              <p className="text-xs text-blue-600 mt-1">
+                                {song.vibe}
+                              </p>
+                            </div>
+                            <button
+                              onClick={playNotificationSound}
+                              className="flex-shrink-0 p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition"
+                              title="Play music"
+                            >
+                              <Play className="w-4 h-4 fill-current" />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -296,34 +2209,38 @@ export default function Dashboard() {
             </div>
 
             {/* Media Upload Section */}
-            <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-md transition">
+              <h2 className="text-2xl font-bold text-blue-900 mb-6">
                 Share Your Day
               </h2>
 
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="grid md:grid-cols-2 gap-3 sm:gap-4 mb-6">
                 <button
                   onClick={() => photoInputRef.current?.click()}
-                  className="p-8 border-2 border-dashed border-cyan-300 rounded-2xl hover:bg-cyan-50 transition flex flex-col items-center justify-center gap-3 cursor-pointer"
+                  className="p-4 sm:p-6 border-2 border-dashed border-blue-300 rounded-xl sm:rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer group"
                 >
-                  <Image className="w-8 h-8 text-cyan-600" />
-                  <div>
-                    <p className="font-semibold text-slate-900">Add Photo</p>
-                    <p className="text-sm text-slate-600">
-                      Share a picture from your day
+                  <Image className="w-6 sm:w-8 h-6 sm:h-8 text-blue-600 group-hover:text-blue-700" />
+                  <div className="text-center">
+                    <p className="font-semibold text-blue-900 group-hover:text-blue-950 text-sm sm:text-base">
+                      Add Photo
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                      Capture a moment
                     </p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => videoInputRef.current?.click()}
-                  className="p-8 border-2 border-dashed border-purple-300 rounded-2xl hover:bg-purple-50 transition flex flex-col items-center justify-center gap-3 cursor-pointer"
+                  className="p-4 sm:p-6 border-2 border-dashed border-blue-300 rounded-xl sm:rounded-2xl hover:bg-blue-50 hover:border-blue-400 transition flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer group"
                 >
-                  <Video className="w-8 h-8 text-purple-600" />
-                  <div>
-                    <p className="font-semibold text-slate-900">Add Video</p>
-                    <p className="text-sm text-slate-600">
-                      Share a video from your day
+                  <Video className="w-6 sm:w-8 h-6 sm:h-8 text-blue-600 group-hover:text-blue-700" />
+                  <div className="text-center">
+                    <p className="font-semibold text-blue-900 group-hover:text-blue-950 text-sm sm:text-base">
+                      Add Video
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                      Share a video update
                     </p>
                   </div>
                 </button>
@@ -350,41 +2267,65 @@ export default function Dashboard() {
               {/* Media Gallery */}
               {mediaItems.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">
-                    Today's Memories ({mediaItems.length})
-                  </h3>
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-blue-900">
+                      My Memories ({mediaItems.length})
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                     {mediaItems.map((item) => (
                       <div
                         key={item.id}
-                        className="relative group rounded-lg overflow-hidden bg-slate-100"
+                        onClick={() => {
+                          // Show pre-roll ad before viewing media (for videos)
+                          if (item.type === "video") {
+                            setShowPreRollAd(true);
+                          }
+                          setFullscreenMedia(item);
+                        }}
+                        className="relative group rounded-lg overflow-hidden bg-gray-200 border border-gray-300 hover:border-gray-400 transition cursor-pointer aspect-square"
                       >
                         {item.type === "photo" ? (
                           <img
                             src={item.url}
                             alt="Shared photo"
-                            className="w-full h-48 object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition"
                           />
                         ) : (
-                          <div className="w-full h-48 bg-black flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative overflow-hidden">
                             <video
-                              src={item.url}
                               className="w-full h-full object-contain"
                               controls
                               controlsList="nodownload"
-                              crossOrigin="anonymous"
-                            />
+                              preload="metadata"
+                              onError={(e) =>
+                                console.error("Video playback error:", e)
+                              }
+                            >
+                              <source src={item.url} type="video/mp4" />
+                              <source src={item.url} type="video/webm" />
+                              <source src={item.url} type="video/ogg" />
+                              Your browser does not support the video tag.
+                            </video>
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => openMediaShareModal(item)}
+                            className="opacity-0 group-hover:opacity-100 transition bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg"
+                            title="Share media"
+                          >
+                            <Share2 className="w-5 h-5" />
+                          </button>
                           <button
                             onClick={() => deleteMedia(item.id)}
                             className="opacity-0 group-hover:opacity-100 transition bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg"
+                            title="Delete media"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
-                        <p className="text-xs text-slate-600 p-2 bg-white">
+                        <p className="text-xs text-gray-700 p-2 bg-gray-100 border-t border-gray-200">
                           {item.type === "photo" ? "📷" : "🎥"} {item.timestamp}
                         </p>
                       </div>
@@ -393,79 +2334,583 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+
+            {/* Rotating Featured Ads */}
+            <RotatingAds />
+
+            {/* Pre-Roll Ad for Media Viewing */}
+            {showPreRollAd && (
+              <MediaPreRollAd
+                onAdComplete={() => {
+                  setShowPreRollAd(false);
+                  // Track view after ad completes
+                  if (fullscreenMedia) {
+                    const userEmail =
+                      localStorage.getItem("userEmail") || "user";
+                    const today = new Date().toISOString().split("T")[0];
+                    analyticsService.trackEvent({
+                      type: "view",
+                      targetId: fullscreenMedia.id,
+                      targetType: "memory",
+                      userEmail,
+                      timestamp: new Date().toISOString(),
+                      date: today,
+                      metadata: {
+                        engagementLevel: "high", // Watched ad = high engagement
+                      },
+                    });
+                  }
+                }}
+              />
+            )}
+
+            {/* Fullscreen Media Modal */}
+            {fullscreenMedia && (
+              <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-40 backdrop-blur-sm">
+                <div className="relative w-full h-full max-w-6xl flex items-center justify-center">
+                  <button
+                    onClick={() => {
+                      setFullscreenMedia(null);
+                      setShowPreRollAd(false);
+                    }}
+                    className="absolute top-4 right-4 z-50 text-white bg-black/50 hover:bg-black/80 p-2 rounded-lg transition"
+                    title="Close"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+
+                  {fullscreenMedia.type === "photo" ? (
+                    <img
+                      src={fullscreenMedia.url}
+                      alt="Fullscreen view"
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  ) : (
+                    <video
+                      controls
+                      autoPlay
+                      controlsList="nodownload"
+                      preload="metadata"
+                      className="max-w-full max-h-full object-contain"
+                      onError={(e) =>
+                        console.error("Fullscreen video playback error:", e)
+                      }
+                    >
+                      <source src={fullscreenMedia.url} type="video/mp4" />
+                      <source src={fullscreenMedia.url} type="video/webm" />
+                      <source src={fullscreenMedia.url} type="video/ogg" />
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-8">
-            {/* Today's Check-ins */}
-            <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-cyan-600" />
-                Today's Check-ins
-              </h3>
+            {/* Today's Check-ins - Only show if there are check-ins */}
+            {checkIns.length > 0 && (
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
+                <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                  Your Today's Check-ins
+                </h3>
 
-              <div className="space-y-3">
-                {checkIns.length > 0 ? (
-                  checkIns.map((checkIn) => (
+                <div className="space-y-3">
+                  {checkIns.map((checkIn) => (
                     <div
                       key={checkIn.id}
-                      className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-blue-50 transition"
                     >
                       <span className="text-2xl">{checkIn.emoji}</span>
                       <div className="flex-1">
-                        <p className="font-semibold text-slate-900 text-sm">
+                        <p className="font-semibold text-blue-900 text-sm">
                           {checkIn.mood}
                         </p>
-                        <p className="text-xs text-slate-600">{checkIn.time}</p>
+                        <p className="text-xs text-gray-500">{checkIn.time}</p>
                       </div>
                     </div>
-                  ))
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Bonded Family Check-ins */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-blue-900 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600" />
+                  Bonded Family Check-ins
+                </h3>
+                <button
+                  onClick={refreshBondedCheckIns}
+                  className="text-blue-600 hover:text-blue-700 transition text-xs font-semibold px-2 py-1 rounded hover:bg-blue-100"
+                  title="Refresh check-ins"
+                >
+                  🔄 Refresh
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {bondedCheckIns && bondedCheckIns.length > 0 ? (
+                  bondedCheckIns.map((checkIn) => {
+                    // Get the current name from bonded contacts, fallback to stored name
+                    // Try matching by email first (for email-bonded contacts), then by name (for QR-bonded)
+                    const currentContact = bondedContacts.find(
+                      (c) =>
+                        c.email === checkIn.userEmail ||
+                        c.name === checkIn.userName,
+                    );
+                    const displayName =
+                      currentContact?.name || checkIn.userName;
+                    const displayEmoji = checkIn.emoji;
+
+                    return (
+                      <div
+                        key={checkIn.id}
+                        className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition"
+                      >
+                        <span className="text-2xl">{displayEmoji}</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-blue-900 text-sm">
+                            {displayName}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {checkIn.mood}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {checkIn.timestamp}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })
                 ) : (
-                  <p className="text-slate-600 text-sm">
-                    No check-ins yet today
-                  </p>
+                  <div className="space-y-3">
+                    <p className="text-gray-600 text-sm">
+                      No check-ins from bonded members yet today
+                    </p>
+                    <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                      💡 Once your bonded contacts check in, their status will
+                      appear here
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Emergency Contacts */}
-            <div className="bg-white rounded-2xl shadow-lg border border-cyan-100 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">
+            {/* Bonded Emergency Contacts */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
+              <h3 className="text-lg font-bold text-blue-900 mb-4">
                 Emergency Contacts
               </h3>
 
               <div className="space-y-3">
-                {[
-                  { name: "Mom", emoji: "👩" },
-                  { name: "Brother", emoji: "👨" },
-                  { name: "Best Friend", emoji: "👨‍🤝‍👨" },
-                ].map((contact, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
-                  >
-                    <span className="text-2xl">{contact.emoji}</span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-slate-900 text-sm">
-                        {contact.name}
-                      </p>
-                      <p className="text-xs text-green-600">●  Notified</p>
-                    </div>
+                {bondedContacts && bondedContacts.length > 0 ? (
+                  <>
+                    <p className="text-xs text-blue-700 bg-blue-50 p-2 rounded border border-blue-200 mb-3">
+                      ✅ Your check-ins are automatically shared with these
+                      emergency contacts
+                    </p>
+                    {bondedContacts.map((contact: any, i: number) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-blue-50 transition cursor-pointer group"
+                      >
+                        <div className="relative">
+                          <span className="text-2xl">👤</span>
+                          <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-400"></span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-blue-900 text-sm">
+                            {contact.name}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            ● Ready to receive alerts
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p className="text-sm text-yellow-900 font-semibold mb-2">
+                      ⚠️ No emergency contacts set up yet
+                    </p>
+                    <p className="text-xs text-yellow-800">
+                      Add emergency contacts to share your check-ins and receive
+                      alerts from them.
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
 
-              <button className="w-full mt-4 py-2 text-cyan-600 font-semibold hover:bg-cyan-50 rounded-lg transition text-sm">
-                Manage Contacts
-              </button>
+              <Link
+                to="/bond-contacts"
+                className="block w-full mt-4 py-2 text-blue-600 font-semibold hover:bg-blue-50 rounded-lg transition text-sm text-center border border-blue-300"
+              >
+                Add Emergency Contacts
+              </Link>
             </div>
 
-            {/* Tips */}
-            <div className="bg-gradient-to-br from-cyan-50 to-purple-50 rounded-2xl border border-cyan-200 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-3">💡 Tip</h3>
-              <p className="text-sm text-slate-700">
-                Check in consistently to help your loved ones stay assured about
-                your wellbeing. Set reminders to never miss a check-in time!
+            {/* Wellness Insights */}
+            <Link
+              to="/wellness-insights"
+              className="bg-blue-100 text-blue-900 rounded-2xl border border-blue-300 p-6 hover:shadow-md transition block"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <BarChart3 className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-bold">Wellness Insights</h3>
+              </div>
+              <p className="text-sm text-gray-700">
+                View your statistics and progress
+              </p>
+            </Link>
+
+            {/* Shared Memories */}
+            <Link
+              to="/shared-memories"
+              className="bg-blue-50 text-blue-900 rounded-2xl border border-blue-200 p-6 hover:shadow-md transition block"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Share2 className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-bold">Share Memories</h3>
+              </div>
+              <p className="text-sm text-gray-700">
+                Share your day with community
+              </p>
+            </Link>
+
+            {/* Featured Partners Link */}
+            <Link
+              to="/featured-partners"
+              className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl border-2 border-indigo-700 p-6 hover:shadow-xl hover:scale-105 transition block"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Zap className="w-6 h-6 text-purple-200" />
+                <h3 className="text-lg font-bold">Featured Partners</h3>
+              </div>
+              <p className="text-sm text-indigo-100">
+                Advertise your business to our users
+              </p>
+            </Link>
+
+            {/* Public Analytics Link */}
+            <Link
+              to="/analytics"
+              className="bg-blue-50 text-blue-900 rounded-2xl border border-blue-200 p-6 hover:shadow-md transition block"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <BarChart3 className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-bold">Community Insights</h3>
+              </div>
+              <p className="text-sm text-gray-700">
+                View top memories and trending ads
+              </p>
+            </Link>
+
+            {/* Advertiser Portal Link */}
+            <Link
+              to="/advertiser-login"
+              className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl border-2 border-indigo-700 p-6 hover:shadow-xl hover:scale-105 transition block"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Lock className="w-6 h-6 text-purple-200" />
+                <h3 className="text-lg font-bold">Advertiser Portal</h3>
+              </div>
+              <p className="text-sm text-indigo-100">
+                Private analytics for registered advertisers
+              </p>
+            </Link>
+
+            {/* Tip Section */}
+            <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6">
+              <h3 className="text-lg font-bold text-blue-900 mb-3">
+                💡 Daily Tip
+              </h3>
+              <p className="text-sm text-gray-700">
+                Consistent check-ins keep your loved ones assured. Set reminders
+                for your daily check-in times!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Media Share Modal */}
+        {mediaShareModalOpen && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 max-w-md w-full mx-4">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-blue-900">
+                  Share Media
+                </h2>
+                <button
+                  onClick={() => {
+                    setMediaShareModalOpen(null);
+                    setSelectedContactsToShare([]);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 transition"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Visibility Options */}
+                <div>
+                  <label className="text-sm font-semibold text-blue-900 block mb-3">
+                    Share with:
+                  </label>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => {
+                        setShareVisibility("community");
+                        setSelectedContactsToShare([]);
+                      }}
+                      className={`w-full px-4 py-3 rounded-lg font-medium text-sm transition border ${
+                        shareVisibility === "community"
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      🌍 Everyone (Community)
+                    </button>
+                    <button
+                      onClick={() => setShareVisibility("bonded-contacts")}
+                      disabled={bondedContacts.length === 0}
+                      className={`w-full px-4 py-3 rounded-lg font-medium text-sm transition border ${
+                        shareVisibility === "bonded-contacts"
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      }`}
+                    >
+                      💚 Bonded Contacts ({bondedContacts.length})
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bonded Contacts Selection */}
+                {shareVisibility === "bonded-contacts" &&
+                  bondedContacts.length > 0 && (
+                    <div>
+                      <label className="text-sm font-semibold text-blue-900 block mb-3">
+                        Select contacts:
+                      </label>
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {bondedContacts.map((contact) => (
+                          <label
+                            key={contact.id}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-blue-50 cursor-pointer transition"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedContactsToShare.includes(
+                                contact.id,
+                              )}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedContactsToShare([
+                                    ...selectedContactsToShare,
+                                    contact.id,
+                                  ]);
+                                } else {
+                                  setSelectedContactsToShare(
+                                    selectedContactsToShare.filter(
+                                      (id) => id !== contact.id,
+                                    ),
+                                  );
+                                }
+                              }}
+                              className="w-4 h-4 rounded"
+                            />
+                            <div className="flex-1">
+                              <p className="text-blue-900 font-medium text-sm">
+                                {contact.name}
+                              </p>
+                              <p className="text-gray-500 text-xs">
+                                {contact.email}
+                              </p>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      setMediaShareModalOpen(null);
+                      setSelectedContactsToShare([]);
+                    }}
+                    className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      const mediaItem = mediaItems.find(
+                        (m) => m.id === mediaShareModalOpen,
+                      );
+                      if (mediaItem) {
+                        handleShareMedia(mediaItem);
+                      }
+                    }}
+                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition"
+                  >
+                    Share
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Dashboard Information Footer */}
+        <div className="mt-16 border-t border-gray-200 pt-12 pb-8">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-4 gap-8 mb-8">
+              {/* How It Works */}
+              <div>
+                <h4 className="font-semibold text-blue-900 mb-4">
+                  How It Works
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>Check in 2-3 times daily</li>
+                  <li>Share mood and wellness status</li>
+                  <li>Connect with loved ones</li>
+                  <li>Get wellness insights</li>
+                </ul>
+              </div>
+
+              {/* Products & Features */}
+              <div>
+                <h4 className="font-semibold text-blue-900 mb-4">Products</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Daily Check-ins
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Health Tracking
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Emergency Alerts
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Community Sharing
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Contact & Support */}
+              <div>
+                <h4 className="font-semibold text-blue-900 mb-4">Support</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>
+                    <Link
+                      to="/contact"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Contact Us
+                    </Link>
+                  </li>
+                  <li>
+                    <a
+                      href="mailto:support@youok.fit"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Email Support
+                    </a>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      FAQ
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/features"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Help Center
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Legal */}
+              <div>
+                <h4 className="font-semibold text-blue-900 mb-4">Legal</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>
+                    <Link
+                      to="/terms"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Terms of Service
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/privacy"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/about"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/pricing"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Pricing
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-600">
+              <p>
+                &copy; 2024 UOK. All rights reserved |{" "}
+                <a
+                  href="mailto:support@youok.fit"
+                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                >
+                  support@youok.fit
+                </a>
               </p>
             </div>
           </div>

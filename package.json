@@ -2,6 +2,7 @@
   "name": "fusion-starter",
   "private": true,
   "type": "module",
+  "_comment": "Force Vercel rebuild with fixed routing config",
   "pkg": {
     "assets": [
       "dist/spa/*"
@@ -18,14 +19,24 @@
     "start": "node dist/server/node-build.mjs",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "cap:sync": "pnpm run build:client && pnpm exec cap sync",
+    "cap:open:ios": "pnpm exec cap open ios",
+    "cap:open:android": "pnpm exec cap open android",
+    "build:ios": "pnpm run cap:sync && pnpm exec cap open ios",
+    "build:android": "pnpm run cap:sync && pnpm exec cap open android"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.94.1",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.0.2",
+    "@capacitor/cli": "^8.0.2",
+    "@capacitor/core": "^8.0.2",
+    "@capacitor/ios": "^8.0.2",
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",

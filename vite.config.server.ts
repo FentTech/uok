@@ -39,7 +39,7 @@ export default defineConfig({
       },
     },
     minify: false, // Keep readable for debugging
-    sourcemap: true,
+    sourcemap: false, // Disable sourcemaps to prevent 404 errors
   },
   resolve: {
     alias: {

@@ -1,0 +1,17 @@
+{
+  "appId": "com.uok.app",
+  "appName": "UOK - Understand Our Knowing",
+  "webDir": "dist/spa",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "ios": {
+    "contentInset": "automatic"
+  }
+}

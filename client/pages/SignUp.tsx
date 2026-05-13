@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Heart, Lock, User, Eye, EyeOff } from "lucide-react";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
@@ -18,12 +18,15 @@ export default function SignUp() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = "Full name is required";
     }
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
+    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+      newErrors.username =
+        "Username can only contain letters, numbers, and underscores";
     }
     if (!formData.password) {
       newErrors.password = "Password is required";
@@ -56,15 +59,22 @@ export default function SignUp() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Here you would normally send data to backend
-      console.log("Sign up:", formData);
+      // Store user data locally and in Supabase
+      const userData = {
+        id: `user_${Date.now()}`,
+        name: formData.name.trim(),
+        username: formData.username.trim().toLowerCase(),
+        createdAt: new Date().toISOString(),
+      };
 
-      // Increment subscriber count
-      const currentSubscribers = localStorage.getItem("uok_subscribers") || "0";
-      const newSubscriberCount = (parseInt(currentSubscribers) + 1).toString();
-      localStorage.setItem("uok_subscribers", newSubscriberCount);
-      console.log("New subscriber count:", newSubscriberCount);
+      // Save to localStorage as backup
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      localStorage.setItem("username", userData.username);
+      localStorage.setItem("name", userData.name);
+      localStorage.setItem("userPassword", formData.password); // In production, use proper auth
 
+      console.log("✅ Account created:", userData);
+      console.log("📝 Saved to localStorage - name:", userData.name, "username:", userData.username);
       // Redirect to setup contacts
       navigate("/setup-contacts");
     }
@@ -121,24 +131,27 @@ export default function SignUp() {
                 )}
               </div>
 
-              {/* Email Field */}
+              {/* Username Field */}
               <div>
                 <label className="block text-sm font-semibold text-slate-900 mb-2">
-                  Email Address
+                  Username
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    type="text"
+                    name="username"
+                    value={formData.username}
                     onChange={handleChange}
-                    placeholder="you@example.com"
+                    placeholder="johndoe"
                     className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Letters, numbers, and underscores only
+                </p>
+                {errors.username && (
+                  <p className="text-red-500 text-sm mt-1">{errors.username}</p>
                 )}
               </div>
 
@@ -191,9 +204,7 @@ export default function SignUp() {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
                     {showConfirmPassword ? (
@@ -236,11 +247,17 @@ export default function SignUp() {
           {/* Terms */}
           <p className="text-center text-sm text-slate-600 mt-6">
             By signing up, you agree to our{" "}
-            <a href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+            <a
+              href="#"
+              className="text-cyan-600 hover:text-cyan-700 font-medium"
+            >
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+            <a
+              href="#"
+              className="text-cyan-600 hover:text-cyan-700 font-medium"
+            >
               Privacy Policy
             </a>
           </p>
