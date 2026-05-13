@@ -95,6 +95,19 @@ const MOOD_EMOJIS = [
   { emoji: "🎉", mood: "Celebrating" },
 ];
 
+const MOTIVATIONAL_QUOTES = [
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+  { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+  { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+  { text: "Everything you want is on the other side of fear.", author: "Jack Canfield" },
+  { text: "Believe in yourself. You are braver than you think, more talented than you know, and capable of more than you imagine.", author: "Roy T. Bennett" },
+  { text: "I learned that courage was not the absence of fear, but the triumph over it.", author: "Nelson Mandela" },
+  { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+  { text: "Your limitation—it's only your imagination. Push past it.", author: "Unknown" },
+];
+
 // NOTE: Demo data initialization removed - running in production mode
 // No demo contacts (Mom, Brother, Sister) or fake check-ins
 
@@ -2335,6 +2348,23 @@ export default function Dashboard() {
                   </div>
                 </div>
               )}
+
+              {/* Daily Motivational Quotes */}
+              <div className="mt-8 sm:mt-10">
+                <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4 sm:mb-6">
+                  💡 Daily Motivation
+                </h2>
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-lg sm:rounded-xl p-6 sm:p-8">
+                  <blockquote className="text-center">
+                    <p className="text-lg sm:text-xl font-semibold text-amber-900 mb-4 leading-relaxed">
+                      "{MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)].text}"
+                    </p>
+                    <footer className="text-sm sm:text-base text-amber-700 font-medium">
+                      — {MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)].author}
+                    </footer>
+                  </blockquote>
+                </div>
+              </div>
             </div>
 
             {/* Rotating Featured Ads */}
