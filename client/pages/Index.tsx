@@ -1,8 +1,25 @@
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { moodSongs } from "../data/songs";
+import { useState, useEffect } from "react";
 
 export default function Index() {
+  const [visitorCount, setVisitorCount] = useState<number>(0);
+  const [subscriberCount, setSubscriberCount] = useState<number>(0);
+
+  useEffect(() => {
+    // Load visitor and subscriber counts from localStorage
+    const savedVisitors = localStorage.getItem("uok_visitors") || "0";
+    const savedSubscribers = localStorage.getItem("uok_subscribers") || "0";
+
+    setVisitorCount(parseInt(savedVisitors));
+    setSubscriberCount(parseInt(savedSubscribers));
+
+    // Increment visitor count
+    const newVisitorCount = parseInt(savedVisitors) + 1;
+    localStorage.setItem("uok_visitors", newVisitorCount.toString());
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -106,6 +123,28 @@ export default function Index() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Visitor & Subscriber Stats Section */}
+      <div className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-slate-50 border-b border-slate-200">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="text-center p-8 bg-white rounded-2xl border border-blue-200 shadow-md hover:shadow-lg transition">
+              <div className="text-5xl font-bold text-blue-600 mb-2">
+                {visitorCount.toLocaleString()}
+              </div>
+              <p className="text-lg font-semibold text-slate-700 mb-1">Total Visitors</p>
+              <p className="text-sm text-slate-600">People who've visited UOK</p>
+            </div>
+            <div className="text-center p-8 bg-white rounded-2xl border border-green-200 shadow-md hover:shadow-lg transition">
+              <div className="text-5xl font-bold text-green-600 mb-2">
+                {subscriberCount.toLocaleString()}
+              </div>
+              <p className="text-lg font-semibold text-slate-700 mb-1">Active Users</p>
+              <p className="text-sm text-slate-600">Users who've signed up</p>
             </div>
           </div>
         </div>

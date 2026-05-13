@@ -73,6 +73,12 @@ export default function SignUp() {
       localStorage.setItem("name", userData.name);
       localStorage.setItem("userPassword", formData.password); // In production, use proper auth
 
+      // Increment subscriber count
+      const currentSubscribers = localStorage.getItem("uok_subscribers") || "0";
+      const newSubscriberCount = (parseInt(currentSubscribers) + 1).toString();
+      localStorage.setItem("uok_subscribers", newSubscriberCount);
+      console.log("New subscriber count:", newSubscriberCount);
+
       console.log("✅ Account created:", userData);
       console.log("📝 Saved to localStorage - name:", userData.name, "username:", userData.username);
       // Redirect to setup contacts
