@@ -2070,7 +2070,7 @@ export default function Dashboard() {
                     key={item.emoji}
                     onClick={() => handleCheckIn(item.emoji, item.mood)}
                     disabled={todayCheckInCount >= 3}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-lg transition transform ${
+                    className={`w-14 h-14 sm:w-16 sm:h-16 flex flex-col items-center justify-center rounded-lg transition transform ${
                       selectedMood === item.emoji
                         ? "bg-blue-600 shadow-lg scale-105"
                         : "bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
