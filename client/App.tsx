@@ -57,6 +57,26 @@ export default function App() {
       });
     }
 
+    // Track visitor count in localStorage (permanent fallback)
+    try {
+      const currentVisitors = localStorage.getItem("uok_visitor_count") || "0";
+      const newCount = (parseInt(currentVisitors, 10) + 1).toString();
+      localStorage.setItem("uok_visitor_count", newCount);
+      console.log("📊 Visitor count updated to:", newCount);
+    } catch (error) {
+      console.warn("⚠️ Failed to update visitor count:", error);
+    }
+
+    // Track interaction (page view) in localStorage
+    try {
+      const currentInteractions = localStorage.getItem("uok_interaction_count") || "0";
+      const newCount = (parseInt(currentInteractions, 10) + 1).toString();
+      localStorage.setItem("uok_interaction_count", newCount);
+      console.log("📊 Interaction count updated to:", newCount);
+    } catch (error) {
+      console.warn("⚠️ Failed to update interaction count:", error);
+    }
+
     // Check for expiring media and notify users
     // DISABLED: Auto-delete functionality
     // User requirement: "pictures and videos should stay on the system forever"

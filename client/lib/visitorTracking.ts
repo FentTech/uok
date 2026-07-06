@@ -186,54 +186,78 @@ class VisitorTrackingService {
 
   /**
    * Get total unique visitors count
-   * Works globally across all browsers - returns 0 if unavailable
+   * Works globally across all browsers - uses localStorage as fallback
    */
   async getTotalVisitors(): Promise<number> {
     try {
-      const { getSupabase } = await import("./supabase");
-      const supabase = getSupabase();
-      if (!supabase) {
-        console.log(
-          "ℹ️ Supabase not configured, returning 0 for visitor count",
-        );
-        return 0;
+      // First try Supabase
+      try {
+        const { getSupabase } = await import("./supabase");
+        const supabase = getSupabase();
+        if (supabase) {
+          const { count, error } = await supabase
+            .from("visitors")
+            .select("*", { count: "exact", head: true });
+
+          if (!error && count !== null) {
+            // Save to localStorage as backup
+            try {
+              localStorage.setItem("uok_visitor_count", count.toString());
+            } catch (e) {
+              // Ignore localStorage errors
+            }
+            return count || 0;
+          }
+        }
+      } catch (supabaseError) {
+        // Supabase failed, continue to localStorage fallback
+        console.log("ℹ️ Supabase fetch failed, using localStorage fallback");
       }
 
-      const { count, error } = await supabase
-        .from("visitors")
-        .select("*", { count: "exact", head: true });
-
-      if (error) throw error;
-      return count || 0;
+      // Fallback to localStorage
+      const stored = localStorage.getItem("uok_visitor_count");
+      return stored ? parseInt(stored, 10) : 0;
     } catch (error) {
-      console.warn("⚠️ Failed to get visitor count (non-critical):", error);
+      console.warn("⚠️ Failed to get visitor count:", error);
       return 0;
     }
   }
 
   /**
    * Get total page views/clicks
-   * Works globally across all browsers - returns 0 if unavailable
+   * Works globally across all browsers - uses localStorage as fallback
    */
   async getTotalPageViews(): Promise<number> {
     try {
-      const { getSupabase } = await import("./supabase");
-      const supabase = getSupabase();
-      if (!supabase) {
-        console.log(
-          "ℹ️ Supabase not configured, returning 0 for page views count",
-        );
-        return 0;
+      // First try Supabase
+      try {
+        const { getSupabase } = await import("./supabase");
+        const supabase = getSupabase();
+        if (supabase) {
+          const { count, error } = await supabase
+            .from("visitor_events")
+            .select("*", { count: "exact", head: true });
+
+          if (!error && count !== null) {
+            // Save to localStorage as backup
+            try {
+              localStorage.setItem("uok_interaction_count", count.toString());
+            } catch (e) {
+              // Ignore localStorage errors
+            }
+            return count || 0;
+          }
+        }
+      } catch (supabaseError) {
+        // Supabase failed, continue to localStorage fallback
+        console.log("ℹ️ Supabase fetch failed, using localStorage fallback");
       }
 
-      const { count, error } = await supabase
-        .from("visitor_events")
-        .select("*", { count: "exact", head: true });
-
-      if (error) throw error;
-      return count || 0;
+      // Fallback to localStorage
+      const stored = localStorage.getItem("uok_interaction_count");
+      return stored ? parseInt(stored, 10) : 0;
     } catch (error) {
-      console.warn("⚠️ Failed to get page views (non-critical):", error);
+      console.warn("⚠️ Failed to get page views:", error);
       return 0;
     }
   }

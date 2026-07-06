@@ -11,34 +11,32 @@ export function VisitorCounter() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        // Set timeout to prevent hanging in slow networks
-        const loadWithTimeout = async <T,>(
-          promise: Promise<T>,
-          timeoutMs = 5000,
-        ): Promise<T | null> => {
-          return Promise.race([
-            promise,
-            new Promise<null>((resolve) =>
-              setTimeout(() => resolve(null), timeoutMs),
-            ),
+        // First, try to load from localStorage (permanent fallback)
+        const storedVisitors = localStorage.getItem("uok_visitor_count");
+        const storedInteractions = localStorage.getItem("uok_interaction_count");
+
+        setTotalVisitors(storedVisitors ? parseInt(storedVisitors, 10) : 0);
+        setTotalEvents(storedInteractions ? parseInt(storedInteractions, 10) : 0);
+
+        // Then try to load from Supabase in the background
+        try {
+          const [visitors, events] = await Promise.all([
+            visitorTracking.getTotalVisitors(),
+            visitorTracking.getTotalPageViews(),
           ]);
-        };
 
-        const [visitors, events] = await Promise.all([
-          loadWithTimeout(visitorTracking.getTotalVisitors()),
-          loadWithTimeout(visitorTracking.getTotalPageViews()),
-        ]);
-
-        // Use 0 as fallback if loading times out or fails
-        setTotalVisitors((visitors as number) || 0);
-        setTotalEvents((events as number) || 0);
-        setHasError(false);
+          // Update with Supabase data if available
+          if (visitors > 0) setTotalVisitors(visitors);
+          if (events > 0) setTotalEvents(events);
+          setHasError(false);
+        } catch (supabaseError) {
+          // If Supabase fails, we already have localStorage data
+          console.warn("Supabase stats failed, using localStorage:", supabaseError);
+          setHasError(false); // Don't show error since we have localStorage data
+        }
       } catch (error) {
         console.warn("Failed to load visitor stats:", error);
         setHasError(true);
-        // Keep previous values or use 0 as fallback
-        setTotalVisitors((prev) => prev || 0);
-        setTotalEvents((prev) => prev || 0);
       } finally {
         setLoading(false);
       }
@@ -47,8 +45,8 @@ export function VisitorCounter() {
     // Load on mount
     loadStats();
 
-    // Refresh stats every 30 seconds
-    const interval = setInterval(loadStats, 30000);
+    // Refresh stats every 5 seconds for real-time updates
+    const interval = setInterval(loadStats, 5000);
     return () => clearInterval(interval);
   }, []);
 
