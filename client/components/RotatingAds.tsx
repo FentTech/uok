@@ -21,7 +21,7 @@ interface RotatingAdsProps {
 export default function RotatingAds({
   ads = DEMO_ADS,
   autoRotateInterval = 2000,
-  height = "h-96",
+  height = "h-32",
   onAdClick,
 }: RotatingAdsProps) {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
@@ -95,31 +95,31 @@ export default function RotatingAds({
 
   return (
     <div
-      className={`${height} w-40 mx-auto bg-gradient-to-b from-purple-600 to-pink-500 rounded-3xl p-4 flex flex-col items-center justify-between shadow-lg relative group overflow-hidden`}
-      style={{ minHeight: height.includes("h-") ? undefined : "384px" }}
+      className={`${height} bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg p-4 flex items-center justify-between shadow-lg relative group overflow-hidden w-full`}
+      style={{ minHeight: "128px" }}
     >
       {/* Close button */}
       <button
         onClick={handleClose}
-        className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 hover:bg-white/40 rounded-full p-1"
+        className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 hover:bg-white/40 rounded p-1"
         title="Close ad"
       >
         <X size={16} className="text-white" />
       </button>
 
-      {/* Ad Content - Stable container */}
-      <div className="flex flex-col items-center gap-2 flex-1 justify-center min-h-0">
+      {/* Ad Content - Stable horizontal container */}
+      <div className="flex items-center gap-3 sm:gap-4 flex-1 pr-8 min-h-0">
         {/* Ad Image/Icon - Fixed size to prevent shift */}
-        <div className="text-5xl flex-shrink-0 select-none w-16 h-16 flex items-center justify-center">
+        <div className="text-3xl sm:text-4xl flex-shrink-0 select-none w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
           {currentAd.image}
         </div>
 
-        {/* Ad Text - Centered text for vertical layout */}
-        <div className="flex-1 min-w-0 overflow-hidden text-center">
-          <h3 className="font-bold text-white text-sm lg:text-base line-clamp-2">
+        {/* Ad Text - Horizontal layout */}
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <h3 className="font-bold text-white text-xs sm:text-sm truncate whitespace-nowrap">
             {currentAd.title}
           </h3>
-          <p className="text-white/80 text-xs lg:text-sm line-clamp-2">
+          <p className="text-white/80 text-xs line-clamp-1 whitespace-nowrap overflow-hidden text-ellipsis">
             {currentAd.description}
           </p>
         </div>
@@ -128,14 +128,14 @@ export default function RotatingAds({
       {/* CTA Button - Fixed width */}
       <button
         onClick={handleAdClick}
-        className="flex-shrink-0 bg-white/30 hover:bg-white/50 text-white font-semibold py-2 px-4 rounded-full flex items-center gap-1 text-xs lg:text-sm transition-colors whitespace-nowrap"
+        className="flex-shrink-0 bg-white/30 hover:bg-white/50 text-white font-semibold py-2 px-3 sm:px-4 rounded flex items-center gap-1 text-xs sm:text-sm transition-colors whitespace-nowrap"
       >
         {currentAd.cta}
         <ChevronRight size={16} />
       </button>
 
-      {/* Ad Indicator Dots - Fixed position - Vertical */}
-      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col gap-1.5 pointer-events-auto">
+      {/* Ad Indicator Dots - Fixed position - Bottom */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5 pointer-events-auto">
         {ads.map((_, index) => (
           <button
             key={index}
@@ -150,12 +150,12 @@ export default function RotatingAds({
         ))}
       </div>
 
-      {/* Animation indicator - Smooth progress bar - Vertical */}
-      <div className="absolute bottom-0 right-0 top-0 w-0.5 bg-white/40 overflow-hidden">
+      {/* Animation indicator - Smooth progress bar - Horizontal */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/40 overflow-hidden">
         <div
-          className="w-full bg-white"
+          className="h-full bg-white"
           style={{
-            height: "100%",
+            width: "100%",
             animation: `progress ${autoRotateInterval}ms linear forwards`,
           }}
         />
@@ -164,10 +164,10 @@ export default function RotatingAds({
       <style>{`
         @keyframes progress {
           from {
-            height: 100%;
+            width: 100%;
           }
           to {
-            height: 0%;
+            width: 0%;
           }
         }
       `}</style>

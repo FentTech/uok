@@ -2078,22 +2078,22 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6 w-full">
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 gap-1.5 sm:gap-2 mb-4 sm:mb-6 w-full">
                 {MOOD_EMOJIS.map((item) => (
                   <button
                     key={item.emoji}
                     onClick={() => handleCheckIn(item.emoji, item.mood)}
                     disabled={todayCheckInCount >= 3}
                     title={item.mood}
-                    className={`w-full aspect-square flex flex-col items-center justify-center rounded-lg transition transform ${
+                    className={`w-full min-h-16 sm:min-h-20 flex flex-col items-center justify-center rounded-lg transition transform ${
                       selectedMood === item.emoji
                         ? "bg-blue-600 shadow-lg scale-105"
                         : "bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border border-gray-300"
                     }`}
                   >
-                    <span className="text-lg sm:text-xl">{item.emoji}</span>
+                    <span className="text-base sm:text-lg">{item.emoji}</span>
                     <span
-                      className={`text-xs leading-tight truncate px-0.5 max-w-full ${
+                      className={`text-xs leading-tight truncate px-0.5 max-w-full mt-1 ${
                         selectedMood === item.emoji
                           ? "text-white"
                           : "text-gray-700"
