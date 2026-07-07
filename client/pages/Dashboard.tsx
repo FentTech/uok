@@ -93,6 +93,10 @@ const MOOD_EMOJIS = [
   { emoji: "🏠", mood: "At Home" },
   { emoji: "💻", mood: "At Work" },
   { emoji: "🎉", mood: "Celebrating" },
+  { emoji: "💪", mood: "Motivated" },
+  { emoji: "😇", mood: "Peaceful" },
+  { emoji: "🎵", mood: "Inspired Music" },
+  { emoji: "⚡", mood: "Energized" },
 ];
 
 const MOTIVATIONAL_QUOTES = [
