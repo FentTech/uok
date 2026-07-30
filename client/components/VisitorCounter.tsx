@@ -53,11 +53,11 @@ export function VisitorCounter() {
   // Always render the counter, even if data fails to load
   // This ensures consistent UI across all browsers and environments
   return (
-    <div className="fixed bottom-6 right-6 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-4 min-w-max z-40">
-      <div className="flex gap-6">
+    <div className="fixed bottom-3 left-3 right-3 sm:left-auto sm:bottom-6 sm:right-6 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4 z-40 max-w-[calc(100vw-1.5rem)] sm:max-w-none">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-6">
         {/* Total Visitors */}
-        <div className="flex items-center gap-3">
-          <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="bg-blue-100 dark:bg-blue-900/30 p-2 sm:p-3 rounded-lg flex-shrink-0">
             <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
@@ -74,8 +74,8 @@ export function VisitorCounter() {
         </div>
 
         {/* Total Page Views/Clicks */}
-        <div className="flex items-center gap-3">
-          <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="bg-blue-100 dark:bg-blue-900/30 p-2 sm:p-3 rounded-lg flex-shrink-0">
             <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>

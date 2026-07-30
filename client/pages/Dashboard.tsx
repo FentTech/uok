@@ -1770,7 +1770,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-white">
       {/* Top Navigation */}
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-2 sm:py-4 flex justify-between items-center gap-2">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-2 sm:py-4 flex flex-wrap justify-between items-center gap-2 min-w-0">
           <Link to="/" className="flex items-center gap-1 sm:gap-2 group">
             <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/50 group-hover:shadow-blue-600/100 transition flex-shrink-0">
               <Heart className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
@@ -1780,12 +1780,12 @@ export default function Dashboard() {
             </span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 min-w-0">
             {/* User Status Display */}
-            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-semibold text-blue-900">
-                {displayName} Online
+            <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-blue-50 rounded-lg border border-blue-200 min-w-0 max-w-[42vw] sm:max-w-none">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
+              <span className="text-xs sm:text-sm font-semibold text-blue-900 truncate">
+                {displayName} <span className="hidden sm:inline">Online</span>
               </span>
             </div>
 
@@ -1795,7 +1795,7 @@ export default function Dashboard() {
                 onClick={() =>
                   setNotificationDropdownOpen(!notificationDropdownOpen)
                 }
-                className="p-2 hover:bg-blue-50 rounded-lg transition text-blue-600 relative"
+                className="p-2 hover:bg-blue-50 rounded-lg transition text-blue-600 relative flex-shrink-0"
               >
                 <Bell className="w-6 h-6" />
                 {notifications.length > 0 && (
@@ -1853,7 +1853,7 @@ export default function Dashboard() {
             {/* Settings Button */}
             <button
               onClick={() => setSettingsOpen(!settingsOpen)}
-              className="p-2 hover:bg-blue-50 rounded-lg transition text-blue-600"
+              className="p-2 hover:bg-blue-50 rounded-lg transition text-blue-600 flex-shrink-0"
             >
               <Settings className="w-6 h-6" />
             </button>
@@ -1939,7 +1939,7 @@ export default function Dashboard() {
                 // Redirect to login
                 navigate("/login");
               }}
-              className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400"
+              className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400 flex-shrink-0"
               title="Logout"
             >
               <LogOut className="w-6 h-6" />
@@ -1985,7 +1985,7 @@ export default function Dashboard() {
       )}
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 min-w-0">
         {/* Welcome Card */}
         <div className="mb-6 sm:mb-8 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-600 mb-1 sm:mb-2">

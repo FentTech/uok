@@ -95,7 +95,7 @@ export default function RotatingAds({
 
   return (
     <div
-      className={`${height} bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg p-4 flex items-center justify-between shadow-lg relative group overflow-hidden w-full`}
+      className={`${height} bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-4 shadow-lg relative group overflow-hidden w-full min-w-0`}
       style={{ minHeight: "128px" }}
     >
       {/* Close button */}
@@ -108,7 +108,7 @@ export default function RotatingAds({
       </button>
 
       {/* Ad Content - Stable horizontal container */}
-      <div className="flex items-center gap-3 sm:gap-4 flex-1 pr-8 min-h-0">
+      <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0 pr-8 sm:pr-0 min-h-0">
         {/* Ad Image/Icon - Fixed size to prevent shift */}
         <div className="text-3xl sm:text-4xl flex-shrink-0 select-none w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
           {currentAd.image}
@@ -128,7 +128,7 @@ export default function RotatingAds({
       {/* CTA Button - Fixed width */}
       <button
         onClick={handleAdClick}
-        className="flex-shrink-0 bg-white/30 hover:bg-white/50 text-white font-semibold py-2 px-3 sm:px-4 rounded flex items-center gap-1 text-xs sm:text-sm transition-colors whitespace-nowrap"
+        className="w-full sm:w-auto flex-shrink-0 bg-white/30 hover:bg-white/50 text-white font-semibold py-2 px-3 sm:px-4 rounded flex items-center justify-center gap-1 text-xs sm:text-sm transition-colors whitespace-nowrap"
       >
         {currentAd.cta}
         <ChevronRight size={16} />
