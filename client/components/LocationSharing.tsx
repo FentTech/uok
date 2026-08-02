@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { LocateFixed, MapPin, Navigation, Radio, Square } from "lucide-react";
 import { getSupabase } from "../lib/supabase";
 
-type Contact = { name?: string; email?: string };
 type LocationSignal = {
   type: "location";
   from: string;
@@ -14,9 +13,9 @@ type LocationSignal = {
   timestamp: string;
 };
 
-const emailKey = (email: string) => email.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
+const LOCATION_CHANNEL = "uok-location-all-signed-in";
 
-export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
+export default function LocationSharing() {
   const userEmail = localStorage.getItem("userEmail") || "";
   const currentUser = localStorage.getItem("currentUser");
   const userName = currentUser ? JSON.parse(currentUser).name || JSON.parse(currentUser).username : "UOK user";
@@ -24,9 +23,6 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
   const [status, setStatus] = useState("");
   const [receivedLocation, setReceivedLocation] = useState<LocationSignal | null>(null);
   const watchIdRef = useRef<number | null>(null);
-  const contactsRef = useRef(contacts);
-  contactsRef.current = contacts;
-
   const sendLocation = async (position: GeolocationPosition) => {
     const supabase = getSupabase();
     if (!supabase || !userEmail) {
@@ -42,25 +38,15 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
       accuracy: Math.round(position.coords.accuracy),
       timestamp: new Date().toISOString(),
     };
-    const eligibleContacts = contactsRef.current.filter((contact) => contact.email);
-    if (eligibleContacts.length === 0) {
-      setStatus("Add a bonded member with an email address first.");
-      return;
-    }
-
-    await Promise.all(eligibleContacts.map(async (contact) => {
-      const channel = supabase.channel(`uok-location-${emailKey(contact.email!)}`);
-      await new Promise<void>((resolve) => {
-        channel.subscribe((state) => {
-          if (state === "SUBSCRIBED" || state === "CHANNEL_ERROR" || state === "TIMED_OUT") resolve();
-        });
+    const channel = supabase.channel(LOCATION_CHANNEL);
+    await new Promise<void>((resolve) => {
+      channel.subscribe((state) => {
+        if (state === "SUBSCRIBED" || state === "CHANNEL_ERROR" || state === "TIMED_OUT") resolve();
       });
-      if (channel.topic) {
-        await channel.send({ type: "broadcast", event: "location-share", payload: { ...signalBase, to: contact.email } });
-      }
-      await supabase.removeChannel(channel);
-    }));
-    setStatus(`Location shared with ${eligibleContacts.length} bonded member${eligibleContacts.length === 1 ? "" : "s"}.`);
+    });
+    await channel.send({ type: "broadcast", event: "location-share", payload: { ...signalBase, to: "all-signed-in-users" } });
+    await supabase.removeChannel(channel);
+    setStatus("Location shared with signed-in UOK users.");
   };
 
   const shareOnce = () => {
@@ -103,9 +89,9 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
   useEffect(() => {
     const supabase = getSupabase();
     if (!supabase || !userEmail) return;
-    const channel = supabase.channel(`uok-location-${emailKey(userEmail)}`);
+    const channel = supabase.channel(LOCATION_CHANNEL);
     channel.on("broadcast", { event: "location-share" }, ({ payload }: { payload: LocationSignal }) => {
-      if (payload.to !== userEmail || payload.type !== "location") return;
+      if (payload.from === userEmail || payload.to !== "all-signed-in-users" || payload.type !== "location") return;
       setReceivedLocation(payload);
       if (navigator.vibrate) navigator.vibrate([150, 100, 150]);
       if ("Notification" in window && Notification.permission === "granted") {
@@ -121,10 +107,10 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
   return (
     <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
       <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-emerald-900"><LocateFixed className="h-4 w-4" /> Instant location sharing</div>
-      <p className="mb-3 text-xs text-emerald-800">Share your precise GPS position with bonded members in real time. Location is sent live and is not saved as a permanent history.</p>
+      <p className="mb-3 text-xs text-emerald-800">Share your precise GPS position with signed-in UOK users in real time. Location is sent live and is not saved as a permanent history.</p>
       <div className="flex flex-wrap gap-2">
-        <button onClick={shareOnce} disabled={contacts.length === 0} className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"><MapPin className="h-3.5 w-3.5" />Share once</button>
-        {!sharing ? <button onClick={startLiveSharing} disabled={contacts.length === 0} className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"><Radio className="h-3.5 w-3.5" />Start live sharing</button> : <button onClick={stopLiveSharing} className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"><Square className="h-3.5 w-3.5" />Stop sharing</button>}
+        <button onClick={shareOnce} className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"><MapPin className="h-3.5 w-3.5" />Share once</button>
+        {!sharing ? <button onClick={startLiveSharing} className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"><Radio className="h-3.5 w-3.5" />Start live sharing</button> : <button onClick={stopLiveSharing} className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"><Square className="h-3.5 w-3.5" />Stop sharing</button>}
       </div>
       {status && <p className="mt-2 text-xs text-emerald-800">{status}</p>}
       {receivedLocation && <div className="mt-3 rounded-lg border border-emerald-200 bg-white p-3"><p className="text-xs font-semibold text-slate-800"><Navigation className="mr-1 inline h-3.5 w-3.5 text-emerald-600" />{receivedLocation.name} shared a location</p><p className="mt-1 text-xs text-slate-600">Accuracy: approximately {receivedLocation.accuracy} metres</p><a className="mt-2 inline-block text-xs font-semibold text-blue-700 underline" target="_blank" rel="noreferrer" href={`https://www.google.com/maps?q=${receivedLocation.latitude},${receivedLocation.longitude}`}>Open precise location on map</a></div>}

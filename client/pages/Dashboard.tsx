@@ -2375,44 +2375,7 @@ export default function Dashboard() {
 
             {/* Rotating Featured Ads */}
             <RotatingAds />
-
-            {/* Inspiring Art Gallery */}
-            <div className="mt-8 sm:mt-10">
-              <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4 sm:mb-6">
-                🎨 Daily Inspiration
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-                {/* Wellness Art 1 - Nature Mindfulness */}
-                <div className="bg-gradient-to-br from-emerald-400 via-green-400 to-teal-500 rounded-lg sm:rounded-xl aspect-square flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer group overflow-hidden">
-                  <div className="text-6xl group-hover:scale-110 transition">🌿</div>
-                </div>
-
-                {/* Wellness Art 2 - Meditation Peace */}
-                <div className="bg-gradient-to-br from-purple-300 via-indigo-400 to-blue-500 rounded-lg sm:rounded-xl aspect-square flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer group overflow-hidden">
-                  <div className="text-6xl group-hover:scale-110 transition">🧘</div>
-                </div>
-
-                {/* Wellness Art 3 - Health & Fitness */}
-                <div className="bg-gradient-to-br from-orange-300 via-red-400 to-pink-500 rounded-lg sm:rounded-xl aspect-square flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer group overflow-hidden">
-                  <div className="text-6xl group-hover:scale-110 transition">🏃</div>
-                </div>
-
-                {/* Wellness Art 4 - Sleep & Rest */}
-                <div className="bg-gradient-to-br from-slate-400 via-blue-400 to-purple-600 rounded-lg sm:rounded-xl aspect-square flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer group overflow-hidden">
-                  <div className="text-6xl group-hover:scale-110 transition">😴</div>
-                </div>
-
-                {/* Wellness Art 5 - Joy & Happiness */}
-                <div className="bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-400 rounded-lg sm:rounded-xl aspect-square flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer group overflow-hidden">
-                  <div className="text-6xl group-hover:scale-110 transition">🌞</div>
-                </div>
-
-                {/* Wellness Art 6 - Growth & Progress */}
-                <div className="bg-gradient-to-br from-lime-300 via-emerald-400 to-cyan-500 rounded-lg sm:rounded-xl aspect-square flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer group overflow-hidden">
-                  <div className="text-6xl group-hover:scale-110 transition">🌱</div>
-                </div>
-              </div>
-            </div>
+            <LocationSharing />
 
             {/* Pre-Roll Ad for Media Viewing */}
             {showPreRollAd && (
@@ -2623,7 +2586,6 @@ export default function Dashboard() {
               </div>
 
               <VideoCall contacts={bondedContacts} />
-              <LocationSharing contacts={bondedContacts} />
 
               <Link
                 to="/bond-contacts"
