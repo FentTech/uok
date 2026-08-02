@@ -7,6 +7,7 @@ export function VisitorCounter() {
   const [totalEvents, setTotalEvents] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -53,8 +54,12 @@ export function VisitorCounter() {
   // Always render the counter, even if data fails to load
   // This ensures consistent UI across all browsers and environments
   return (
-    <div className="fixed bottom-3 left-3 right-3 sm:left-auto sm:bottom-6 sm:right-6 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4 z-40 max-w-[calc(100vw-1.5rem)] sm:max-w-none">
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-6">
+    <div className={`fixed bottom-3 right-3 sm:bottom-6 sm:right-6 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-40 ${expanded ? "p-3 sm:p-4" : "p-0"}`}>
+      <button onClick={() => setExpanded((value) => !value)} className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800" aria-expanded={expanded} title="Show visitor statistics">
+        <Users className="h-4 w-4 text-blue-600" />
+        <span>{loading ? "..." : totalVisitors.toLocaleString("en-US")}</span>
+      </button>
+      {expanded && <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
         {/* Total Visitors */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="bg-blue-100 dark:bg-blue-900/30 p-2 sm:p-3 rounded-lg flex-shrink-0">
@@ -90,7 +95,7 @@ export function VisitorCounter() {
             </p>
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

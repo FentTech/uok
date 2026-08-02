@@ -14,6 +14,7 @@ import { VisitorCounter } from "./components/VisitorCounter";
 import Index from "./pages/Index";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import SetupContacts from "./pages/SetupContacts";
 import Dashboard from "./pages/Dashboard";
 import BondContacts from "./pages/BondContacts";
@@ -207,6 +208,7 @@ export default function App() {
               <Route path="/" element={<Index />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/setup-contacts" element={<SetupContacts />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/bond-contacts" element={<BondContacts />} />

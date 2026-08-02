@@ -24,6 +24,7 @@ import {
 import { moodSongs } from "../data/songs";
 import RotatingAds from "../components/RotatingAds";
 import MediaPreRollAd from "../components/MediaPreRollAd";
+import VideoCall from "../components/VideoCall";
 import { analyticsService } from "../lib/analytics";
 import { moodSuggestionsService } from "../lib/moodSuggestions";
 import { audioUtils } from "../lib/audioUtils";
@@ -2619,6 +2620,8 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
+
+              <VideoCall contacts={bondedContacts} />
 
               <Link
                 to="/bond-contacts"
