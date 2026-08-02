@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Mic, MicOff, Phone, PhoneCall, Video, VideoOff, X } from "lucide-react";
 import { getSupabase } from "../lib/supabase";
-import { audioUtils } from "../lib/audioUtils";
 
 type Contact = { name?: string; email?: string };
 type Signal = { type: string; callId: string; from: string; to: string; sdp?: RTCSessionDescriptionInit; candidate?: RTCIceCandidateInit; name?: string; mode?: "audio" | "video" };
@@ -28,10 +27,55 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const ringtoneRef = useRef<number | null>(null);
+  const ringtoneContextRef = useRef<AudioContext | null>(null);
+  const ringtoneOscillatorRef = useRef<OscillatorNode | null>(null);
+  const ringtoneGainRef = useRef<GainNode | null>(null);
+  const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
 
   const stopRingtone = () => {
     if (ringtoneRef.current) window.clearInterval(ringtoneRef.current);
     ringtoneRef.current = null;
+    try {
+      ringtoneOscillatorRef.current?.stop();
+    } catch {
+      // The oscillator may already be stopped.
+    }
+    ringtoneOscillatorRef.current = null;
+    ringtoneGainRef.current?.disconnect();
+    ringtoneGainRef.current = null;
+  };
+
+  const startRingtone = () => {
+    stopRingtone();
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const context = ringtoneContextRef.current || new AudioContextClass();
+      ringtoneContextRef.current = context;
+      void context.resume();
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = 720;
+      gain.gain.value = 0;
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
+      ringtoneOscillatorRef.current = oscillator;
+      ringtoneGainRef.current = gain;
+      const pulse = () => {
+        const now = context.currentTime;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(0.16, now + 0.04);
+        gain.gain.setValueAtTime(0.16, now + 0.32);
+        gain.gain.linearRampToValueAtTime(0.0001, now + 0.38);
+      };
+      pulse();
+      ringtoneRef.current = window.setInterval(pulse, 900);
+    } catch (error) {
+      console.warn("Call ringtone could not start:", error);
+    }
   };
 
   const send = (signal: Omit<Signal, "from">) => {
@@ -60,6 +104,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     const stream = await navigator.mediaDevices.getUserMedia({ video: mode === "video", audio: true });
     localStreamRef.current = stream;
     if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+    pendingCandidatesRef.current = [];
     const peer = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
     peerRef.current = peer;
     remoteStreamRef.current = new MediaStream();
@@ -82,6 +127,9 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     try {
       const peer = await createPeer(signal.callId, signal.from, signal.mode || "video");
       await peer.setRemoteDescription(new RTCSessionDescription(signal.sdp!));
+      for (const candidate of pendingCandidatesRef.current.splice(0)) {
+        await peer.addIceCandidate(new RTCIceCandidate(candidate));
+      }
       const answer = await peer.createAnswer();
       await peer.setLocalDescription(answer);
       send({ type: "answer", callId: signal.callId, to: signal.from, sdp: answer });
@@ -100,6 +148,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     setCallId(id);
     callIdRef.current = id;
     setCallState("calling");
+    startRingtone();
     try {
       const peer = await createPeer(id, contact.email, mode);
       const offer = await peer.createOffer();
@@ -119,13 +168,21 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
       if (payload.to !== userEmail) return;
       if (payload.type === "invite") {
         setIncoming(payload);
-        ringtoneRef.current = window.setInterval(() => audioUtils.playBeep(740, 180), 1100);
+        startRingtone();
       } else if (payload.callId !== callIdRef.current) return;
       if (payload.type === "answer" && peerRef.current && payload.sdp) {
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+        for (const candidate of pendingCandidatesRef.current.splice(0)) {
+          await peerRef.current.addIceCandidate(new RTCIceCandidate(candidate));
+        }
+        stopRingtone();
         setCallState("connected");
-      } else if (payload.type === "ice" && peerRef.current && payload.candidate) {
-        await peerRef.current.addIceCandidate(new RTCIceCandidate(payload.candidate));
+      } else if (payload.type === "ice" && payload.candidate) {
+        if (peerRef.current?.remoteDescription) {
+          await peerRef.current.addIceCandidate(new RTCIceCandidate(payload.candidate));
+        } else {
+          pendingCandidatesRef.current.push(payload.candidate);
+        }
       } else if (payload.type === "end") {
         cleanup(false);
       }
@@ -144,9 +201,9 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
         {!canCall && <p className="mt-2 text-xs text-amber-700">Log in with your account email to place calls.</p>}
       </div>
 
-      {incoming && <div className="fixed inset-x-3 top-20 z-[60] mx-auto max-w-sm rounded-2xl border border-blue-200 bg-white p-4 shadow-2xl"><div className="flex items-center gap-3"><div className="rounded-full bg-green-100 p-3 text-green-700"><PhoneCall className="h-5 w-5" /></div><div className="min-w-0 flex-1"><p className="font-bold text-slate-900">Incoming video call</p><p className="truncate text-sm text-slate-600">{incoming.name || incoming.from}</p></div></div><div className="mt-4 flex gap-2"><button onClick={acceptCall} className="flex-1 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white"><Check className="mr-1 inline h-4 w-4" />Answer</button><button onClick={() => { stopRingtone(); send({ type: "end", callId: incoming.callId, to: incoming.from }); setIncoming(null); }} className="flex-1 rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white"><X className="mr-1 inline h-4 w-4" />Decline</button></div></div>}
+      {incoming && <div className="fixed inset-x-3 top-20 z-[60] mx-auto max-w-sm rounded-2xl border border-blue-200 bg-white p-4 shadow-2xl"><div className="flex items-center gap-3"><div className="rounded-full bg-green-100 p-3 text-green-700"><PhoneCall className="h-5 w-5" /></div><div className="min-w-0 flex-1"><p className="font-bold text-slate-900">Incoming {incoming.mode === "audio" ? "call" : "video call"}</p><p className="truncate text-sm text-slate-600">{incoming.name || incoming.from}</p></div></div><div className="mt-4 flex gap-2"><button onClick={acceptCall} className="flex-1 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white"><Check className="mr-1 inline h-4 w-4" />Answer</button><button onClick={() => { stopRingtone(); send({ type: "end", callId: incoming.callId, to: incoming.from }); setIncoming(null); }} className="flex-1 rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white"><X className="mr-1 inline h-4 w-4" />Decline</button></div></div>}
 
-      {callState !== "idle" && <div className="fixed inset-3 z-50 flex flex-col overflow-hidden rounded-2xl bg-slate-950 shadow-2xl sm:inset-8"><div className="flex items-center justify-between p-3 text-white"><span className="text-sm font-semibold">{callState === "calling" ? `Calling ${activeContact?.name || activeContact?.email}…` : `Connected to ${activeContact?.name || activeContact?.email}`}</span><button onClick={() => cleanup()}><X /></button></div><div className="relative flex min-h-0 flex-1 items-center justify-center bg-black"><video ref={remoteVideoRef} autoPlay playsInline className="h-full w-full object-contain" /><video ref={localVideoRef} autoPlay muted playsInline className="absolute bottom-4 right-4 h-28 w-40 rounded-lg border border-white object-cover sm:h-36 sm:w-52" /></div>{error && <p className="bg-red-900 px-3 py-2 text-center text-xs text-red-100">{error}</p>}<div className="flex justify-center gap-3 p-3"><button onClick={() => { const tracks = localStreamRef.current?.getAudioTracks() || []; tracks.forEach((track) => track.enabled = muted); setMuted(!muted); }} className="rounded-full bg-white/10 p-3 text-white">{muted ? <MicOff /> : <Mic />}</button><button onClick={() => { const tracks = localStreamRef.current?.getVideoTracks() || []; tracks.forEach((track) => track.enabled = cameraOff); setCameraOff(!cameraOff); }} className="rounded-full bg-white/10 p-3 text-white">{cameraOff ? <VideoOff /> : <Video />}</button><button onClick={() => cleanup()} className="rounded-full bg-red-600 p-3 text-white"><Phone /></button></div></div>}
+      {callState !== "idle" && <div className="fixed inset-3 z-50 flex flex-col overflow-hidden rounded-2xl bg-slate-950 shadow-2xl sm:inset-8"><div className="flex items-center justify-between p-3 text-white"><span className="text-sm font-semibold">{callState === "calling" ? `${callMode === "audio" ? "Calling" : "Video calling"} ${activeContact?.name || activeContact?.email}…` : `${callMode === "audio" ? "Call" : "Video call"} connected to ${activeContact?.name || activeContact?.email}`}</span><button onClick={() => cleanup()}><X /></button></div><div className="relative flex min-h-0 flex-1 items-center justify-center bg-black">{callMode === "video" ? <><video ref={remoteVideoRef} autoPlay playsInline className="h-full w-full object-contain" /><video ref={localVideoRef} autoPlay muted playsInline className="absolute bottom-4 right-4 h-28 w-40 rounded-lg border border-white object-cover sm:h-36 sm:w-52" /></> : <div className="text-center text-white"><PhoneCall className="mx-auto mb-3 h-12 w-12" /><p>Audio call in progress</p></div>}</div>{error && <p className="bg-red-900 px-3 py-2 text-center text-xs text-red-100">{error}</p>}<div className="flex justify-center gap-3 p-3"><button onClick={() => { const tracks = localStreamRef.current?.getAudioTracks() || []; tracks.forEach((track) => track.enabled = muted); setMuted(!muted); }} className="rounded-full bg-white/10 p-3 text-white">{muted ? <MicOff /> : <Mic />}</button><button onClick={() => { const tracks = localStreamRef.current?.getVideoTracks() || []; tracks.forEach((track) => track.enabled = cameraOff); setCameraOff(!cameraOff); }} className="rounded-full bg-white/10 p-3 text-white">{cameraOff ? <VideoOff /> : <Video />}</button><button onClick={() => cleanup()} className="rounded-full bg-red-600 p-3 text-white"><Phone /></button></div></div>}
     </>
   );
 }
