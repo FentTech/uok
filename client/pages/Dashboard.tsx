@@ -2375,7 +2375,7 @@ export default function Dashboard() {
 
             {/* Rotating Featured Ads */}
             <RotatingAds />
-            <LocationSharing />
+            <LocationSharing contacts={bondedContacts} />
 
             {/* Pre-Roll Ad for Media Viewing */}
             {showPreRollAd && (
