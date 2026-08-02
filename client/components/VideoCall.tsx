@@ -78,6 +78,18 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     }
   };
 
+  const unlockAudio = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const context = ringtoneContextRef.current || new AudioContextClass();
+      ringtoneContextRef.current = context;
+      if (context.state === "suspended") void context.resume();
+    } catch (error) {
+      console.warn("Call audio could not be unlocked:", error);
+    }
+  };
+
   const send = (signal: Omit<Signal, "from">) => {
     channelRef.current?.send({ type: "broadcast", event: "call-signal", payload: { ...signal, from: userEmail } });
   };
@@ -161,6 +173,16 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   };
 
   useEffect(() => {
+    const handleAudioUnlock = () => unlockAudio();
+    window.addEventListener("pointerdown", handleAudioUnlock, { passive: true });
+    window.addEventListener("keydown", handleAudioUnlock, { passive: true });
+    return () => {
+      window.removeEventListener("pointerdown", handleAudioUnlock);
+      window.removeEventListener("keydown", handleAudioUnlock);
+    };
+  }, []);
+
+  useEffect(() => {
     const supabase = getSupabase();
     if (!supabase || !userEmail) return;
     const channel = supabase.channel(`uok-call-${emailKey(userEmail)}`);
@@ -169,6 +191,14 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
       if (payload.type === "invite") {
         setIncoming(payload);
         startRingtone();
+        if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 500]);
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification(payload.mode === "audio" ? "Incoming UOK call" : "Incoming UOK video call", {
+            body: `${payload.name || payload.from} is calling you`,
+            icon: "/favicon.ico",
+            tag: `uok-call-${payload.callId}`,
+          });
+        }
       } else if (payload.callId !== callIdRef.current) return;
       if (payload.type === "answer" && peerRef.current && payload.sdp) {
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(payload.sdp));
