@@ -55,9 +55,9 @@ export function VisitorCounter() {
   // This ensures consistent UI across all browsers and environments
   return (
     <div className={`fixed bottom-3 right-3 sm:bottom-6 sm:right-6 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-40 ${expanded ? "p-3 sm:p-4" : "p-0"}`}>
-      <button onClick={() => setExpanded((value) => !value)} className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800" aria-expanded={expanded} title="Show visitor statistics">
+      <button onClick={() => setExpanded((value) => !value)} className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800" aria-expanded={expanded} title="Show visitor and interaction statistics">
         <Users className="h-4 w-4 text-blue-600" />
-        <span>{loading ? "..." : totalVisitors.toLocaleString("en-US")}</span>
+        <span className="sr-only">{loading ? "Loading visitor statistics" : `${totalVisitors.toLocaleString("en-US")} visitors`}</span>
       </button>
       {expanded && <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
         {/* Total Visitors */}
