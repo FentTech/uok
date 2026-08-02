@@ -25,6 +25,7 @@ import { moodSongs } from "../data/songs";
 import RotatingAds from "../components/RotatingAds";
 import MediaPreRollAd from "../components/MediaPreRollAd";
 import VideoCall from "../components/VideoCall";
+import LocationSharing from "../components/LocationSharing";
 import { analyticsService } from "../lib/analytics";
 import { moodSuggestionsService } from "../lib/moodSuggestions";
 import { audioUtils } from "../lib/audioUtils";
@@ -2622,6 +2623,7 @@ export default function Dashboard() {
               </div>
 
               <VideoCall contacts={bondedContacts} />
+              <LocationSharing contacts={bondedContacts} />
 
               <Link
                 to="/bond-contacts"
