@@ -378,6 +378,21 @@ export const supabaseUserSyncService = {
     }
   },
 
+  appendSharedMoment: async (userEmail: string, moment: any): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return false;
+      const { data } = await supabase.from("shared_moments").select("shared_moments").eq("user_email", userEmail).maybeSingle();
+      const current = Array.isArray(data?.shared_moments) ? data.shared_moments : [];
+      const { error } = await supabase.from("shared_moments").upsert({ user_email: userEmail, shared_moments: [moment, ...current].slice(0, 100), updated_at: new Date().toISOString() }, { onConflict: "user_email" });
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to publish shared moment:", error);
+      return false;
+    }
+  },
+
   // Fetch shared moments from Supabase
   fetchSharedMoments: async (userEmail: string): Promise<any[]> => {
     try {
@@ -863,6 +878,22 @@ export const supabaseBondService = {
 
 // Media Sync Service - Store and sync media metadata to Supabase
 export const supabaseMediaService = {
+  uploadMediaFile: async (file: File, mediaId: string, userEmail: string): Promise<string | null> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return null;
+      const safeEmail = userEmail.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `${safeEmail}/${mediaId}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      const { error } = await supabase.storage.from("uok-media").upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      const { data } = supabase.storage.from("uok-media").getPublicUrl(path);
+      return data.publicUrl;
+    } catch (error) {
+      console.warn("⚠️ Shared media upload failed:", error);
+      return null;
+    }
+  },
+
   // Sync media to Supabase database for persistence
   syncMedia: async (userEmail: string, media: any[]): Promise<boolean> => {
     try {

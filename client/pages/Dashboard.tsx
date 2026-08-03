@@ -1378,6 +1378,29 @@ export default function Dashboard() {
       }
       const userName =
         (currentUser as any).name || (currentUser as any).username || "User";
+      const ownerEmail = localStorage.getItem("userEmail") || "";
+      if (ownerEmail) {
+        import("../lib/supabase").then(({ supabaseUserSyncService }) =>
+          supabaseUserSyncService.appendSharedMoment(ownerEmail, {
+            id: `memory-${item.id}`,
+            username: userName,
+            email: ownerEmail,
+            avatar: "👤",
+            mood: item.mood || "Shared memory",
+            moodEmoji: "📸",
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleDateString(),
+            caption: `${userName} shared a ${item.type}`,
+            mediaUrl: item.url,
+            mediaType: item.type,
+            likes: 0,
+            comments: [],
+            visibility: "bonded-contacts",
+            sharedWith: contactEmails,
+            createdAt: new Date().toISOString(),
+          }),
+        ).catch((error) => console.warn("⚠️ Failed to publish shared media:", error));
+      }
 
       // Send persistent notifications to selected contacts through Supabase
       selectedContactsToShare.forEach((contactId) => {
@@ -1498,11 +1521,14 @@ export default function Dashboard() {
             mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
             visibility: "personal",
           })
-            .then(({ url }) => {
+            .then(async ({ url }) => {
+              const ownerEmail = localStorage.getItem("userEmail") || "user";
+              const cloudUrl = await import("../lib/supabase").then(({ supabaseMediaService }) => supabaseMediaService.uploadMediaFile(file, mediaId, ownerEmail));
+              const shareUrl = cloudUrl || url;
               // Save reference to persistent storage
               const savedMedia = mediaStorage.add({
                 type: "photo",
-                url: mediaId, // Store ID instead of URL
+                url: shareUrl,
                 timestamp,
                 date,
                 mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
@@ -1511,7 +1537,7 @@ export default function Dashboard() {
               });
 
               // Update local state
-              setMediaItems((prev) => [{ ...savedMedia, url } as any, ...prev]);
+              setMediaItems((prev) => [{ ...savedMedia, url: shareUrl } as any, ...prev]);
 
               // Sync to Supabase (fire and forget)
               const userEmail = localStorage.getItem("userEmail");
@@ -1607,11 +1633,14 @@ export default function Dashboard() {
               mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
               visibility: "personal",
             })
-              .then(({ url }) => {
+              .then(async ({ url }) => {
+                const ownerEmail = localStorage.getItem("userEmail") || "user";
+                const cloudUrl = await import("../lib/supabase").then(({ supabaseMediaService }) => supabaseMediaService.uploadMediaFile(file, mediaId, ownerEmail));
+                const shareUrl = cloudUrl || url;
                 // Save reference to persistent storage
                 const savedMedia = mediaStorage.add({
                   type: "video",
-                  url: mediaId, // Store ID instead of URL
+                  url: shareUrl,
                   timestamp,
                   date,
                   mood: MOOD_EMOJIS.find((m) => m.emoji === selectedMood)?.mood,
@@ -1621,7 +1650,7 @@ export default function Dashboard() {
 
                 // Update local state
                 setMediaItems((prev) => [
-                  { ...savedMedia, url } as any,
+                  { ...savedMedia, url: shareUrl } as any,
                   ...prev,
                 ]);
 
