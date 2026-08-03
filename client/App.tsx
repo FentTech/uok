@@ -32,6 +32,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Messenger from "./pages/Messenger";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -211,6 +212,7 @@ export default function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/setup-contacts" element={<SetupContacts />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/messenger" element={<Messenger />} />
               <Route path="/bond-contacts" element={<BondContacts />} />
               <Route
                 path="/bond-notifications"

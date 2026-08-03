@@ -18,6 +18,7 @@ import {
   Send,
   X,
   Bell,
+  MessageCircle,
   Zap,
   Lock,
 } from "lucide-react";
@@ -1810,6 +1811,11 @@ export default function Dashboard() {
                 {displayName} <span className="hidden sm:inline">Online</span>
               </span>
             </div>
+
+            <Link to="/messenger" className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50 sm:px-3 sm:py-2 sm:text-sm" title="Open bonded messenger">
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">Messenger</span>
+            </Link>
 
             {/* Notifications Dropdown */}
             <div className="relative">
