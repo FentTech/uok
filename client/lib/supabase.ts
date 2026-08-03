@@ -523,6 +523,34 @@ export const supabaseNotificationService = {
     }
   },
 
+  sendChatMessage: async (
+    recipientEmail: string,
+    senderEmail: string,
+    senderName: string,
+    message: string,
+    kind: "text" | "feeling",
+  ): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return false;
+      const { error } = await supabase.from("notifications").insert([{
+        recipient_email: recipientEmail,
+        sender_email: senderEmail,
+        sender_name: senderName,
+        notification_type: "message",
+        title: `${senderName} sent you a message`,
+        message,
+        metadata: { chat_message: true, kind, timestamp: new Date().toISOString() },
+        read: false,
+      }]);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to save chat message:", error);
+      return false;
+    }
+  },
+
   // Fetch user's notifications
   getNotifications: async (
     userEmail: string,

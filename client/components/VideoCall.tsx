@@ -21,7 +21,6 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
   const [error, setError] = useState("");
-  const channelRef = useRef<any>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const remoteStreamRef = useRef<MediaStream | null>(null);
@@ -91,8 +90,15 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     }
   };
 
-  const send = (signal: Omit<Signal, "from">) => {
-    channelRef.current?.send({ type: "broadcast", event: "call-signal", payload: { ...signal, from: userEmail } });
+  const send = async (signal: Omit<Signal, "from">) => {
+    const supabase = getSupabase();
+    if (!supabase || !signal.to) return;
+    const channel = supabase.channel(`uok-call-${emailKey(signal.to)}`);
+    await new Promise<void>((resolve) => channel.subscribe((state) => {
+      if (state === "SUBSCRIBED" || state === "CHANNEL_ERROR" || state === "TIMED_OUT") resolve();
+    }));
+    await channel.send({ type: "broadcast", event: "call-signal", payload: { ...signal, from: userEmail } });
+    await supabase.removeChannel(channel);
   };
 
   const cleanup = (notify = true) => {
@@ -218,7 +224,6 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
         cleanup(false);
       }
     }).subscribe();
-    channelRef.current = channel;
     return () => { stopRingtone(); channel.unsubscribe(); cleanup(false); };
   }, [userEmail]);
 
