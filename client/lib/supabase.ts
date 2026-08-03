@@ -646,9 +646,9 @@ export const supabaseBondService = {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
       const { data, error } = await supabase
-        .from("bond_relationships")
+        .from("bonded_contacts")
         .select("id", { count: "exact", head: true })
-        .eq("bonding_user_email", userEmail)
+        .eq("user_email", userEmail)
         .gt("created_at", oneHourAgo);
 
       if (error) {
@@ -697,29 +697,16 @@ export const supabaseBondService = {
         return false;
       }
 
-      // Create a bond record that shows User A has bonded with User B
-      const { error } = await supabase.from("bond_relationships").insert([
-        {
-          bonding_user_name: bondingUserName,
-          bonding_user_email: bondingUserEmail,
-          contact_name: contactName,
-          contact_email: contactEmail || null,
-          bond_code: bondCode,
-          status: "active",
-          created_at: new Date().toISOString(),
-        },
-      ]);
-
-      if (error) {
-        // Handle RLS violations
-        if (error.code === "42501") {
-          console.warn(
-            "⚠️ Access denied: You do not have permission to create this bond",
-          );
-          return false;
-        }
-        throw error;
-      }
+      const contacts = await supabaseUserSyncService.fetchBondedContacts(bondingUserEmail);
+      const nextContact = {
+        id: `bond_${Date.now()}`,
+        name: contactName,
+        email: contactEmail || "",
+        bondCode,
+        status: "active",
+        createdAt: new Date().toISOString(),
+      };
+      return supabaseUserSyncService.syncBondedContacts(bondingUserEmail, [...contacts, nextContact]);
 
       console.log(
         `✅ Bond created in Supabase: ${bondingUserName} -> ${contactName}`,
@@ -741,10 +728,10 @@ export const supabaseBondService = {
       }
 
       const { data, error } = await supabase
-        .from("bond_relationships")
-        .select("*")
-        .eq("bonding_user_email", userEmail)
-        .order("created_at", { ascending: false });
+        .from("bonded_contacts")
+        .select("contacts")
+        .eq("user_email", userEmail)
+        .maybeSingle();
 
       if (error) {
         // Handle RLS violations
