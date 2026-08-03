@@ -20,6 +20,7 @@ import {
   type StoredSharedMoment,
   type StoredComment,
 } from "../lib/dataStorage";
+import { supabaseUserSyncService } from "../lib/supabase";
 
 interface Comment {
   id: string;
@@ -75,6 +76,7 @@ export default function SharedMemories() {
 
   // Load bonded contacts and shared moments on mount
   useEffect(() => {
+    const loadSharedMoments = async () => {
     // Load bonded contacts
     let bondedContactsList: any[] = [];
     const bondedContactsStr = localStorage.getItem("bondedContacts");
@@ -91,8 +93,12 @@ export default function SharedMemories() {
     const currentUserEmail = localStorage.getItem("userEmail") || "";
     const bondedEmails = bondedContactsList.map((c: any) => c.email);
 
-    // Load shared moments from persistent storage
-    const storedMoments = sharedMomentsStorage.getActive();
+    // Merge local cache with shared moments synced by every user
+    const localMoments = sharedMomentsStorage.getActive();
+    const remoteMoments = currentUserEmail
+      ? await supabaseUserSyncService.fetchSharedMoments(currentUserEmail)
+      : [];
+    const storedMoments = [...localMoments, ...remoteMoments].filter((moment, index, all) => all.findIndex((candidate) => candidate.id === moment.id) === index);
 
     // Filter moments based on visibility for the current user
     const visibleMoments = storedMoments.filter((m) => {
@@ -153,6 +159,8 @@ export default function SharedMemories() {
       {},
     );
     setLikedMemories(initialLikes);
+    };
+    void loadSharedMoments();
   }, []);
 
   // Load featured ads from localStorage (only images, only verified payments)

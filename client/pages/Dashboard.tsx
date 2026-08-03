@@ -1168,6 +1168,15 @@ export default function Dashboard() {
 
             // Send alerts to bonded contacts
             bondedContacts.forEach((contact: any) => {
+              if (contact.email) {
+                import("../lib/supabase").then(({ supabaseNotificationService }) =>
+                  supabaseNotificationService.sendMissedCheckInNotification(
+                    contact.email,
+                    localStorage.getItem("userEmail") || "",
+                    (JSON.parse(localStorage.getItem("currentUser") || "{}").name || "Your bonded member"),
+                  ),
+                ).catch((error) => console.warn("⚠️ Failed to deliver missed alert:", error));
+              }
               console.log("🚨 MISSED CHECK-IN ALERT sent to bonded contact:", {
                 recipient: contact.name,
                 bondCode: contact.bondCode,
@@ -1350,12 +1359,12 @@ export default function Dashboard() {
       }
 
       // Update media in storage with sharing info
-      const contactNames = selectedContactsToShare
-        .map((id) => bondedContacts.find((c) => c.id === id)?.name)
+      const contactEmails = selectedContactsToShare
+        .map((id) => bondedContacts.find((c) => c.id === id)?.email)
         .filter(Boolean);
 
       mediaStorage.update(item.id, {
-        sharedWith: contactNames,
+        sharedWith: contactEmails,
         visibility: "bonded-contacts",
       });
 
@@ -1369,8 +1378,19 @@ export default function Dashboard() {
       const userName =
         (currentUser as any).name || (currentUser as any).username || "User";
 
-      // Send notifications to selected contacts via shared localStorage
+      // Send persistent notifications to selected contacts through Supabase
       selectedContactsToShare.forEach((contactId) => {
+        const selectedContact = bondedContacts.find((c) => c.id === contactId);
+        if (selectedContact?.email) {
+          import("../lib/supabase").then(({ supabaseNotificationService }) =>
+            supabaseNotificationService.sendMediaSharedNotification(
+              selectedContact.email,
+              localStorage.getItem("userEmail") || "",
+              userName,
+              item.type,
+            ),
+          ).catch((error) => console.warn("⚠️ Failed to send media notification:", error));
+        }
         const contact = bondedContacts.find((c) => c.id === contactId);
         if (contact) {
           const notificationKey = `uok_bonded_notifications_${contact.name.toLowerCase().replace(/\s+/g, "_")}`;

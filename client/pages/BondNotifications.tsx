@@ -13,6 +13,7 @@ import {
   notificationStorage,
   type StoredNotification,
 } from "../lib/dataStorage";
+import { supabaseNotificationService } from "../lib/supabase";
 
 export default function BondNotifications() {
   const navigate = useNavigate();
@@ -22,9 +23,33 @@ export default function BondNotifications() {
   >("all");
 
   useEffect(() => {
-    // Load all notifications
-    const allNotifications = notificationStorage.getAll();
-    setNotifications(allNotifications);
+    const userEmail = localStorage.getItem("userEmail") || "";
+    let active = true;
+
+    const loadNotifications = async () => {
+      const localNotifications = notificationStorage.getAll();
+      const remoteNotifications = userEmail
+        ? await supabaseNotificationService.getNotifications(userEmail)
+        : [];
+      const mappedRemote: StoredNotification[] = remoteNotifications.map((notification: any) => ({
+        id: notification.id,
+        type: notification.notification_type === "media_shared" ? "media-shared" : notification.notification_type,
+        message: notification.message,
+        timestamp: new Date(notification.created_at || Date.now()).toLocaleTimeString(),
+        date: new Date(notification.created_at || Date.now()).toLocaleDateString(),
+        fromContact: notification.sender_name,
+        read: Boolean(notification.read),
+      }));
+      const merged = [...mappedRemote, ...localNotifications].filter((item, index, all) => all.findIndex((candidate) => candidate.id === item.id) === index);
+      if (active) setNotifications(merged);
+    };
+
+    void loadNotifications();
+    const interval = window.setInterval(() => void loadNotifications(), 5000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
   }, []);
 
   const filteredNotifications = notifications.filter((n) => {
@@ -38,6 +63,7 @@ export default function BondNotifications() {
 
   const handleMarkAsRead = (id: string) => {
     notificationStorage.markAsRead(id);
+    void supabaseNotificationService.markAsRead(id);
     setNotifications(
       notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );

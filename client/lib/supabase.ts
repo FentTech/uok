@@ -388,14 +388,14 @@ export const supabaseUserSyncService = {
 
       const { data, error } = await supabase
         .from("shared_moments")
-        .select("shared_moments")
-        .eq("user_email", userEmail)
-        .single();
+        .select("shared_moments, user_email")
+        .order("updated_at", { ascending: false });
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) throw error;
 
-      console.log("📥 Fetched shared moments from Supabase");
-      return data?.shared_moments || [];
+      const moments = (data || []).flatMap((row: any) => Array.isArray(row.shared_moments) ? row.shared_moments : []);
+      console.log("📥 Fetched shared moments across users from Supabase");
+      return moments;
     } catch (error) {
       console.warn("⚠️ Failed to fetch shared moments from Supabase:", error);
       return [];
@@ -448,6 +448,32 @@ export const supabaseNotificationService = {
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       console.warn("⚠️ Failed to send check-in notification:", errorMsg);
+      return false;
+    }
+  },
+
+  sendMissedCheckInNotification: async (
+    recipientEmail: string,
+    senderEmail: string,
+    senderName: string,
+  ): Promise<boolean> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return false;
+      const { error } = await supabase.from("notifications").insert([{
+        recipient_email: recipientEmail,
+        sender_email: senderEmail,
+        sender_name: senderName,
+        notification_type: "missed",
+        title: `${senderName} missed a check-in`,
+        message: `⚠️ ${senderName} missed their scheduled check-in. Please check on them.`,
+        metadata: { timestamp: new Date().toISOString() },
+        read: false,
+      }]);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.warn("⚠️ Failed to send missed check-in notification:", error);
       return false;
     }
   },
