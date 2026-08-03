@@ -17,9 +17,10 @@ type LocationSignal = {
 const locationChannel = (email: string) => `uok-location-${email.trim().toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
 
 export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
-  const userEmail = localStorage.getItem("userEmail") || "";
   const currentUser = localStorage.getItem("currentUser");
-  const userName = currentUser ? JSON.parse(currentUser).name || JSON.parse(currentUser).username : "UOK user";
+  const userData = currentUser ? JSON.parse(currentUser) : {};
+  const userEmail = localStorage.getItem("userEmail") || userData.email || "";
+  const userName = userData.name || userData.username || "UOK user";
   const [sharing, setSharing] = useState(false);
   const [status, setStatus] = useState("");
   const [selectedEmail, setSelectedEmail] = useState("");

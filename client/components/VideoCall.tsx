@@ -8,9 +8,10 @@ type Signal = { type: string; callId: string; from: string; to: string; sdp?: RT
 const emailKey = (email: string) => email.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
 
 export default function VideoCall({ contacts }: { contacts: Contact[] }) {
-  const userEmail = localStorage.getItem("userEmail") || "";
   const user = localStorage.getItem("currentUser");
-  const userName = user ? JSON.parse(user).name || JSON.parse(user).username : "UOK user";
+  const userData = user ? JSON.parse(user) : {};
+  const userEmail = localStorage.getItem("userEmail") || userData.email || "";
+  const userName = userData.name || userData.username || "UOK user";
   const [incoming, setIncoming] = useState<Signal | null>(null);
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
   const [callId, setCallId] = useState("");
