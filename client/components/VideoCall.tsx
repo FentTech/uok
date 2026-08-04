@@ -7,10 +7,20 @@ type Signal = { type: string; callId: string; from: string; to: string; sdp?: RT
 
 const emailKey = (email: string) => email.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
 
+const configuredTurnUrls = (import.meta.env.VITE_TURN_URLS || "")
+  .split(",")
+  .map((url: string) => url.trim())
+  .filter(Boolean);
+const configuredTurnUsername = import.meta.env.VITE_TURN_USERNAME || "";
+const configuredTurnCredential = import.meta.env.VITE_TURN_CREDENTIAL || "";
+
 const iceServers: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
   { urls: "stun:stun.cloudflare.com:3478" },
+  ...(configuredTurnUrls.length && configuredTurnUsername && configuredTurnCredential
+    ? [{ urls: configuredTurnUrls, username: configuredTurnUsername, credential: configuredTurnCredential }]
+    : []),
   {
     urls: [
       "turn:openrelay.metered.ca:80",
