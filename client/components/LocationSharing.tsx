@@ -14,13 +14,14 @@ type LocationSignal = {
   timestamp: string;
 };
 
-const locationChannel = (email: string) => `uok-location-${email.trim().toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
-const locationShareId = (sender: string, recipient: string) => `${sender.trim().toLowerCase()}__${recipient.trim().toLowerCase()}`;
+const normalizeEmail = (email?: string) => (email || "").trim().toLowerCase();
+const locationChannel = (email: string) => `uok-location-${normalizeEmail(email).replace(/[^a-z0-9]/g, "-")}`;
+const locationShareId = (sender: string, recipient: string) => `${normalizeEmail(sender)}__${normalizeEmail(recipient)}`;
 
 export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
   const currentUser = localStorage.getItem("currentUser");
   const userData = currentUser ? JSON.parse(currentUser) : {};
-  const userEmail = localStorage.getItem("userEmail") || userData.email || "";
+  const userEmail = normalizeEmail(localStorage.getItem("userEmail") || userData.email);
   const userName = userData.name || userData.username || "UOK user";
   const [sharing, setSharing] = useState(false);
   const [status, setStatus] = useState("");
@@ -35,11 +36,12 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
       setStatus("Sign in to share your location.");
       return;
     }
-    if (!selectedEmail) {
+    const recipientEmail = normalizeEmail(selectedEmail);
+    if (!recipientEmail) {
       setStatus("Choose a bonded family member first.");
       return;
     }
-    const shareId = locationShareId(userEmail, selectedEmail);
+    const shareId = locationShareId(userEmail, recipientEmail);
     const signalBase = {
       type: "location" as const,
       from: userEmail,
@@ -49,27 +51,31 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
       accuracy: Math.round(position.coords.accuracy),
       timestamp: new Date().toISOString(),
     };
-    const { data: existingShare } = await supabase.from("location_shares").select("status").eq("id", shareId).maybeSingle();
-    await supabase.from("location_shares").upsert({
+    const { data: existingShare } = await (supabase.from("location_shares") as any).select("status").eq("id", shareId).maybeSingle();
+    const { error: upsertError } = await (supabase.from("location_shares") as any).upsert({
       id: shareId,
       sender_email: userEmail,
       sender_name: userName,
-      recipient_email: selectedEmail,
+      recipient_email: recipientEmail,
       latitude: signalBase.latitude,
       longitude: signalBase.longitude,
       accuracy: signalBase.accuracy,
       status: existingShare?.status === "accepted" ? "accepted" : "pending",
       updated_at: new Date().toISOString(),
     }, { onConflict: "id" });
-    const channel = supabase.channel(locationChannel(selectedEmail));
+    if (upsertError) {
+      setStatus("Location could not be saved. Please check the connection and try again.");
+      return;
+    }
+    const channel = supabase.channel(locationChannel(recipientEmail));
     await new Promise<void>((resolve) => {
       channel.subscribe((state) => {
         if (state === "SUBSCRIBED" || state === "CHANNEL_ERROR" || state === "TIMED_OUT") resolve();
       });
     });
-    await channel.send({ type: "broadcast", event: "location-share", payload: { ...signalBase, to: selectedEmail } });
+    await channel.send({ type: "broadcast", event: "location-share", payload: { ...signalBase, to: recipientEmail } });
     await supabase.removeChannel(channel);
-    setStatus(`Location request sent to ${contacts.find((contact) => contact.email === selectedEmail)?.name || selectedEmail}.`);
+    setStatus(`Location request sent to ${contacts.find((contact) => normalizeEmail(contact.email) === recipientEmail)?.name || recipientEmail}.`);
   };
 
   const shareOnce = () => {
@@ -105,7 +111,7 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
   const acceptLocation = async (location: LocationSignal) => {
     const supabase = getSupabase();
     if (supabase) {
-      await supabase.from("location_shares").update({ status: "accepted", updated_at: new Date().toISOString() }).eq("id", locationShareId(location.from, userEmail));
+      await (supabase.from("location_shares") as any).update({ status: "accepted", updated_at: new Date().toISOString() }).eq("id", locationShareId(location.from, userEmail));
     }
     acceptedFromRef.current = location.from;
     setReceivedLocation(location);
@@ -123,7 +129,11 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
     const supabase = getSupabase();
     if (!supabase || !userEmail) return;
     const loadLocationShares = async () => {
-      const { data } = await supabase.from("location_shares").select("*").eq("recipient_email", userEmail).neq("status", "ended").order("updated_at", { ascending: false }).limit(10);
+      const { data, error } = await (supabase.from("location_shares") as any).select("*").eq("recipient_email", userEmail).neq("status", "ended").order("updated_at", { ascending: false }).limit(10);
+      if (error) {
+        setStatus("Location sharing is temporarily unavailable. Please reconnect and try again.");
+        return;
+      }
       const latest = data?.[0];
       if (!latest) return;
       const location: LocationSignal = { type: "location", from: latest.sender_email, to: userEmail, name: latest.sender_name, latitude: latest.latitude, longitude: latest.longitude, accuracy: latest.accuracy, timestamp: latest.updated_at };
@@ -146,6 +156,8 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
       if ("Notification" in window && Notification.permission === "granted") {
         new Notification("UOK location shared", { body: `${payload.name} shared their live location with you`, icon: "/favicon.ico" });
       }
+    }).on("postgres_changes", { event: "*", schema: "public", table: "location_shares", filter: `recipient_email=eq.${userEmail}` }, () => {
+      void loadLocationShares();
     }).subscribe();
     return () => {
       window.clearInterval(refresh);

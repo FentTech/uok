@@ -144,15 +144,23 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     localStreamRef.current = stream;
     if (localVideoRef.current) localVideoRef.current.srcObject = stream;
     pendingCandidatesRef.current = [];
-    const peer = new RTCPeerConnection({ iceServers, iceTransportPolicy: "all" });
+    const peer = new RTCPeerConnection({ iceServers, iceTransportPolicy: "all", iceCandidatePoolSize: 10 });
     peerRef.current = peer;
     remoteStreamRef.current = new MediaStream();
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStreamRef.current;
     if (remoteAudioRef.current) remoteAudioRef.current.srcObject = remoteStreamRef.current;
     stream.getTracks().forEach((track) => peer.addTrack(track, stream));
     peer.ontrack = (event) => event.streams[0]?.getTracks().forEach((track) => remoteStreamRef.current?.addTrack(track));
+    let recoveryStarted = false;
     peer.onconnectionstatechange = () => {
-      if (peer.connectionState === "failed") setError("The mobile network could not establish a relay connection. Please try again on Wi-Fi or mobile data.");
+      if ((peer.connectionState === "disconnected" || peer.connectionState === "failed") && !recoveryStarted && peer.signalingState === "stable") {
+        recoveryStarted = true;
+        setError("Reconnecting the call through a secure internet relay…");
+        void peer.createOffer({ iceRestart: true }).then(async (offer) => {
+          await peer.setLocalDescription(offer);
+          await send({ type: "renegotiate", callId: id, to: otherEmail, sdp: offer, name: userName, mode });
+        }).catch(() => setError("The mobile network could not establish a relay connection. Please check that mobile data or Wi-Fi is on and try again."));
+      }
     };
     peer.onicecandidate = (event) => event.candidate && send({ type: "ice", callId: id, to: otherEmail, candidate: event.candidate.toJSON() });
     return peer;
@@ -240,7 +248,12 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
           });
         }
       } else if (payload.callId !== callIdRef.current) return;
-      if (payload.type === "answer" && peerRef.current && payload.sdp) {
+      if (payload.type === "renegotiate" && peerRef.current && payload.sdp) {
+        await peerRef.current.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+        const answer = await peerRef.current.createAnswer();
+        await peerRef.current.setLocalDescription(answer);
+        await send({ type: "answer", callId: payload.callId, to: payload.from, sdp: answer });
+      } else if (payload.type === "answer" && peerRef.current && payload.sdp) {
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(payload.sdp));
         for (const candidate of pendingCandidatesRef.current.splice(0)) {
           await peerRef.current.addIceCandidate(new RTCIceCandidate(candidate));

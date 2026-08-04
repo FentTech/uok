@@ -544,6 +544,7 @@ export const supabaseNotificationService = {
     senderName: string,
     message: string,
     kind: "text" | "feeling",
+    messageId?: string,
   ): Promise<boolean> => {
     try {
       const supabase = getSupabaseClient();
@@ -555,7 +556,7 @@ export const supabaseNotificationService = {
         notification_type: "message",
         title: `${senderName} sent you a message`,
         message,
-        metadata: { chat_message: true, kind, timestamp: new Date().toISOString() },
+        metadata: { chat_message: true, kind, message_id: messageId || crypto.randomUUID(), timestamp: new Date().toISOString() },
         read: false,
       }]);
       if (error) throw error;
@@ -563,6 +564,36 @@ export const supabaseNotificationService = {
     } catch (error) {
       console.warn("⚠️ Failed to save chat message:", error);
       return false;
+    }
+  },
+
+  getChatMessages: async (userEmail: string, otherEmail: string): Promise<any[]> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return [];
+      const normalizedUser = userEmail.trim().toLowerCase();
+      const normalizedOther = otherEmail.trim().toLowerCase();
+      const { data, error } = await (supabase.from("notifications") as any)
+        .select("*")
+        .or(`recipient_email.eq.${normalizedUser},sender_email.eq.${normalizedUser}`)
+        .eq("notification_type", "message")
+        .order("created_at", { ascending: true })
+        .limit(200);
+      if (error) throw error;
+      return (data || [])
+        .filter((notification: any) => notification.metadata?.chat_message && [notification.sender_email, notification.recipient_email].some((email: string) => email?.trim().toLowerCase() === normalizedOther))
+        .map((notification: any) => ({
+          id: notification.metadata.message_id || String(notification.id),
+          from: (notification.sender_email || "").trim().toLowerCase(),
+          fromName: notification.sender_name || notification.sender_email,
+          to: (notification.recipient_email || "").trim().toLowerCase(),
+          text: notification.message,
+          timestamp: notification.created_at || new Date().toISOString(),
+          kind: notification.metadata.kind || "text",
+        }));
+    } catch (error) {
+      console.warn("⚠️ Failed to fetch chat history:", error);
+      return [];
     }
   },
 
