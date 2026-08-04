@@ -26,8 +26,16 @@ export default function BondContacts() {
   });
 
   const [bondedContacts, setBondedContacts] = useState<BondedContact[]>(() => {
-    const stored = localStorage.getItem("bondedContacts");
-    return stored ? JSON.parse(stored) : [];
+    try {
+      const stored = localStorage.getItem("bondedContacts");
+      const parsed = stored ? JSON.parse(stored) : [];
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter((contact: any) => contact && typeof contact.name === "string" && contact.name.trim());
+    } catch (error) {
+      console.warn("Invalid bonded contacts were cleared:", error);
+      localStorage.removeItem("bondedContacts");
+      return [];
+    }
   });
 
   const [scanMode, setScanMode] = useState(false);
