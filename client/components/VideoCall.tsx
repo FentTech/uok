@@ -7,6 +7,19 @@ type Signal = { type: string; callId: string; from: string; to: string; sdp?: RT
 
 const emailKey = (email: string) => email.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
 
+const iceServers: RTCIceServer[] = [
+  { urls: "stun:stun.l.google.com:19302" },
+  {
+    urls: [
+      "turn:staticauth.openrelay.metered.ca:80",
+      "turn:staticauth.openrelay.metered.ca:443",
+      "turn:staticauth.openrelay.metered.ca:443?transport=tcp",
+    ],
+    username: "openrelayproject",
+    credential: "openrelayprojectsecret",
+  },
+];
+
 export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   const user = localStorage.getItem("currentUser");
   const userData = user ? JSON.parse(user) : {};
@@ -128,13 +141,16 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     localStreamRef.current = stream;
     if (localVideoRef.current) localVideoRef.current.srcObject = stream;
     pendingCandidatesRef.current = [];
-    const peer = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+    const peer = new RTCPeerConnection({ iceServers, iceTransportPolicy: "all" });
     peerRef.current = peer;
     remoteStreamRef.current = new MediaStream();
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStreamRef.current;
     if (remoteAudioRef.current) remoteAudioRef.current.srcObject = remoteStreamRef.current;
     stream.getTracks().forEach((track) => peer.addTrack(track, stream));
     peer.ontrack = (event) => event.streams[0]?.getTracks().forEach((track) => remoteStreamRef.current?.addTrack(track));
+    peer.onconnectionstatechange = () => {
+      if (peer.connectionState === "failed") setError("The mobile network could not establish a relay connection. Please try again on Wi-Fi or mobile data.");
+    };
     peer.onicecandidate = (event) => event.candidate && send({ type: "ice", callId: id, to: otherEmail, candidate: event.candidate.toJSON() });
     return peer;
   };
