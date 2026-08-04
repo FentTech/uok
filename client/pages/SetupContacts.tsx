@@ -158,7 +158,7 @@ export default function SetupContacts() {
 
   const handleContinue = async () => {
     // Save contacts locally and to Supabase
-    const bondedContacts = contacts.map((c) => ({
+    const bondedContacts = contacts.filter((contact) => contact.name.trim()).map((c) => ({
       ...c,
       status: "pending" as const,
     }));
@@ -170,7 +170,7 @@ export default function SetupContacts() {
       const currentUser = JSON.parse(
         localStorage.getItem("currentUser") || "{}",
       );
-      const userEmail = localStorage.getItem("userEmail") || "user";
+      const userEmail = localStorage.getItem("userEmail") || currentUser.email || currentUser.username || "";
       const userName = currentUser.name || currentUser.username || "User";
 
       // Import bond service and save each bond to Supabase

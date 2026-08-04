@@ -121,6 +121,9 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   };
 
   const createPeer = async (id: string, otherEmail: string, mode: "audio" | "video") => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error("This browser does not support microphone or camera access.");
+    }
     const stream = await navigator.mediaDevices.getUserMedia({ video: mode === "video", audio: true });
     localStreamRef.current = stream;
     if (localVideoRef.current) localVideoRef.current.srcObject = stream;
@@ -135,6 +138,15 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     peer.onicecandidate = (event) => event.candidate && send({ type: "ice", callId: id, to: otherEmail, candidate: event.candidate.toJSON() });
     return peer;
   };
+
+  useEffect(() => {
+    if (!remoteStreamRef.current) return;
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStreamRef.current;
+    if (remoteAudioRef.current) {
+      remoteAudioRef.current.srcObject = remoteStreamRef.current;
+      void remoteAudioRef.current.play().catch(() => undefined);
+    }
+  }, [callState, callMode]);
 
   const acceptCall = async () => {
     if (!incoming) return;
@@ -156,7 +168,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
       send({ type: "answer", callId: signal.callId, to: signal.from, sdp: answer });
       setCallState("connected");
     } catch (err) {
-      setError("Camera or microphone permission is required for video calls.");
+      setError(err instanceof Error ? err.message : "Camera or microphone access failed. Check browser permissions and try again.");
       cleanup(false);
     }
   };
@@ -176,7 +188,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
       await peer.setLocalDescription(offer);
       send({ type: "invite", callId: id, to: contact.email, sdp: offer, name: userName, mode });
     } catch (err) {
-      setError("Camera or microphone permission is required for video calls.");
+      setError(err instanceof Error ? err.message : "Camera or microphone access failed. Check browser permissions and try again.");
       cleanup(false);
     }
   };

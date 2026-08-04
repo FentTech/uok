@@ -95,7 +95,8 @@ export default function BondContacts() {
       localStorage.setItem("bondedContacts", JSON.stringify(updated));
 
       // Sync to Supabase for cross-device availability
-      const userEmail = localStorage.getItem("userEmail");
+      const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      const userEmail = localStorage.getItem("userEmail") || currentUser.email || currentUser.username || "";
       if (userEmail) {
         import("../lib/supabase").then(({ supabaseUserSyncService }) => {
           supabaseUserSyncService
@@ -125,7 +126,8 @@ export default function BondContacts() {
       localStorage.setItem("bondedContacts", JSON.stringify(updated));
 
       // Sync to Supabase for cross-device availability
-      const userEmail = localStorage.getItem("userEmail");
+      const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      const userEmail = localStorage.getItem("userEmail") || currentUser.email || currentUser.username || "";
       if (userEmail) {
         import("../lib/supabase").then(({ supabaseUserSyncService }) => {
           supabaseUserSyncService
