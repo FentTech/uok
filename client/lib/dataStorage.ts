@@ -21,7 +21,8 @@ export interface StoredNotification {
     | "missed"
     | "media-shared"
     | "media-received"
-    | "media-expiring";
+    | "media-expiring"
+    | "message";
   message: string;
   timestamp: string;
   date: string;

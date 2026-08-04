@@ -747,7 +747,7 @@ export const supabaseBondService = {
       console.log(
         `📥 Fetched ${data?.length || 0} bonds for user ${userEmail}`,
       );
-      return data || [];
+      return data?.contacts || [];
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       console.warn("⚠️ Failed to fetch bonds from Supabase:", errorMsg);
@@ -765,11 +765,10 @@ export const supabaseBondService = {
 
       // Find all bonds where this user is the contact_name
       const { data, error } = await supabase
-        .from("bond_relationships")
-        .select("*")
-        .eq("contact_name", userName)
-        .eq("status", "active")
-        .order("created_at", { ascending: false });
+        .from("bonded_contacts")
+        .select("contacts")
+        .eq("user_email", userName)
+        .maybeSingle();
 
       if (error) {
         // Handle RLS violations (expected if user doesn't have access)
@@ -788,7 +787,7 @@ export const supabaseBondService = {
       console.log(
         `📥 Found ${data?.length || 0} incoming bonds for ${userName}`,
       );
-      return data || [];
+      return data?.contacts || [];
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       console.warn("⚠️ Failed to fetch incoming bonds:", errorMsg);
@@ -894,7 +893,7 @@ export const supabaseMediaService = {
       const { error } = await supabase.from("user_media").upsert(
         {
           user_email: userEmail,
-          media_data: media, // Store as JSONB
+          media: media, // Store as JSONB
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_email" },
@@ -927,7 +926,7 @@ export const supabaseMediaService = {
 
       const { data, error } = await supabase
         .from("user_media")
-        .select("media_data")
+        .select("media")
         .eq("user_email", userEmail)
         .single();
 
@@ -937,7 +936,7 @@ export const supabaseMediaService = {
         return [];
       }
 
-      const media = data?.media_data || [];
+      const media = data?.media || [];
       console.log("✅ Loaded media from Supabase:", media.length, "items");
       return media;
     } catch (error) {
@@ -963,7 +962,7 @@ export const supabaseMediaService = {
       const { error } = await supabase.from("user_media").upsert(
         {
           user_email: userEmail,
-          media_data: updated,
+          media: updated,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_email" },
