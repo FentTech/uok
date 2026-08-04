@@ -47,6 +47,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
   const [error, setError] = useState("");
+  const [networkOnline, setNetworkOnline] = useState(() => navigator.onLine);
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const remoteStreamRef = useRef<MediaStream | null>(null);
@@ -117,15 +118,16 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     }
   };
 
-  const send = async (signal: Omit<Signal, "from">) => {
+  const send = async (signal: Omit<Signal, "from">): Promise<boolean> => {
     const supabase = getSupabase();
-    if (!supabase || !signal.to) return;
+    if (!supabase || !signal.to) return false;
     const channel = supabase.channel(`uok-call-${emailKey(signal.to)}`);
     await new Promise<void>((resolve) => channel.subscribe((state) => {
       if (state === "SUBSCRIBED" || state === "CHANNEL_ERROR" || state === "TIMED_OUT") resolve();
     }));
-    await channel.send({ type: "broadcast", event: "call-signal", payload: { ...signal, from: userEmail } });
+    const result = await channel.send({ type: "broadcast", event: "call-signal", payload: { ...signal, from: userEmail } });
     await supabase.removeChannel(channel);
+    return result === "ok";
   };
 
   const cleanup = (notify = true) => {
@@ -160,7 +162,17 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStreamRef.current;
     if (remoteAudioRef.current) remoteAudioRef.current.srcObject = remoteStreamRef.current;
     stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-    peer.ontrack = (event) => event.streams[0]?.getTracks().forEach((track) => remoteStreamRef.current?.addTrack(track));
+    peer.ontrack = (event) => {
+      event.streams[0]?.getTracks().forEach((track) => remoteStreamRef.current?.addTrack(track));
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = remoteStreamRef.current;
+        void remoteVideoRef.current.play().catch(() => undefined);
+      }
+      if (remoteAudioRef.current) {
+        remoteAudioRef.current.srcObject = remoteStreamRef.current;
+        void remoteAudioRef.current.play().catch(() => undefined);
+      }
+    };
     let recoveryStarted = false;
     peer.onconnectionstatechange = () => {
       if ((peer.connectionState === "disconnected" || peer.connectionState === "failed") && !recoveryStarted && peer.signalingState === "stable") {
@@ -211,7 +223,10 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   };
 
   const startCall = async (contact: Contact, mode: "audio" | "video") => {
-    if (!contact.email || !userEmail) return;
+    if (!contact.email || !userEmail || !networkOnline) {
+      if (!networkOnline) setError("Connect to Wi-Fi or mobile data before starting an online call.");
+      return;
+    }
     const id = crypto.randomUUID();
     setActiveContact(contact);
     setCallMode(mode);
@@ -223,12 +238,30 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
       const peer = await createPeer(id, contact.email, mode);
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-      send({ type: "invite", callId: id, to: contact.email, sdp: offer, name: userName, mode });
+      const delivered = await send({ type: "invite", callId: id, to: contact.email, sdp: offer, name: userName, mode });
+      if (!delivered) throw new Error("The online call signal could not be delivered. Check your Wi-Fi or mobile data connection.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Camera or microphone access failed. Check browser permissions and try again.");
       cleanup(false);
     }
   };
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setNetworkOnline(true);
+      setError("");
+    };
+    const handleOffline = () => {
+      setNetworkOnline(false);
+      setError("Your internet connection is offline. Calls use Wi-Fi or mobile data and do not use carrier minutes.");
+    };
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     const handleAudioUnlock = () => unlockAudio();
@@ -289,7 +322,8 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     <>
       <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
         <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-blue-900"><PhoneCall className="h-4 w-4" /> Call a bonded family member</div>
-        {contacts.length > 0 ? <div className="space-y-2">{contacts.map((contact, index) => <div key={`${contact.email}-${index}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white p-2"><span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-800">{contact.name || contact.email}</span><div className="flex gap-1"><button onClick={() => startCall(contact, "audio")} disabled={!canCall || !contact.email || callState !== "idle"} className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-2 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50"><Phone className="h-3.5 w-3.5" />Call</button><button onClick={() => startCall(contact, "video")} disabled={!canCall || !contact.email || callState !== "idle"} className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-2 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"><Video className="h-3.5 w-3.5" />Video</button></div></div>)}</div> : <p className="text-xs text-slate-600">No bonded family members yet. Add one below to enable calling.</p>}
+        <p className="mb-2 text-xs text-blue-800">Online calling uses Wi-Fi or mobile data only. It does not use carrier minutes. {networkOnline ? "Internet connection detected." : "You are offline."}</p>
+        {contacts.length > 0 ? <div className="space-y-2">{contacts.map((contact, index) => <div key={`${contact.email}-${index}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white p-2"><span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-800">{contact.name || contact.email}</span><div className="flex gap-1"><button onClick={() => startCall(contact, "audio")} disabled={!canCall || !networkOnline || !contact.email || callState !== "idle"} className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-2 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50"><Phone className="h-3.5 w-3.5" />Call</button><button onClick={() => startCall(contact, "video")} disabled={!canCall || !networkOnline || !contact.email || callState !== "idle"} className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-2 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"><Video className="h-3.5 w-3.5" />Video</button></div></div>)}</div> : <p className="text-xs text-slate-600">No bonded family members yet. Add one below to enable calling.</p>}
         {!canCall && <p className="mt-2 text-xs text-amber-700">Log in with your account email to place calls.</p>}
       </div>
 
