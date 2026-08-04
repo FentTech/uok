@@ -397,29 +397,27 @@ export default function Dashboard() {
         }
 
         // Merge bonds (Supabase takes precedence, but include local bonds if they're not in Supabase)
+        const validContact = (contact: any) => Boolean(contact && typeof contact.name === "string" && contact.name.trim() && typeof contact.email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email));
+        const normalizedSupabaseBonds = supabaseBonds.filter(validContact).map((contact: any) => ({
+          ...contact,
+          id: contact.id || contact.bondCode || `bond_${contact.email}`,
+          status: "bonded" as const,
+        }));
+        const normalizedLocalBonds = localBonds.filter(validContact);
         const mergedBonds = [
-          ...supabaseBonds.map((b) => ({
-            id: b.bond_code,
-            name: b.contact_name,
-            bondCode: b.bond_code,
-            qrCode: b.qr_code || `UOK_QR_${b.bond_code}`,
-            email: b.contact_email,
-            status: "bonded" as const,
-            bondedAt: b.created_at,
-          })),
-          ...localBonds.filter(
-            (lb) => !supabaseBonds.some((sb) => sb.contact_name === lb.name),
-          ),
+          ...normalizedSupabaseBonds,
+          ...normalizedLocalBonds.filter((localBond: any) => !normalizedSupabaseBonds.some((remoteBond: any) => remoteBond.email === localBond.email)),
         ];
 
         if (mergedBonds.length > 0) {
           console.log("✅ Loaded bonded contacts:", mergedBonds.length);
           setBondedContacts(mergedBonds);
           localStorage.setItem("bondedContacts", JSON.stringify(mergedBonds));
-        } else if (localBonds.length > 0) {
-          // If no Supabase bonds, use local bonds
-          console.log("✅ Using local bonded contacts:", localBonds.length);
-          setBondedContacts(localBonds);
+        } else if (normalizedLocalBonds.length > 0) {
+          // If no Supabase bonds, use valid local bonds
+          console.log("✅ Using local bonded contacts:", normalizedLocalBonds.length);
+          setBondedContacts(normalizedLocalBonds);
+          localStorage.setItem("bondedContacts", JSON.stringify(normalizedLocalBonds));
         }
 
         // Load incoming bonds (people who bonded with this user)

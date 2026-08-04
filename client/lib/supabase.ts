@@ -283,7 +283,7 @@ export const supabaseUserSyncService = {
         .from("user_check_ins")
         .select("check_ins")
         .eq("user_email", userEmail)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== "PGRST116") throw error;
 
@@ -335,7 +335,7 @@ export const supabaseUserSyncService = {
         .from("user_media")
         .select("media")
         .eq("user_email", userEmail)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== "PGRST116") throw error;
 
@@ -756,43 +756,10 @@ export const supabaseBondService = {
   },
 
   // Get all users who have bonded with this user (incoming bonds)
-  getIncomingBonds: async (userName: string): Promise<any[]> => {
-    try {
-      const supabase = getSupabaseClient();
-      if (!supabase) {
-        return [];
-      }
-
-      // Find all bonds where this user is the contact_name
-      const { data, error } = await supabase
-        .from("bonded_contacts")
-        .select("contacts")
-        .eq("user_email", userName)
-        .maybeSingle();
-
-      if (error) {
-        // Handle RLS violations (expected if user doesn't have access)
-        if (error.code === "42501") {
-          console.warn(
-            "⚠️ Note: Incoming bonds require contact to have verified email",
-          );
-          return [];
-        }
-        // Non-RLS errors should still be logged
-        if (!error.code?.includes("PGRST")) {
-          throw error;
-        }
-      }
-
-      console.log(
-        `📥 Found ${data?.length || 0} incoming bonds for ${userName}`,
-      );
-      return data?.contacts || [];
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      console.warn("⚠️ Failed to fetch incoming bonds:", errorMsg);
-      return [];
-    }
+  getIncomingBonds: async (_userName: string): Promise<any[]> => {
+    // bonded_contacts stores each user's outgoing contact list; incoming bonds
+    // are already delivered through the recipient's own synced contact list.
+    return [];
   },
 
   // Set up realtime listener for check-ins from bonded contacts
@@ -928,7 +895,7 @@ export const supabaseMediaService = {
         .from("user_media")
         .select("media")
         .eq("user_email", userEmail)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== "PGRST116") {
         // PGRST116 = no rows found, which is ok
