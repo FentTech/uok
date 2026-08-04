@@ -9,11 +9,14 @@ const emailKey = (email: string) => email.trim().toLowerCase().replace(/[^a-z0-9
 
 const iceServers: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
+  { urls: "stun:stun1.l.google.com:19302" },
+  { urls: "stun:stun.cloudflare.com:3478" },
   {
     urls: [
-      "turn:staticauth.openrelay.metered.ca:80",
-      "turn:staticauth.openrelay.metered.ca:443",
-      "turn:staticauth.openrelay.metered.ca:443?transport=tcp",
+      "turn:openrelay.metered.ca:80",
+      "turn:openrelay.metered.ca:443",
+      "turn:openrelay.metered.ca:443?transport=tcp",
+      "turns:openrelay.metered.ca:443?transport=tcp",
     ],
     username: "openrelayproject",
     credential: "openrelayprojectsecret",
