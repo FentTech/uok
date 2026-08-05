@@ -30,6 +30,14 @@ interface Comment {
   timestamp: string;
 }
 
+const videoMimeType = (url: string) => {
+  const cleanUrl = url.split("?")[0].toLowerCase();
+  if (cleanUrl.endsWith(".webm")) return "video/webm";
+  if (cleanUrl.endsWith(".mov")) return "video/quicktime";
+  if (cleanUrl.endsWith(".ogv")) return "video/ogg";
+  return "video/mp4";
+};
+
 interface SharedMemory {
   id: string;
   username: string;
@@ -99,9 +107,17 @@ export default function SharedMemories() {
       ? await supabaseUserSyncService.fetchSharedMoments(currentUserEmail)
       : [];
     const storedMoments = [...localMoments, ...remoteMoments].filter((moment, index, all) => all.findIndex((candidate) => candidate.id === moment.id) === index);
+    const { getMediaUrl } = await import("../lib/indexedDBStorage");
+    const hydratedMoments = await Promise.all(storedMoments.map(async (moment: any) => {
+      if (typeof moment.mediaUrl === "string" && moment.mediaUrl.startsWith("blob:") && typeof moment.id === "string" && moment.id.startsWith("memory-")) {
+        const localUrl = await getMediaUrl(moment.id.slice("memory-".length));
+        return localUrl ? { ...moment, mediaUrl: localUrl } : moment;
+      }
+      return moment;
+    }));
 
     // Filter moments based on visibility for the current user
-    const visibleMoments = storedMoments.filter((m) => {
+    const visibleMoments = hydratedMoments.filter((m) => {
       // Creator can always see their own moments
       if (m.email === currentUserEmail) {
         return true;
@@ -689,13 +705,14 @@ export default function SharedMemories() {
                     <div className="relative bg-black">
                       <video
                         key={memory.imageUrl}
-                        src={memory.imageUrl}
                         className="w-full h-96 object-cover"
                         controls
                         playsInline
                         preload="metadata"
                         onError={() => setVideoLoadingId(null)}
-                      />
+                      >
+                        <source src={memory.imageUrl} type={videoMimeType(memory.imageUrl)} />
+                      </video>
                       <button
                         onClick={() => {
                           setVideoLoadingId(memory.id);
@@ -947,7 +964,6 @@ export default function SharedMemories() {
 
               <video
                 key={fullscreenVideo}
-                src={fullscreenVideo}
                 controls
                 autoPlay
                 playsInline
@@ -956,7 +972,9 @@ export default function SharedMemories() {
                 onLoadStart={() => setVideoLoadingId(fullscreenVideo)}
                 onCanPlay={() => setVideoLoadingId(null)}
                 className="max-w-full max-h-full object-contain"
-              />
+              >
+                <source src={fullscreenVideo} type={videoMimeType(fullscreenVideo)} />
+              </video>
             </div>
           </div>
         )}

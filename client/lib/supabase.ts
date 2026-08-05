@@ -868,7 +868,8 @@ export const supabaseMediaService = {
       if (!supabase) return null;
       const safeEmail = userEmail.replace(/[^a-zA-Z0-9._-]/g, "_");
       const path = `${safeEmail}/${mediaId}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
-      const { error } = await supabase.storage.from("uok-media").upload(path, file, { upsert: true, contentType: file.type });
+      const contentType = file.type || (file.name.toLowerCase().endsWith(".webm") ? "video/webm" : file.name.toLowerCase().endsWith(".mov") ? "video/quicktime" : file.name.toLowerCase().endsWith(".mp4") ? "video/mp4" : "application/octet-stream");
+      const { error } = await supabase.storage.from("uok-media").upload(path, file, { upsert: true, contentType });
       if (error) throw error;
       const { data } = supabase.storage.from("uok-media").getPublicUrl(path);
       return data.publicUrl;

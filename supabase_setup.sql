@@ -71,6 +71,17 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- Create call_signals table for durable cross-device WebRTC signaling
+CREATE TABLE IF NOT EXISTS call_signals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  call_id TEXT NOT NULL,
+  sender_email TEXT NOT NULL,
+  recipient_email TEXT NOT NULL,
+  signal_type TEXT NOT NULL,
+  payload JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
 -- Create location_shares table for persistent live-location delivery
 CREATE TABLE IF NOT EXISTS location_shares (
   id TEXT PRIMARY KEY,
@@ -132,6 +143,8 @@ CREATE INDEX IF NOT EXISTS idx_user_email ON user_profiles(email);
 CREATE INDEX IF NOT EXISTS idx_check_ins_user_email ON check_ins(user_email);
 CREATE INDEX IF NOT EXISTS idx_check_ins_date ON check_ins(date);
 CREATE INDEX IF NOT EXISTS idx_notifications_recipient_created ON notifications(recipient_email, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_call_signals_recipient_created ON call_signals(recipient_email, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_call_signals_call_created ON call_signals(call_id, created_at ASC);
 CREATE INDEX IF NOT EXISTS idx_location_shares_recipient_status ON location_shares(recipient_email, status, updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_analytics_user ON analytics_events(user_email);
 CREATE INDEX IF NOT EXISTS idx_analytics_type ON analytics_events(event_type);
@@ -146,6 +159,7 @@ ALTER TABLE bonded_contacts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_media ENABLE ROW LEVEL SECURITY;
 ALTER TABLE shared_moments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE call_signals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE location_shares ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE advertiser_credentials ENABLE ROW LEVEL SECURITY;
@@ -159,6 +173,7 @@ CREATE POLICY "Allow all access" ON bonded_contacts AS PERMISSIVE FOR ALL USING 
 CREATE POLICY "Allow all access" ON user_media AS PERMISSIVE FOR ALL USING (TRUE) WITH CHECK (TRUE);
 CREATE POLICY "Allow all access" ON shared_moments AS PERMISSIVE FOR ALL USING (TRUE) WITH CHECK (TRUE);
 CREATE POLICY "Allow all access" ON notifications AS PERMISSIVE FOR ALL USING (TRUE) WITH CHECK (TRUE);
+CREATE POLICY "Allow all access" ON call_signals AS PERMISSIVE FOR ALL USING (TRUE) WITH CHECK (TRUE);
 CREATE POLICY "Allow all access" ON location_shares AS PERMISSIVE FOR ALL USING (TRUE) WITH CHECK (TRUE);
 CREATE POLICY "Allow all access" ON analytics_events AS PERMISSIVE FOR ALL USING (TRUE) WITH CHECK (TRUE);
 CREATE POLICY "Allow all access" ON advertiser_credentials AS PERMISSIVE FOR ALL USING (TRUE) WITH CHECK (TRUE);

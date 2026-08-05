@@ -3,7 +3,7 @@ import { Check, Mic, MicOff, Phone, PhoneCall, Video, VideoOff, X } from "lucide
 import { getSupabase } from "../lib/supabase";
 
 type Contact = { name?: string; email?: string };
-type Signal = { type: string; callId: string; from: string; to: string; sdp?: RTCSessionDescriptionInit; candidate?: RTCIceCandidateInit; name?: string; mode?: "audio" | "video" };
+type Signal = { type: string; callId: string; from: string; to: string; sdp?: RTCSessionDescriptionInit; candidate?: RTCIceCandidateInit; name?: string; mode?: "audio" | "video"; signalId?: string };
 
 const normalizeEmail = (email?: string) => (email || "").trim().toLowerCase();
 const emailKey = (email: string) => normalizeEmail(email).replace(/[^a-z0-9]/g, "-");
@@ -65,6 +65,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   const signalChannelTargetRef = useRef("");
   const signalChannelPromiseRef = useRef<Promise<any> | null>(null);
   const reconnectTimerRef = useRef<number | null>(null);
+  const processedSignalIdsRef = useRef(new Set<string>());
 
   const stopRingtone = () => {
     if (ringtoneRef.current) window.clearInterval(ringtoneRef.current);
@@ -148,7 +149,19 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     const channel = await getSignalChannel(signal.to);
     if (!channel) return false;
     try {
-      const result = await channel.send({ type: "broadcast", event: "call-signal", payload: { ...signal, from: userEmail } });
+      const supabase = getSupabase();
+      if (!supabase) return false;
+      const payload = { ...signal, from: userEmail, signalId: crypto.randomUUID() };
+      const { error } = await (supabase.from("call_signals") as any).insert({
+        id: payload.signalId,
+        call_id: payload.callId,
+        sender_email: userEmail,
+        recipient_email: normalizeEmail(signal.to),
+        signal_type: payload.type,
+        payload,
+      });
+      if (error) return false;
+      const result = await channel.send({ type: "broadcast", event: "call-signal", payload });
       return result === "ok";
     } catch {
       return false;
@@ -343,21 +356,20 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   useEffect(() => {
     const supabase = getSupabase();
     if (!supabase || !userEmail) return;
-    const channel = supabase.channel(`uok-call-${emailKey(userEmail)}`);
-    channel.on("broadcast", { event: "call-signal" }, async ({ payload }: { payload: Signal }) => {
+    const processSignal = async (payload: Signal) => {
+      if (payload.signalId && processedSignalIdsRef.current.has(payload.signalId)) return;
+      if (payload.signalId) processedSignalIdsRef.current.add(payload.signalId);
       if (normalizeEmail(payload.to) !== userEmail) return;
       if (payload.type === "invite") {
         setIncoming(payload);
         startRingtone();
         if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 500]);
         if ("Notification" in window && Notification.permission === "granted") {
-          new Notification(payload.mode === "audio" ? "Incoming UOK call" : "Incoming UOK video call", {
-            body: `${payload.name || payload.from} is calling you`,
-            icon: "/favicon.ico",
-            tag: `uok-call-${payload.callId}`,
-          });
+          new Notification(payload.mode === "audio" ? "Incoming UOK call" : "Incoming UOK video call", { body: `${payload.name || payload.from} is calling you`, icon: "/favicon.ico", tag: `uok-call-${payload.callId}` });
         }
-      } else if (payload.callId !== callIdRef.current) return;
+        return;
+      }
+      if (payload.callId !== callIdRef.current) return;
       if (payload.type === "renegotiate" && peerRef.current && payload.sdp) {
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(payload.sdp));
         const answer = await peerRef.current.createAnswer();
@@ -365,23 +377,24 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
         await send({ type: "answer", callId: payload.callId, to: payload.from, sdp: answer });
       } else if (payload.type === "answer" && peerRef.current && payload.sdp) {
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(payload.sdp));
-        for (const candidate of pendingCandidatesRef.current.splice(0)) {
-          await peerRef.current.addIceCandidate(new RTCIceCandidate(candidate));
-        }
+        for (const candidate of pendingCandidatesRef.current.splice(0)) await peerRef.current.addIceCandidate(new RTCIceCandidate(candidate));
         stopRingtone();
         setCallState("connected");
         void enableRemoteMedia();
       } else if (payload.type === "ice" && payload.candidate) {
-        if (peerRef.current?.remoteDescription) {
-          await peerRef.current.addIceCandidate(new RTCIceCandidate(payload.candidate));
-        } else {
-          pendingCandidatesRef.current.push(payload.candidate);
-        }
+        if (peerRef.current?.remoteDescription) await peerRef.current.addIceCandidate(new RTCIceCandidate(payload.candidate));
+        else pendingCandidatesRef.current.push(payload.candidate);
       } else if (payload.type === "end") {
         cleanup(false);
       }
-    }).subscribe();
-    return () => { stopRingtone(); channel.unsubscribe(); cleanup(false); };
+    };
+    const channel = supabase.channel(`uok-call-${emailKey(userEmail)}`);
+    channel.on("broadcast", { event: "call-signal" }, ({ payload }: { payload: Signal }) => void processSignal(payload)).subscribe();
+    const poll = window.setInterval(async () => {
+      const { data } = await (supabase.from("call_signals") as any).select("payload").eq("recipient_email", userEmail).order("created_at", { ascending: false }).limit(30);
+      for (const row of data || []) await processSignal(row.payload as Signal);
+    }, 1500);
+    return () => { window.clearInterval(poll); stopRingtone(); channel.unsubscribe(); cleanup(false); };
   }, [userEmail]);
 
   const canCall = Boolean(userEmail);
