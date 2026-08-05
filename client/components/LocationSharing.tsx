@@ -83,12 +83,8 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
       setStatus("Location sharing is not supported by this browser.");
       return;
     }
-    setStatus("Getting your precise location…");
-    navigator.geolocation.getCurrentPosition(
-      (position) => void sendLocation(position),
-      () => setStatus("Location permission was denied or unavailable."),
-      { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 },
-    );
+    setStatus("Getting your phone location…");
+    getMobilePosition((position) => void sendLocation(position));
   };
 
   const startLiveSharing = () => {
@@ -97,14 +93,22 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
       return;
     }
     setSharing(true);
-    setStatus("Live location sharing is on.");
+    setStatus("Starting live location from your phone…");
     watchIdRef.current = navigator.geolocation.watchPosition(
-      (position) => void sendLocation(position),
-      () => {
-        setSharing(false);
-        setStatus("Location permission was denied or unavailable.");
+      (position) => {
+        setStatus("Live location sharing is on.");
+        void sendLocation(position);
       },
-      { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 },
+      (error) => {
+        if (error.code === 3) {
+          setStatus("GPS is taking longer than expected. Continuing with your phone's network location…");
+          watchIdRef.current = navigator.geolocation.watchPosition((position) => void sendLocation(position), () => { setSharing(false); setStatus("Turn on device location services and try again."); }, { enableHighAccuracy: false, maximumAge: 30000, timeout: 30000 });
+        } else {
+          setSharing(false);
+          setStatus(error.code === 1 ? "Location permission was denied. Enable location access for this browser in device settings." : "Turn on device location services and try again.");
+        }
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
     );
   };
 
@@ -116,6 +120,21 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
     acceptedFromRef.current = location.from;
     setReceivedLocation(location);
     setPendingLocation(null);
+  };
+
+  const getMobilePosition = (onSuccess: (position: GeolocationPosition) => void) => {
+    if (!window.isSecureContext) {
+      setStatus("Location sharing requires a secure HTTPS connection.");
+      return;
+    }
+    const retryWithNetworkLocation = (error: GeolocationPositionError) => {
+      if (error.code !== 3) {
+        setStatus(error.code === 1 ? "Location permission was denied. Enable location access for this browser in device settings." : "Your phone could not determine a location. Turn on device location services and try again.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(onSuccess, () => setStatus("Your phone could not determine a location. Turn on device location services and try again."), { enableHighAccuracy: false, maximumAge: 30000, timeout: 30000 });
+    };
+    navigator.geolocation.getCurrentPosition(onSuccess, retryWithNetworkLocation, { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 });
   };
 
   const stopLiveSharing = () => {
@@ -173,7 +192,7 @@ export default function LocationSharing({ contacts }: { contacts: Contact[] }) {
       <label className="mb-3 block text-xs font-semibold text-emerald-900" htmlFor="location-recipient">Share with bonded member
         <select id="location-recipient" value={selectedEmail} onChange={(event) => setSelectedEmail(event.target.value)} className="mt-1 block w-full rounded-lg border border-emerald-300 bg-white px-3 py-2 text-sm font-normal text-slate-800">
           <option value="">Choose a bonded family member</option>
-          {contacts.filter((contact) => contact.email).map((contact) => <option key={contact.email} value={contact.email}>{contact.name || contact.email}</option>)}
+          {contacts.filter((contact) => contact.email).map((contact) => <option key={normalizeEmail(contact.email)} value={normalizeEmail(contact.email)}>{contact.name || contact.email}</option>)}
         </select>
       </label>
       <div className="flex flex-wrap gap-2">
