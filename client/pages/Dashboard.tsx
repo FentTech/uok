@@ -1023,7 +1023,7 @@ export default function Dashboard() {
           const mediaWithUrls = await Promise.all(
             savedMedia.map(async (item) => {
               try {
-                const blobUrl = await getMediaUrl(item.url); // item.url contains mediaId
+                const blobUrl = await getMediaUrl(item.id);
                 return { ...item, url: blobUrl || item.url };
               } catch (error) {
                 console.warn(
@@ -1341,12 +1341,29 @@ export default function Dashboard() {
   };
 
   // Share media to community or bonded members
-  const handleShareMedia = (item: MediaItem) => {
+  const handleShareMedia = async (item: MediaItem) => {
+    let shareUrl = item.url;
+    const ownerEmail = localStorage.getItem("userEmail") || "";
+    if (shareUrl.startsWith("blob:") && ownerEmail) {
+      try {
+        const { getMediaFile } = await import("../lib/indexedDBStorage");
+        const { supabaseMediaService } = await import("../lib/supabase");
+        const file = await getMediaFile(item.id);
+        const cloudUrl = file ? await supabaseMediaService.uploadMediaFile(file, item.id, ownerEmail) : null;
+        if (cloudUrl) shareUrl = cloudUrl;
+      } catch (error) {
+        console.warn("Could not create a cross-device media URL:", error);
+      }
+    }
+    if (shareUrl.startsWith("blob:")) {
+      alert("This media could not be uploaded for cross-device sharing. Please try uploading it again.");
+      return;
+    }
     if (shareVisibility === "community") {
       // Share to community memories
       navigate("/shared-memories", {
         state: {
-          mediaUrl: item.url,
+          mediaUrl: shareUrl,
           mediaType: item.type,
           mood: item.mood,
         },
@@ -1389,7 +1406,7 @@ export default function Dashboard() {
             timestamp: new Date().toISOString(),
             date: new Date().toLocaleDateString(),
             caption: `${userName} shared a ${item.type}`,
-            mediaUrl: item.url,
+            mediaUrl: shareUrl,
             mediaType: item.type,
             likes: 0,
             comments: [],

@@ -690,14 +690,11 @@ export default function SharedMemories() {
                       <video
                         key={memory.imageUrl}
                         src={memory.imageUrl}
-                        className="w-full h-96 object-cover cursor-pointer"
+                        className="w-full h-96 object-cover"
                         controls
+                        playsInline
                         preload="metadata"
-                        onClick={() => {
-                          setShowPreRollAd(true);
-                          setSelectedMemoryForView(memory);
-                          setFullscreenVideo(memory.imageUrl);
-                        }}
+                        onError={() => setVideoLoadingId(null)}
                       />
                       <button
                         onClick={() => {
@@ -706,7 +703,7 @@ export default function SharedMemories() {
                           setSelectedMemoryForView(memory);
                           // Don't set fullscreenVideo yet - let ad complete first
                         }}
-                        className="absolute inset-0 w-full h-full bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center"
+                        className="pointer-events-none absolute inset-0 w-full h-full bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center"
                       >
                         {videoLoadingId === memory.id ? (
                           <div className="animate-spin">
@@ -953,7 +950,9 @@ export default function SharedMemories() {
                 src={fullscreenVideo}
                 controls
                 autoPlay
+                playsInline
                 preload="auto"
+                onError={() => setVideoLoadingId(null)}
                 onLoadStart={() => setVideoLoadingId(fullscreenVideo)}
                 onCanPlay={() => setVideoLoadingId(null)}
                 className="max-w-full max-h-full object-contain"

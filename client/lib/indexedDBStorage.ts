@@ -111,6 +111,22 @@ export async function storeMedia(
   });
 }
 
+export async function getMediaFile(mediaId: string): Promise<File | null> {
+  const database = await getDB();
+  return new Promise((resolve, reject) => {
+    const request = database.transaction([MEDIA_STORE], "readonly").objectStore(MEDIA_STORE).get(mediaId);
+    request.onsuccess = () => {
+      const record = request.result;
+      if (!record?.data) {
+        resolve(null);
+        return;
+      }
+      resolve(new File([record.data], record.fileName || mediaId, { type: record.mimeType || "application/octet-stream" }));
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
 // Retrieve media URL from IndexedDB
 export async function getMediaUrl(mediaId: string): Promise<string | null> {
   const database = await getDB();

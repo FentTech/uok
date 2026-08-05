@@ -5,7 +5,8 @@ import { getSupabase } from "../lib/supabase";
 type Contact = { name?: string; email?: string };
 type Signal = { type: string; callId: string; from: string; to: string; sdp?: RTCSessionDescriptionInit; candidate?: RTCIceCandidateInit; name?: string; mode?: "audio" | "video" };
 
-const emailKey = (email: string) => email.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
+const normalizeEmail = (email?: string) => (email || "").trim().toLowerCase();
+const emailKey = (email: string) => normalizeEmail(email).replace(/[^a-z0-9]/g, "-");
 
 const configuredTurnUrls = (import.meta.env.VITE_TURN_URLS || "")
   .split(",")
@@ -36,7 +37,7 @@ const iceServers: RTCIceServer[] = [
 export default function VideoCall({ contacts }: { contacts: Contact[] }) {
   const user = localStorage.getItem("currentUser");
   const userData = user ? JSON.parse(user) : {};
-  const userEmail = localStorage.getItem("userEmail") || userData.email || "";
+  const userEmail = normalizeEmail(localStorage.getItem("userEmail") || userData.email);
   const userName = userData.name || userData.username || "UOK user";
   const [incoming, setIncoming] = useState<Signal | null>(null);
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
@@ -163,7 +164,13 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     if (remoteAudioRef.current) remoteAudioRef.current.srcObject = remoteStreamRef.current;
     stream.getTracks().forEach((track) => peer.addTrack(track, stream));
     peer.ontrack = (event) => {
-      event.streams[0]?.getTracks().forEach((track) => remoteStreamRef.current?.addTrack(track));
+      const remoteStream = remoteStreamRef.current;
+      if (remoteStream && !remoteStream.getTracks().some((track) => track.id === event.track.id)) {
+        remoteStream.addTrack(event.track);
+      }
+      event.streams[0]?.getTracks().forEach((track) => {
+        if (remoteStream && !remoteStream.getTracks().some((remoteTrack) => remoteTrack.id === track.id)) remoteStream.addTrack(track);
+      });
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = remoteStreamRef.current;
         void remoteVideoRef.current.play().catch(() => undefined);
@@ -235,10 +242,10 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     setCallState("calling");
     startRingtone();
     try {
-      const peer = await createPeer(id, contact.email, mode);
+      const peer = await createPeer(id, normalizeEmail(contact.email), mode);
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-      const delivered = await send({ type: "invite", callId: id, to: contact.email, sdp: offer, name: userName, mode });
+      const delivered = await send({ type: "invite", callId: id, to: normalizeEmail(contact.email), sdp: offer, name: userName, mode });
       if (!delivered) throw new Error("The online call signal could not be delivered. Check your Wi-Fi or mobile data connection.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Camera or microphone access failed. Check browser permissions and try again.");
@@ -278,7 +285,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
     if (!supabase || !userEmail) return;
     const channel = supabase.channel(`uok-call-${emailKey(userEmail)}`);
     channel.on("broadcast", { event: "call-signal" }, async ({ payload }: { payload: Signal }) => {
-      if (payload.to !== userEmail) return;
+      if (normalizeEmail(payload.to) !== userEmail) return;
       if (payload.type === "invite") {
         setIncoming(payload);
         startRingtone();
@@ -329,7 +336,7 @@ export default function VideoCall({ contacts }: { contacts: Contact[] }) {
 
       {incoming && <div className="fixed inset-x-3 top-20 z-[60] mx-auto max-w-sm rounded-2xl border border-blue-200 bg-white p-4 shadow-2xl"><div className="flex items-center gap-3"><div className="rounded-full bg-green-100 p-3 text-green-700"><PhoneCall className="h-5 w-5" /></div><div className="min-w-0 flex-1"><p className="font-bold text-slate-900">Incoming {incoming.mode === "audio" ? "call" : "video call"}</p><p className="truncate text-sm text-slate-600">{incoming.name || incoming.from}</p></div></div><div className="mt-4 flex gap-2"><button onClick={acceptCall} className="flex-1 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white"><Check className="mr-1 inline h-4 w-4" />Answer</button><button onClick={() => { stopRingtone(); send({ type: "end", callId: incoming.callId, to: incoming.from }); setIncoming(null); }} className="flex-1 rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white"><X className="mr-1 inline h-4 w-4" />Decline</button></div></div>}
 
-      {callState !== "idle" && <div className="fixed inset-3 z-50 flex flex-col overflow-hidden rounded-2xl bg-slate-950 shadow-2xl sm:inset-8"><div className="flex items-center justify-between p-3 text-white"><span className="text-sm font-semibold">{callState === "calling" ? `${callMode === "audio" ? "Calling" : "Video calling"} ${activeContact?.name || activeContact?.email}…` : `${callMode === "audio" ? "Call" : "Video call"} connected to ${activeContact?.name || activeContact?.email}`}</span><button onClick={() => cleanup()}><X /></button></div><div className="relative flex min-h-0 flex-1 items-center justify-center bg-black">{callMode === "video" ? <><video ref={remoteVideoRef} autoPlay playsInline className="h-full w-full object-contain" /><video ref={localVideoRef} autoPlay muted playsInline className="absolute bottom-4 right-4 h-28 w-40 rounded-lg border border-white object-cover sm:h-36 sm:w-52" /></> : <div className="text-center text-white"><audio ref={remoteAudioRef} autoPlay controls className="mx-auto mb-4 w-64" /><PhoneCall className="mx-auto mb-3 h-12 w-12" /><p>Audio call in progress</p></div>}</div>{error && <p className="bg-red-900 px-3 py-2 text-center text-xs text-red-100">{error}</p>}<div className="flex justify-center gap-3 p-3"><button onClick={() => { const tracks = localStreamRef.current?.getAudioTracks() || []; tracks.forEach((track) => track.enabled = muted); setMuted(!muted); }} className="rounded-full bg-white/10 p-3 text-white">{muted ? <MicOff /> : <Mic />}</button><button onClick={() => { const tracks = localStreamRef.current?.getVideoTracks() || []; tracks.forEach((track) => track.enabled = cameraOff); setCameraOff(!cameraOff); }} className="rounded-full bg-white/10 p-3 text-white">{cameraOff ? <VideoOff /> : <Video />}</button><button onClick={() => cleanup()} className="rounded-full bg-red-600 p-3 text-white"><Phone /></button></div></div>}
+      {callState !== "idle" && <div className="fixed inset-3 z-50 flex flex-col overflow-hidden rounded-2xl bg-slate-950 shadow-2xl sm:inset-8"><audio ref={remoteAudioRef} autoPlay playsInline className="hidden" onCanPlay={(event) => void event.currentTarget.play().catch(() => undefined)} /><div className="flex items-center justify-between p-3 text-white"><span className="text-sm font-semibold">{callState === "calling" ? `${callMode === "audio" ? "Calling" : "Video calling"} ${activeContact?.name || activeContact?.email}…` : `${callMode === "audio" ? "Call" : "Video call"} connected to ${activeContact?.name || activeContact?.email}`}</span><button onClick={() => cleanup()}><X /></button></div><div className="relative flex min-h-0 flex-1 items-center justify-center bg-black">{callMode === "video" ? <><video ref={remoteVideoRef} autoPlay playsInline className="h-full w-full object-contain" /><video ref={localVideoRef} autoPlay muted playsInline className="absolute bottom-4 right-4 h-28 w-40 rounded-lg border border-white object-cover sm:h-36 sm:w-52" /></> : <div className="text-center text-white"><PhoneCall className="mx-auto mb-3 h-12 w-12" /><p>Audio call in progress</p></div>}</div>{error && <p className="bg-red-900 px-3 py-2 text-center text-xs text-red-100">{error}</p>}<div className="flex justify-center gap-3 p-3"><button onClick={() => { const tracks = localStreamRef.current?.getAudioTracks() || []; tracks.forEach((track) => track.enabled = muted); setMuted(!muted); }} className="rounded-full bg-white/10 p-3 text-white">{muted ? <MicOff /> : <Mic />}</button><button onClick={() => { const tracks = localStreamRef.current?.getVideoTracks() || []; tracks.forEach((track) => track.enabled = cameraOff); setCameraOff(!cameraOff); }} className="rounded-full bg-white/10 p-3 text-white">{cameraOff ? <VideoOff /> : <Video />}</button><button onClick={() => cleanup()} className="rounded-full bg-red-600 p-3 text-white"><Phone /></button></div></div>}
     </>
   );
 }
